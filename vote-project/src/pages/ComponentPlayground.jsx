@@ -14,7 +14,7 @@ import NavBar from "../components/ui/NavBar";
 import AuthLayout from "../components/layout/AuthLayout";
 import LoginForm from "./auth/LoginForm";
 
-const Dashboard = () => {
+const ComponentPlayground = () => {
   const [date, setDate] = useState(null);
   const [isOn, setIsOn] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -112,11 +112,11 @@ const Dashboard = () => {
       </div>
   
 
-<ToggleSwitch
-  size="md"
-  checked={isOn}
-  onChange={setIsOn}
-/>
+  <ToggleSwitch
+    size="md"
+    checked={isOn}
+    onChange={setIsOn}
+  />
 
       {/* Pagination Test */}
       <div className="bg-white p-6 rounded-xl shadow w-full space-y-4">
@@ -288,4 +288,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default ComponentPlayground;
