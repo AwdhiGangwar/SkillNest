@@ -15,7 +15,7 @@ export default function TeacherLayout() {
         </div>
 
         <div className="flex-1 overflow-y-auto p-6">
-          <div className="mx-auto w-full" style={{ maxWidth: 1168 }}>
+          <div className="mx-auto w-full" style={{ maxWidth: 1200 }}>
             <div style={{ backgroundColor: '#F7F7F7', borderRadius: 24 }} className="p-6">
               <Outlet />
             </div>

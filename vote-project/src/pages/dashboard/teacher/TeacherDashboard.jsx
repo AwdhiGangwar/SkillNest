@@ -1,196 +1,117 @@
-import React, { useState, useRef } from "react";
-import {
-  Users,
-  Clock,
-  BookOpen,
-  TrendingUp,
-  Plus,
-} from "lucide-react";
-import StatsCard from "../../../components/dashboard/teacher/StatsCard";
-import SlotCard from "../../../components/dashboard/teacher/SlotCard";
-import WeekNavigator from "../../../components/dashboard/teacher/WeekNavigator";
+import React, { useState } from "react";
 import StudentCard from "../../../components/ui/StudentCard";
-
-// Helper: horizontal scroll row that converts vertical wheel to horizontal scroll
-function HorizontalScrollRow({ items }) {
-  const rowRef = useRef(null);
-
-  const onWheel = (e) => {
-    const el = rowRef.current;
-    if (!el) return;
-    if (el.scrollWidth > el.clientWidth) {
-      // scroll horizontally with vertical wheel and prevent page scroll
-      el.scrollLeft += e.deltaY;
-      e.preventDefault();
-    }
-  };
-
-  return (
-    <div
-      ref={rowRef}
-      onWheel={onWheel}
-      className="flex gap-4 overflow-x-auto py-2 px-1"
-      style={{ WebkitOverflowScrolling: 'touch' }}
-    >
-      {items.map((cls) => (
-        <div key={cls.id} className="min-w-[260px]">
-          <SlotCard
-            studentName={cls.studentName}
-            studentImage={cls.studentImage}
-            subject={cls.subject}
-            time={cls.time}
-            status={cls.status}
-          />
-        </div>
-      ))}
-    </div>
-  );
-}
+import Pagination from "../../../components/ui/Pagination";
 
 const TeacherDashboard = () => {
   const [upcomingClasses] = useState([
-    {
-      id: 1,
-      studentName: "Emma Wilson",
-      studentImage: "https://via.placeholder.com/40",
-      subject: "Mathematics",
-      time: "10:00 AM - 11:00 AM",
-      status: "scheduled",
-    },
-    {
-      id: 2,
-      studentName: "Liam Smith",
-      studentImage: "https://via.placeholder.com/40",
-      subject: "Physics",
-      time: "11:30 AM - 12:30 PM",
-      status: "scheduled",
-    },
-    {
-      id: 3,
-      studentName: "Sophia Brown",
-      studentImage: "https://via.placeholder.com/40",
-      subject: "Chemistry",
-      time: "2:00 PM - 3:00 PM",
-      status: "scheduled",
-    },
+    { id: 1, name: "Rahul Kumar", subject: "Coding", title: "Math Basics", date: "20 July, 2025", time: "10:00 PM - 11:00 PM", status: "scheduled", avatar: "https://via.placeholder.com/32" },
+    { id: 2, name: "Sara Kapoor", subject: "Design", title: "UX Fundamentals", date: "20 July, 2025", time: "11:00 PM - 12:00 PM", status: "cancelled", avatar: "https://via.placeholder.com/32" },
+    { id: 3, name: "Riya Verma", subject: "Coding", title: "Java 103", date: "21 July, 2025", time: "07:00 PM - 08:00 PM", status: "scheduled", avatar: "https://via.placeholder.com/32" },
+    { id: 4, name: "Vivaan Sharma", subject: "Design", title: "UI Design", date: "20 July, 2025", time: "10:00 PM - 11:00 PM", status: "scheduled", avatar: "https://via.placeholder.com/32" },
+    { id: 5, name: "Kabir Joshi", subject: "Coding", title: "Java 205", date: "20 July, 2025", time: "10:00 PM - 11:00 PM", status: "scheduled", avatar: "https://via.placeholder.com/32" },
+    { id: 6, name: "Extra Student", subject: "Coding", title: "Extra", date: "22 July, 2025", time: "09:00 AM - 10:00 AM", status: "scheduled", avatar: "https://via.placeholder.com/32" },
   ]);
 
-  const [completedClasses] = useState([
-    {
-      id: 4,
-      studentName: "Oliver Davis",
-      studentImage: "https://via.placeholder.com/40",
-      subject: "Biology",
-      time: "Yesterday 3:00 PM",
-      status: "completed",
-    },
-    {
-      id: 5,
-      studentName: "Ava Miller",
-      studentImage: "https://via.placeholder.com/40",
-      subject: "English",
-      time: "2 days ago 2:00 PM",
-      status: "completed",
-    },
+  const [students] = useState([
+    { id: 1, name: 'Vivaan Sharma', image: 'https://via.placeholder.com/120', country: 'United Kingdom', grade: '8th Grade', tag: 'Design' },
+    { id: 2, name: 'Riya Verma', image: 'https://via.placeholder.com/120', country: 'Australia', grade: '10th Grade', tag: 'Design' },
+    { id: 3, name: 'Sara Kapoor', image: 'https://via.placeholder.com/120', country: 'India', grade: '11th Grade', tag: 'Design' },
+    { id: 4, name: 'Kabir Joshi', image: 'https://via.placeholder.com/120', country: 'United Kingdom', grade: '9th Grade', tag: 'Coding' },
   ]);
+
+  // pagination state for upcoming classes table
+  const [page, setPage] = useState(1);
+  const perPage = 5;
+  const total = upcomingClasses.length;
+  const start = (page - 1) * perPage;
+  const visibleClasses = upcomingClasses.slice(start, start + perPage);
 
   return (
-    <div className="space-y-6">
-
+    <div style={{ width: 1200, height: 992 }} className="bg-[#F7F7F7] rounded-2xl p-6 mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6 ">
+      <div className="flex items-center justify-between mb-6" style={{ width: 800, height: 43 }}>
+        <h3 style={{ fontFamily: 'General Sans', fontWeight: 500, fontSize: 32, lineHeight: '43px', color: '#0D2232' }}>Welcome back, Harshit</h3>
+        <div className="flex items-center gap-3">
+          <div style={{ width: 32, height: 32 }} className="rounded bg-white flex items-center justify-center">🎁</div>
+          <button style={{ fontWeight: 600, fontSize: 16 }} className="text-[#1F80E0]">Refer for Rewards</button>
+        </div>
+      </div>
+
+      {/* Main content area */}
+      <div style={{ width: 800 }} className="space-y-6">
+        {/* Upcoming Classes panel */}
+        <div style={{ width: 1120 }} className="bg-white rounded-lg border border-[#E9F3FC] shadow-sm">
+          <div className="flex items-center justify-between px-4 py-4" style={{ background: '#F5F9FF', borderRadius: '8px 8px 0 0' }}>
             <div>
-              <h2 className="text-3xl font-medium" style={{ color: '#0D2232', lineHeight: '43px' }}>Welcome back, Harshit</h2>
+              <h4 style={{ fontFamily: 'General Sans', fontWeight: 500, fontSize: 20 }}>Upcoming Classes</h4>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-white rounded flex items-center justify-center">🎁</div>
-              <button className="text-sm font-semibold text-[#1F80E0]">Claim Reward</button>
-            </div>
+            <button className="text-sm text-[#1F80E0]">View All</button>
           </div>
 
-          {/* Main area */}
-          <div className="space-y-6 w-full">
+          {/* Table header */}
+          <div className="flex items-center px-4 py-3 gap-4" style={{ borderBottom: '1px solid #F2F2F2' }}>
+            <div style={{ width: 240 }} className="flex items-center">Student Name</div>
+            <div style={{ width: 104 }} className="text-sm font-medium">Course</div>
+            <div style={{ width: 120 }} className="text-sm font-medium">Class Title</div>
+            <div style={{ width: 96 }} className="text-sm font-medium">Date</div>
+            <div style={{ width: 120 }} className="text-sm font-medium">Time</div>
+            <div style={{ width: 120 }} className="text-sm font-medium">Class Status</div>
+            <div style={{ width: 66 }} className="text-sm font-medium"></div>
+          </div>
 
-            {/* Stats row */}
-            <div className="flex gap-6">
-              <StatsCard icon={Users} label="Total Students" value="24" />
-              <StatsCard icon={BookOpen} label="Active Classes" value="12" />
-              <StatsCard icon={Clock} label="Hours This Week" value="18.5" />
-              <StatsCard icon={TrendingUp} label="Student Performance" value="87%" />
-            </div>
-
-            {/* Week navigator */}
-            <div>
-              <WeekNavigator />
-            </div>
-
-            {/* Two column content */}
-            <div className="flex flex-col gap-6">
-              {/* Left - Upcoming Classes */}
-              <div className="w-full">
-                <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">Upcoming Classes</h3>
-                      <p className="text-sm text-gray-600">Your scheduled sessions for today</p>
-                    </div>
-                    <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                      <Plus size={16} />
-                      <span>Schedule</span>
-                    </button>
+          {/* Rows */}
+          <div className="px-4 py-2">
+            {visibleClasses.map((c) => (
+              <div key={c.id} className="flex items-center px-4 py-3 rounded-md" style={{ borderBottom: '1px solid #F2F2F2' }}>
+                <div style={{ width: 240 }} className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
+                    <img src={c.avatar} alt={c.name} className="w-full h-full object-cover" />
                   </div>
+                  <div className="text-sm font-medium text-[#4F4F4F]">{c.name}</div>
+                </div>
 
-                  {/* Horizontal Slot Cards */}
-                  <div className="mb-3">
-                    <HorizontalScrollRow items={upcomingClasses} />
-                  </div>
+                <div style={{ width: 104 }} className="text-sm">{c.subject}</div>
+                <div style={{ width: 120 }} className="text-sm text-[#4F4F4F]">{c.title}</div>
+                <div style={{ width: 96 }} className="text-sm">{c.date}</div>
+                <div style={{ width: 120 }} className="text-sm">{c.time}</div>
+                <div style={{ width: 120 }} className="text-sm">
+                  <span className={`px-2 py-1 rounded text-sm font-medium ${c.status === 'scheduled' ? 'text-[#27AE60]' : c.status === 'cancelled' ? 'text-[#C83333]' : 'text-gray-700'}`}>
+                    {c.status.charAt(0).toUpperCase() + c.status.slice(1)}
+                  </span>
+                </div>
 
-                  <button className="w-full mt-6 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
-                    View All Classes
-                  </button>
+                <div style={{ width: 66 }} className="flex justify-end">
+                  <button className="px-3 py-1 text-sm border rounded text-[#1F80E0]">Join</button>
                 </div>
               </div>
+            ))}
+          </div>
 
-              {/* Right - Quick Actions, Completed, My Students */}
-              <div className="w-full flex flex-col gap-6">
-                <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <h4 className="text-base font-semibold mb-3">Quick Actions</h4>
-                  <div className="space-y-3">
-                    <button className="w-full px-4 py-3 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg">Create Assignment</button>
-                    <button className="w-full px-4 py-3 bg-green-50 text-green-700 border border-green-200 rounded-lg">Check Submissions</button>
-                    <button className="w-full px-4 py-3 bg-purple-50 text-purple-700 border border-purple-200 rounded-lg">Grade Papers</button>
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <h4 className="text-base font-semibold mb-3">Recently Completed</h4>
-                  <div className="space-y-3">
-                    {completedClasses.map((cls) => (
-                      <SlotCard
-                        key={cls.id}
-                        studentName={cls.studentName}
-                        studentImage={cls.studentImage}
-                        subject={cls.subject}
-                        time={cls.time}
-                        status={cls.status}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h4 className="text-base font-semibold">My Students</h4>
-                    <button className="text-sm text-[#1F80E0]">View all</button>
-                  </div>
-                  <div className="grid grid-cols-1 gap-4">
-                    <StudentCard image={upcomingClasses[0].studentImage} name="Vivaan Sharma" country="United Kingdom" grade="8th Grade" tag="Design" />
-                    <StudentCard image={upcomingClasses[1].studentImage} name="Rahul Kumar" country="India" grade="7th Grade" tag="Coding" />
-                  </div>
-                </div>
-              </div>
+          {/* Pagination and results info */}
+          <div className="flex items-center justify-between px-4 py-4">
+            <div className="text-sm text-[#4F4F4F]">Showing {String(start + 1).padStart(2,'0')}-{String(Math.min(start + perPage, total)).padStart(2,'0')} of {total} results</div>
+            <div style={{ width: 151 }}>
+              <Pagination currentPage={page} totalItems={total} itemsPerPage={perPage} onPageChange={setPage} />
             </div>
           </div>
+        </div>
+
+        {/* My Students panel */}
+        <div style={{ width: 1120 }} className="bg-white rounded-lg border border-[#F2F2F2] p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h4 style={{ fontFamily: 'General Sans', fontWeight: 500, fontSize: 20 }}>My Students</h4>
+            <button className="text-sm text-[#1F80E0]">View All</button>
+          </div>
+
+          <div className="flex gap-6">
+            {students.map((s) => (
+              <div key={s.id} style={{ width: 271.5 }}>
+                <StudentCard image={s.image} name={s.name} country={s.country} grade={s.grade} tag={s.tag} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
