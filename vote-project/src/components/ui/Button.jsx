@@ -1,11 +1,10 @@
 import React from "react";
-import clsx from "clsx";
 
 const variants = {
-  primary: "bg-blue-600 text-white hover:bg-blue-700 shadow-md",
+  primary: "bg-gradient-to-r from-[#3A8DFF] to-[#1F80E0] text-white hover:shadow-lg",
   secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300",
-  outline: "border border-blue-600 text-blue-600 hover:bg-blue-50",
-  ghost: "text-blue-600 hover:bg-blue-100",
+  outline: "border border-blue-400 text-blue-500 hover:bg-blue-50",
+  ghost: "text-blue-500 hover:bg-blue-50",
   danger: "bg-red-500 text-white hover:bg-red-600",
 };
 
@@ -19,17 +18,17 @@ function Button({
   children,
   variant = "primary",
   size = "md",
-  className,
+  className = "",
   ...props
 }) {
+  const variantClass = variants[variant] || variants.primary;
+  const sizeClass = sizes[size] || sizes.md;
+  
+  const combinedClass = `font-medium transition-all duration-200 flex items-center gap-2 ${variantClass} ${sizeClass} ${className}`;
+
   return (
     <button
-      className={clsx(
-        "font-medium transition-all duration-200 flex items-center gap-2",
-        variants[variant],
-        sizes[size],
-        className
-      )}
+      className={combinedClass}
       {...props}
     >
       {children}

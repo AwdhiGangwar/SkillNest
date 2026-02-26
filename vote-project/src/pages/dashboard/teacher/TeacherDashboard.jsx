@@ -27,20 +27,20 @@ const TeacherDashboard = () => {
   const visibleClasses = upcomingClasses.slice(start, start + perPage);
 
   return (
-    <div style={{ width: 1200, height: 992 }} className="bg-[#F7F7F7] rounded-2xl p-6 mx-auto">
+    <div style={{ maxWidth: 1200, maxHeight: 630 }} className="border border-[#1F80E0] rounded-lg overflow-y-auto p-6 mx-auto  bg-white">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6" style={{ width: 800, height: 43 }}>
+      <div className="flex items-center justify-between " style={{ maxWidth: 1200, height: 53 }}>
         <h3 style={{ fontFamily: 'General Sans', fontWeight: 500, fontSize: 32, lineHeight: '43px', color: '#0D2232' }}>Welcome back, Harshit</h3>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <div style={{ width: 32, height: 32 }} className="rounded bg-white flex items-center justify-center">🎁</div>
           <button style={{ fontWeight: 600, fontSize: 16 }} className="text-[#1F80E0]">Refer for Rewards</button>
         </div>
       </div>
 
       {/* Main content area */}
-      <div style={{ width: 800 }} className="space-y-6">
+      <div style={{ maxWidth: 1200, maxHeight: 500 }} className="space-y-6">
         {/* Upcoming Classes panel */}
-        <div style={{ width: 1120 }} className="bg-white rounded-lg border border-[#E9F3FC] shadow-sm">
+        <div style={{ maxWidth: 1120 }} className="bg-white rounded-lg border border-[#E9F3FC] shadow-sm">
           <div className="flex items-center justify-between px-4 py-4" style={{ background: '#F5F9FF', borderRadius: '8px 8px 0 0' }}>
             <div>
               <h4 style={{ fontFamily: 'General Sans', fontWeight: 500, fontSize: 20 }}>Upcoming Classes</h4>
@@ -49,20 +49,20 @@ const TeacherDashboard = () => {
           </div>
 
           {/* Table header */}
-          <div className="flex items-center px-4 py-3 gap-4" style={{ borderBottom: '1px solid #F2F2F2' }}>
+          <div className="flex justify-between px-4 py-3 gap-4" style={{ borderBottom: '1px solid #F2F2F2' }}>
             <div style={{ width: 240 }} className="flex items-center">Student Name</div>
             <div style={{ width: 104 }} className="text-sm font-medium">Course</div>
             <div style={{ width: 120 }} className="text-sm font-medium">Class Title</div>
             <div style={{ width: 96 }} className="text-sm font-medium">Date</div>
             <div style={{ width: 120 }} className="text-sm font-medium">Time</div>
             <div style={{ width: 120 }} className="text-sm font-medium">Class Status</div>
-            <div style={{ width: 66 }} className="text-sm font-medium"></div>
+            <div style={{ width: 66 }} className="text-sm font-medium mx-4"></div>
           </div>
 
           {/* Rows */}
-          <div className="px-4 py-2">
+          <div className="px-4 py-2 space-y-2" style={{ maxHeight: 300, overflowY: 'auto' }}>
             {visibleClasses.map((c) => (
-              <div key={c.id} className="flex items-center px-4 py-3 rounded-md" style={{ borderBottom: '1px solid #F2F2F2' }}>
+              <div key={c.id} className="flex justify-between px-4 py-3 rounded-md" style={{ borderBottom: '1px solid #F2F2F2' }}>
                 <div style={{ width: 240 }} className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
                     <img src={c.avatar} alt={c.name} className="w-full h-full object-cover" />
@@ -73,8 +73,8 @@ const TeacherDashboard = () => {
                 <div style={{ width: 104 }} className="text-sm">{c.subject}</div>
                 <div style={{ width: 120 }} className="text-sm text-[#4F4F4F]">{c.title}</div>
                 <div style={{ width: 96 }} className="text-sm">{c.date}</div>
-                <div style={{ width: 120 }} className="text-sm">{c.time}</div>
-                <div style={{ width: 120 }} className="text-sm">
+                <div style={{ width: 120 }} className="text-sm ">{c.time}</div>
+                <div style={{ width: 120 }} className="text-sm  flex items-center gap-2">
                   <span className={`px-2 py-1 rounded text-sm font-medium ${c.status === 'scheduled' ? 'text-[#27AE60]' : c.status === 'cancelled' ? 'text-[#C83333]' : 'text-gray-700'}`}>
                     {c.status.charAt(0).toUpperCase() + c.status.slice(1)}
                   </span>
@@ -90,22 +90,22 @@ const TeacherDashboard = () => {
           {/* Pagination and results info */}
           <div className="flex items-center justify-between px-4 py-4">
             <div className="text-sm text-[#4F4F4F]">Showing {String(start + 1).padStart(2,'0')}-{String(Math.min(start + perPage, total)).padStart(2,'0')} of {total} results</div>
-            <div style={{ width: 151 }}>
+            <div style={{ maxWidth: 1200 }}>
               <Pagination currentPage={page} totalItems={total} itemsPerPage={perPage} onPageChange={setPage} />
             </div>
           </div>
         </div>
 
         {/* My Students panel */}
-        <div style={{ width: 1120 }} className="bg-white rounded-lg border border-[#F2F2F2] p-6">
+        <div style={{ maxWidth: 1120 , maxHeight: 300}} className="bg-white rounded-lg border border-[#F2F2F2] p-6 flex flex-col overflow-x-auto" >
           <div className="flex items-center justify-between mb-4">
             <h4 style={{ fontFamily: 'General Sans', fontWeight: 500, fontSize: 20 }}>My Students</h4>
             <button className="text-sm text-[#1F80E0]">View All</button>
           </div>
 
-          <div className="flex gap-6">
+          <div className="flex gap-6" style={{ borderColor: '#E9F3FC' }}>
             {students.map((s) => (
-              <div key={s.id} style={{ width: 271.5 }}>
+              <div key={s.id} style={{ maxWidth: 271.5 }}>
                 <StudentCard image={s.image} name={s.name} country={s.country} grade={s.grade} tag={s.tag} />
               </div>
             ))}

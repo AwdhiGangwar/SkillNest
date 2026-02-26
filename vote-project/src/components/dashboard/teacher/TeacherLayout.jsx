@@ -9,15 +9,25 @@ export default function TeacherLayout() {
       <Sidebar />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-
-        <div className="w-full flex-shrink-0">
-          <Topbar />
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className="mx-auto w-full" style={{ maxWidth: 1200 }}>
-            <div style={{ backgroundColor: '#F7F7F7', borderRadius: 24 }} className="p-6">
-              <Outlet />
+        {/* Main Content Area - Fixed dimensions */}
+        <div className="flex-1 overflow-y-auto p-4" style={{ height: 'calc(100vh - 16px)', width: '100%' }}>
+          <div className="mx-auto h-full w-full" style={{ maxWidth: '1400px', height: '100%' }}>
+            <div style={{ 
+              backgroundColor: '#F7F7F7', 
+              borderRadius: 6,
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden'
+            }} className="p-4">
+              <div style={{ 
+                flex: 1,
+                overflow: 'auto',
+                height: '100%',
+                width: '100%'
+              }}>
+                <Outlet />
+              </div>
             </div>
           </div>
         </div>
