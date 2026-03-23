@@ -23,7 +23,7 @@ public class CourseService {
     public boolean isTeacher(String uid, String token) {
 
         try {
-            String url = "http://localhost:8081/api/me";
+        	String url = "http://localhost:8081/api/me";
 
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", token);
@@ -63,5 +63,15 @@ public class CourseService {
                 .stream()
                 .map(doc -> doc.toObject(Course.class))
                 .collect(Collectors.toList());
+    }
+    public Course getCourseById(String id) throws Exception {
+
+        Firestore db = FirestoreClient.getFirestore();
+
+        return db.collection("courses")
+                .document(id)
+                .get()
+                .get()
+                .toObject(Course.class);
     }
 }

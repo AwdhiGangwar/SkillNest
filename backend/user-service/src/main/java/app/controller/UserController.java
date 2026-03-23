@@ -26,10 +26,11 @@ public class UserController {
     @GetMapping("/me")
     public User getCurrentUser(HttpServletRequest request) throws Exception {
 
-        String uid = (String) request.getAttribute("uid");
+        String uid = request.getHeader("uid");
 
+        // temporary fallback (only for testing)
         if (uid == null) {
-            uid = "teacher123"; // temp
+            uid = "teacher123";
         }
 
         return userService.getOrCreateUser(uid);

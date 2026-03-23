@@ -24,8 +24,11 @@ public class CourseController {
     public String createCourse(@RequestBody Course course,
                                HttpServletRequest request) throws Exception {
 
-        String uid = (String) request.getAttribute("uid");
-        if (uid == null) uid = "teacher123";
+        String uid = request.getHeader("uid");
+
+        if (uid == null) {
+            uid = "teacher123"; // temp fallback
+        }
 
         String token = request.getHeader("Authorization");
 
@@ -41,5 +44,9 @@ public class CourseController {
     @GetMapping("/courses")
     public List<Course> getCourses() throws Exception {
         return courseService.getAllCourses();
+    }
+    @GetMapping("/courses/{id}")
+    public Course getCourseById(@PathVariable String id) throws Exception {
+        return courseService.getCourseById(id);
     }
 }
