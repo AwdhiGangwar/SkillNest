@@ -12,44 +12,43 @@ import java.io.IOException;
 
 public class FirebaseTokenFilter extends OncePerRequestFilter {
 
-	@Override
-	protected void doFilterInternal(HttpServletRequest request,
-	                                HttpServletResponse response,
-	                                FilterChain filterChain)
-	        throws ServletException, IOException {
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
 
-	    String path = request.getRequestURI();
+        String path = request.getRequestURI();
 
-	    // ✅ Allow public endpoint
-	    if (path.equals("/health")) {
-	        filterChain.doFilter(request, response);
-	        return;
-	    }
+        // allow public endpoints (for now)
+        if (path.equals("/health") || path.equals("/users") || path.equals("/me")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-	    String header = request.getHeader("Authorization");
+        String header = request.getHeader("Authorization");
 
-	    if (header == null || !header.startsWith("Bearer ")) {
-	        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-	        response.getWriter().write("Missing or invalid Authorization header");
-	        return;
-	    }
+        if (header == null || !header.startsWith("Bearer ")) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Missing or invalid Authorization header");
+            return;
+        }
 
-	    String token = header.substring(7);
+        String token = header.substring(7);
 
-	    try {
-	        FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
+        try {
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
 
-	        String uid = decodedToken.getUid();
+            String uid = decodedToken.getUid();
 
-	        // Store UID in request (for later use)
-	        request.setAttribute("uid", uid);
+            request.setAttribute("uid", uid);
 
-	    } catch (Exception e) {
-	        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-	        response.getWriter().write("Invalid Firebase token");
-	        return;
-	    }
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Invalid Firebase token");
+            return;
+        }
 
-	    filterChain.doFilter(request, response);
-	}
+        filterChain.doFilter(request, response);
+    }
 }

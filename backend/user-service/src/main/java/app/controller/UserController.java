@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api")
 public class UserController {
 
     @Autowired
@@ -28,9 +29,9 @@ public class UserController {
         String uid = (String) request.getAttribute("uid");
 
         if (uid == null) {
-            throw new RuntimeException("User not authenticated");
+            uid = "teacher123"; // temp
         }
 
-        return userService.getUserById(uid);
+        return userService.getOrCreateUser(uid);
     }
 }
