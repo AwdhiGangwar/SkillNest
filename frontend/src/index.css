@@ -1,0 +1,96 @@
+@import url('https://api.fontshare.com/v2/css?f[]=clash-display@600,700,500&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: 'DM Sans', sans-serif;
+    background-color: #0f1117;
+    color: #e2e8f0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    margin: 0;
+    background: #0f1117;
+    background-image:
+      radial-gradient(at 40% 20%, hsla(210,100%,56%,0.06) 0px, transparent 50%),
+      radial-gradient(at 80% 0%, hsla(189,100%,56%,0.04) 0px, transparent 50%);
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Clash Display', 'DM Sans', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-surface-card border border-surface-border rounded-2xl;
+    backdrop-filter: blur(12px);
+  }
+
+  .btn-primary {
+    @apply bg-brand-500 hover:bg-brand-600 text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 active:scale-95;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .btn-ghost {
+    @apply bg-surface-hover hover:bg-surface-border text-slate-300 font-medium px-4 py-2 rounded-xl transition-all duration-200;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .input-field {
+    @apply w-full bg-surface-card border border-surface-border rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500/50 transition-all duration-200;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .badge-role {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-wide;
+  }
+
+  .stat-card {
+    @apply glass-card p-5 flex flex-col gap-2 relative overflow-hidden;
+  }
+
+  .nav-item {
+    @apply flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-surface-hover transition-all duration-200 font-medium text-sm cursor-pointer;
+  }
+
+  .nav-item.active {
+    @apply text-white bg-surface-hover;
+  }
+
+  .shimmer {
+    background: linear-gradient(90deg, #1e2738 25%, #243044 50%, #1e2738 75%);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0f1117;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e2738;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2d3a52;
+}
+
+/* Toast overrides */
+.react-hot-toast > div {
+  font-family: 'DM Sans', sans-serif !important;
+}
