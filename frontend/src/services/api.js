@@ -5,9 +5,7 @@ import axios from "axios";
 import { auth } from "./firebase";
 
 // In development, use relative path to leverage package.json proxy to avoid CORS
-const API_BASE = process.env.NODE_ENV === "development"
-  ? ""
-  : (process.env.REACT_APP_API_URL || "http://localhost:8080");
+const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8080";
 
 // Create axios instance
 const api = axios.create({
@@ -47,10 +45,14 @@ api.interceptors.response.use(
 
     const msg =
       err.response?.data?.message ||
-      err.response?.data ||
+      (typeof err.response?.data === "string"
+        ? err.response.data
+        : JSON.stringify(err.response?.data)) ||
       err.message ||
       "Something went wrong";
-    return Promise.reject(new Error(msg));
+    const error = new Error(msg);
+    error.status = err.response?.status;
+    return Promise.reject(error);
   }
 );
 
@@ -67,8 +69,7 @@ export const updateCourse = (id, data) => api.put(`/api/courses/${id}`, data);
 export const deleteCourse = (id) => api.delete(`/api/courses/${id}`);
 
 // ─── ENROLLMENT APIs ─────────────────────────────────────────
-export const enrollInCourse = (courseId) =>
-  api.post("/api/enrollments", { courseId, id: `enr_${Date.now()}` });
+export const enrollInCourse = (courseId) => api.post("/api/enrollments", { courseId });
 export const getMyCourses = () => api.get("/api/my-courses");
 export const getEnrollmentsByCourse = (courseId) =>
   api.get(`/api/enrollments/course/${courseId}`);

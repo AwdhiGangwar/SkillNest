@@ -28,9 +28,8 @@ public class UserController {
 
         String uid = request.getHeader("uid");
 
-        // temporary fallback (only for testing)
         if (uid == null) {
-            uid = "teacher123";
+            throw new RuntimeException("Unauthorized: UID missing");
         }
 
         return userService.getOrCreateUser(uid);
