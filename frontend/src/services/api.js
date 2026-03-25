@@ -99,6 +99,6 @@ export const getMonthlyEarnings = () => api.get("/api/earnings/monthly");
 export const checkHealth = () => api.get("/api/health");
 
 // ─── TEACHER APPLICATION ─────────────────────────────────────
-export const applyAsTeacher = (data) => api.post("/api/teacher-applications", data);
+export const applyAsTeacher = (data) => api.post("/api/teacher-requests", data);
 
 export default api;
