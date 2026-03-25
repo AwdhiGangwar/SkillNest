@@ -8,6 +8,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 // Auth pages
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Home from "./pages/Home";
+import JoinTeacher from "./pages/JoinTeacher";
 
 // Student pages
 import StudentDashboard from "./pages/student/StudentDashboard";
@@ -52,9 +54,10 @@ export default function App() {
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/join-teacher" element={<JoinTeacher />} />
 
-          {/* Default redirect */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          {/* Landing Page */}
+          <Route path="/" element={<Home />} />
 
           {/* Student routes */}
           <Route

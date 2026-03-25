@@ -20,9 +20,13 @@ public class UserController {
 
     @PostMapping("/users")
     public String createUser(@RequestBody User user) throws Exception {
+
+        if ("TEACHER".equals(user.getRole())) {
+            throw new RuntimeException("Teachers cannot self register");
+        }
+
         return userService.createUser(user);
     }
-
     @GetMapping("/me")
     public User getCurrentUser(HttpServletRequest request) throws Exception {
 
