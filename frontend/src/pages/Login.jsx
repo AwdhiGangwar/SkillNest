@@ -31,7 +31,8 @@ export default function Login() {
   // Redirect after profile loads
   React.useEffect(() => {
     if (profile) {
-      if (profile.role === "teacher") navigate("/teacher/dashboard");
+      if (profile.role === "ADMIN") navigate("/admin/dashboard");
+      else if (profile.role === "teacher") navigate("/teacher/dashboard");
       else navigate("/student/dashboard");
     }
   }, [profile, navigate]);

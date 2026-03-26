@@ -25,6 +25,10 @@ import Availability from "./pages/teacher/Availability";
 import TeacherStudents from "./pages/teacher/TeacherStudents";
 import Earnings from "./pages/teacher/Earnings";
 
+// Admin pages
+import AdminDashboard from "./pages/AdminDashboard";
+import TeacherRequests from "./pages/TeacherRequests";
+
 export default function App() {
   return (
     <AuthProvider>
@@ -139,6 +143,24 @@ export default function App() {
             element={
               <ProtectedRoute role="teacher">
                 <Earnings />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Admin routes */}
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute role="ADMIN">
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/teacher-requests"
+            element={
+              <ProtectedRoute role="ADMIN">
+                <TeacherRequests />
               </ProtectedRoute>
             }
           />
