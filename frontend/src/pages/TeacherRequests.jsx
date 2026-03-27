@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import Layout from "../../components/Layout";
-import { CardSkeleton, EmptyState, Badge } from "../../components/ui";
-import { getTeacherRequests, approveTeacherRequest, rejectTeacherRequest } from "../../services/api";
+import Layout from "../components/Layout";
+import { CardSkeleton, EmptyState, Badge } from "../components/ui";
+import { getTeacherRequests, approveTeacherRequest, rejectTeacherRequest } from "../services/api";
 import toast from "react-hot-toast";
 
 export default function TeacherRequests() {
