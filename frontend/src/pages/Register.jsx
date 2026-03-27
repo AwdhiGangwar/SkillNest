@@ -138,7 +138,7 @@ export default function Register() {
                   Creating account...
                 </>
               ) : (
-                `Create ${form.role === "Student" ? "Student" : "Teacher"} Account`
+                `Create Account`
               )}
             </button>
           </form>
