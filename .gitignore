@@ -1,0 +1,17 @@
+# Backend build
+backend/**/target/
+
+# Logs
+*.log
+
+# IDE files
+.project
+.classpath
+.settings/
+
+# Firebase secret (IMPORTANT)
+**/firebase.json
+
+# OS files
+.DS_Store
+Thumbs.db
