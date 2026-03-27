@@ -33,8 +33,7 @@ export default function Register() {
     try {
       await register(name, email, password, role);
       toast.success("Account created! Welcome to SkillNest 🎉");
-      if (role === "teacher") navigate("/teacher/dashboard");
-      else navigate("/student/dashboard");
+       navigate("/student/dashboard");
     } catch (err) {
       toast.error(err.message || "Registration failed");
     } finally {
@@ -66,24 +65,7 @@ export default function Register() {
 
         <div className="glass-card p-8">
           {/* Role selector */}
-          <div className="flex rounded-xl border border-surface-border overflow-hidden mb-6">
-            {["student", "teacher"].map((r) => (
-              <button
-                key={r}
-                type="button"
-                onClick={() => setForm((p) => ({ ...p, role: r }))}
-                className={`flex-1 py-2.5 text-sm font-semibold capitalize transition-all duration-200 ${
-                  form.role === r
-                    ? r === "teacher"
-                      ? "bg-orange-500 text-white"
-                      : "bg-violet-500 text-white"
-                    : "text-slate-400 hover:text-white hover:bg-surface-hover"
-                }`}
-              >
-                {r === "student" ? "👨‍🎓" : "👨‍🏫"} {r}
-              </button>
-            ))}
-          </div>
+
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -156,7 +138,7 @@ export default function Register() {
                   Creating account...
                 </>
               ) : (
-                `Create ${form.role === "teacher" ? "Teacher" : "Student"} Account`
+                `Create ${form.role === "Student" ? "Student" : "Teacher"} Account`
               )}
             </button>
           </form>
