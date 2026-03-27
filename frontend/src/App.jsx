@@ -1,5 +1,6 @@
 // src/App.jsx
 import React from "react";
+import ForgotPassword from "./pages/ForgotPassword";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/AuthContext";
@@ -57,6 +58,7 @@ export default function App() {
         <Routes>
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/register" element={<Register />} />
           <Route path="/join-teacher" element={<JoinTeacher />} />
 

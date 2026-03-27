@@ -19,6 +19,11 @@ const TEACHER_NAV = [
   { path: "/teacher/students", icon: "◉", label: "Students" },
   { path: "/teacher/earnings", icon: "◈", label: "Earnings" },
 ];
+const ADMIN_NAV = [
+  { path: "/admin/dashboard", icon: "⊡", label: "Dashboard" },
+  { path: "/admin/teacher-requests", icon: "◈", label: "Teacher Requests" },
+];
+
 
 export default function Sidebar() {
   const { profile, logout } = useAuth();
@@ -27,7 +32,8 @@ export default function Sidebar() {
   const [loggingOut, setLoggingOut] = useState(false);
 
   const isTeacher = profile?.role === "teacher";
-  const nav = isTeacher ? TEACHER_NAV : STUDENT_NAV;
+  const isAdmin = profile?.role === "admin";
+  const nav = isTeacher ? TEACHER_NAV : isAdmin ? ADMIN_NAV : STUDENT_NAV;
 
   const handleLogout = async () => {
     setLoggingOut(true);

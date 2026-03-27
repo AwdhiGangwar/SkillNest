@@ -102,7 +102,7 @@ export const checkHealth = () => api.get("/api/health");
 export const applyAsTeacher = (data) => api.post("/api/teacher-requests", data);
 
 // ─── ADMIN APIs ──────────────────────────────────────────────
-export const getTeacherRequests = () => api.get("/admin/teacher-requests");
+export const getTeacherRequests = () => api.get("/api/teacher-requests");
 export const approveTeacherRequest = (id) => api.put(`/admin/approve/${id}`);
 export const rejectTeacherRequest = (id) => api.put(`/admin/reject/${id}`);
 

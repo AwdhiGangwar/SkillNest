@@ -89,7 +89,12 @@ export default function Login() {
                 autoComplete="current-password"
               />
             </div>
-
+<p
+  onClick={() => navigate("/forgot-password")}
+  className="text-sm text-brand-400 cursor-pointer mt-2 hover:underline"
+>
+  Forgot Password?
+</p>
             <button
               type="submit"
               disabled={loading}
