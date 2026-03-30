@@ -24,7 +24,7 @@ public class CourseController {
     public String createCourse(@RequestBody Course course,
                                HttpServletRequest request) throws Exception {
 
-        String uid = request.getHeader("uid");
+    	String uid = (String) request.getAttribute("uid");
 
         if (uid == null) {
             uid = "teacher123"; // temp fallback

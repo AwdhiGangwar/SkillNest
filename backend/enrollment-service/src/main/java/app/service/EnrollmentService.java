@@ -4,104 +4,119 @@ import app.model.Course;
 import app.model.Enrollment;
 import app.model.User;
 import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QuerySnapshot;
 import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class EnrollmentService {
 
-    private static final String COLLECTION = "enrollments";
+    private static final String ENROLLMENTS_COLLECTION = "enrollments";
 
     @Autowired
     private RestTemplate restTemplate;
 
-    // ✅ ENROLL (role check + course validation + duplicate check)
-    public String enroll(Enrollment enrollment, String token) throws Exception {
+    @Autowired
+    private CourseService courseService;
+
+    // ==================== ENROLL STUDENT ====================
+    public Enrollment enroll(Enrollment enrollment, String token) throws Exception {
 
         Firestore db = FirestoreClient.getFirestore();
 
-        // 🔥 STEP 1: Check user role (only student allowed)
-        String userUrl = "http://localhost:8081/api/me";
+        // 🔥 1. Validate User via USER-SERVICE (via GATEWAY)
+        String userUrl = "http://localhost:8080/api/me";
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", token);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<User> response =
-                restTemplate.exchange(userUrl, HttpMethod.GET, entity, User.class);
+        ResponseEntity<User> response;
+        try {
+            response = restTemplate.exchange(userUrl, HttpMethod.GET, entity, User.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to validate user. Please login again.");
+        }
 
         User user = response.getBody();
 
-        if (user == null || !"student".equals(user.getRole())) {
-            return "Only students can enroll ❌";
+        if (user == null) {
+            throw new RuntimeException("User not found");
         }
 
-        // 🔥 STEP 2: Check course exists
-        String courseUrl = "http://localhost:8082/api/courses/" + enrollment.getCourseId();
+        if (!"student".equalsIgnoreCase(user.getRole())) {
+            throw new RuntimeException("Only students can enroll in courses");
+        }
 
-        Course course = restTemplate.getForObject(courseUrl, Course.class);
+        enrollment.setStudentId(user.getId());
 
+        // 🔥 2. Validate Course Exists
+        Course course = courseService.getCourseById(enrollment.getCourseId());
         if (course == null) {
-            return "Course not found ❌";
+            throw new RuntimeException("Course not found");
         }
 
-        // 🔥 STEP 3: Duplicate check
-        QuerySnapshot snapshot = db.collection(COLLECTION)
+        // 🔥 3. Check Duplicate Enrollment
+        boolean alreadyEnrolled = !db.collection(ENROLLMENTS_COLLECTION)
                 .whereEqualTo("studentId", enrollment.getStudentId())
                 .whereEqualTo("courseId", enrollment.getCourseId())
-                .get()
-                .get();
+                .get().get().isEmpty();
 
-        if (!snapshot.isEmpty()) {
-            return "Already enrolled ❌";
+        if (alreadyEnrolled) {
+            throw new RuntimeException("You are already enrolled in this course");
         }
 
-        // ✅ STEP 4: Save enrollment
-        db.collection(COLLECTION)
+        // 🔥 4. Save Enrollment
+        if (enrollment.getId() == null || enrollment.getId().isEmpty()) {
+            enrollment.setId(UUID.randomUUID().toString());
+        }
+
+        enrollment.setPaymentStatus("paid");
+        enrollment.setStatus("enrolled");
+        enrollment.setCreatedAt(System.currentTimeMillis());
+
+        db.collection(ENROLLMENTS_COLLECTION)
                 .document(enrollment.getId())
                 .set(enrollment)
                 .get();
 
-        return "Enrollment successful 🎉";
+        return enrollment;
     }
 
-    // ✅ STUDENT DASHBOARD (optimized)
+    // ==================== GET MY ENROLLED COURSES ====================
     public List<Course> getMyCourses(String studentId) throws Exception {
 
         Firestore db = FirestoreClient.getFirestore();
 
-        // 🔥 Step 1: get enrollments
-        List<Enrollment> enrollments = db.collection(COLLECTION)
+        List<Enrollment> enrollments = db.collection(ENROLLMENTS_COLLECTION)
                 .whereEqualTo("studentId", studentId)
-                .get()
-                .get()
-                .getDocuments()
+                .whereEqualTo("status", "enrolled")
+                .get().get().getDocuments()
                 .stream()
                 .map(doc -> doc.toObject(Enrollment.class))
                 .toList();
 
-        List<Course> myCourses = new ArrayList<>();
+        // 🔥 Fetch course details safely
+        return enrollments.stream()
+                .map(e -> {
+                    try {
+                        return courseService.getCourseById(e.getCourseId());
+                    } catch (Exception ex) {
+                        return null;
+                    }
+                })
+                .filter(c -> c != null)
+                .toList();
+    }
 
-        // 🔥 Step 2: fetch each course by ID (optimized)
-        for (Enrollment e : enrollments) {
-
-            String url = "http://localhost:8082/api/courses/" + e.getCourseId();
-
-            Course course = restTemplate.getForObject(url, Course.class);
-
-            if (course != null) {
-                myCourses.add(course);
-            }
-        }
-
-        return myCourses;
+    // ==================== BROWSE ALL ACTIVE COURSES ====================
+    public List<Course> getAllActiveCourses() {
+        return courseService.getAllActiveCourses();
     }
 }

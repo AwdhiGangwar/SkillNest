@@ -1,24 +1,24 @@
 // src/App.jsx
 import React from "react";
-import ForgotPassword from "./pages/ForgotPassword";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-// Auth pages
+// Auth & Public Pages
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
 import Home from "./pages/Home";
 import JoinTeacher from "./pages/JoinTeacher";
 
-// Student pages
+// Student Pages
 import StudentDashboard from "./pages/student/StudentDashboard";
-import BrowseCourses from "./pages/student/BrowseCourses";
-import MyCourses from "./pages/student/MyCourses";
+import BrowseCourses from "./pages/student/BrowseCourses";     // Browse Courses Page
+import MyCourses from "./pages/student/MyCoursesPage";        // My Enrolled Courses
 import StudentClasses from "./pages/student/StudentClasses";
 
-// Teacher pages
+// Teacher Pages
 import TeacherDashboard from "./pages/teacher/TeacherDashboard";
 import TeacherCourses from "./pages/teacher/TeacherCourses";
 import TeacherClasses from "./pages/teacher/TeacherClasses";
@@ -26,9 +26,10 @@ import Availability from "./pages/teacher/Availability";
 import TeacherStudents from "./pages/teacher/TeacherStudents";
 import Earnings from "./pages/teacher/Earnings";
 
-// Admin pages
+// Admin Pages
 import AdminDashboard from "./pages/AdminDashboard";
 import TeacherRequests from "./pages/TeacherRequests";
+import CreateTeacher from "./pages/CreateTeacher";
 
 export default function App() {
   return (
@@ -46,26 +47,18 @@ export default function App() {
               fontSize: "14px",
               borderRadius: "12px",
             },
-            success: {
-              iconTheme: { primary: "#10b981", secondary: "#161b27" },
-            },
-            error: {
-              iconTheme: { primary: "#ef4444", secondary: "#161b27" },
-            },
           }}
         />
 
         <Routes>
-          {/* Public routes */}
+          {/* Public Routes */}
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/join-teacher" element={<JoinTeacher />} />
 
-          {/* Landing Page */}
-          <Route path="/" element={<Home />} />
-
-          {/* Student routes */}
+          {/* Student Routes */}
           <Route
             path="/student/dashboard"
             element={
@@ -99,7 +92,7 @@ export default function App() {
             }
           />
 
-          {/* Teacher routes */}
+          {/* Teacher Routes */}
           <Route
             path="/teacher/dashboard"
             element={
@@ -149,7 +142,7 @@ export default function App() {
             }
           />
 
-          {/* Admin routes */}
+          {/* Admin Routes */}
           <Route
             path="/admin/dashboard"
             element={
@@ -166,8 +159,16 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/admin/create-teacher"
+            element={
+              <ProtectedRoute role="admin">
+                <CreateTeacher />
+              </ProtectedRoute>
+            }
+          />
 
-          {/* 404 fallback */}
+          {/* Fallback */}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>

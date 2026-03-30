@@ -1,10 +1,11 @@
 package app.controller;
 
-import app.model.Enrollment;
 import app.model.Course;
+import app.model.Enrollment;
 import app.service.EnrollmentService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,40 +17,52 @@ public class EnrollmentController {
     @Autowired
     private EnrollmentService enrollmentService;
 
-    // ✅ Health check
     @GetMapping("/health")
-    public String health() {
-        return "Enrollment Service running 🚀";
+    public ResponseEntity<String> health() {
+        return ResponseEntity.ok("Enrollment Service is running 🚀");
     }
 
-    // ✅ Enroll in course (with role check)
     @PostMapping("/enrollments")
-    public String enroll(@RequestBody Enrollment enrollment,
-                         HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> enroll(@RequestBody Enrollment enrollment,
+                                   HttpServletRequest request) {
+        try {
+            String token = request.getHeader("Authorization");
 
-        String uid = (String) request.getAttribute("uid");
+            if (token == null || !token.startsWith("Bearer ")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("Missing or invalid Authorization header");
+            }
 
-        if (uid == null) {
-            uid = "student123"; // temp fallback
+            Enrollment result = enrollmentService.enroll(enrollment, token);
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Something went wrong while enrolling");
         }
-
-        String token = request.getHeader("Authorization");
-
-        enrollment.setStudentId(uid);
-
-        return enrollmentService.enroll(enrollment, token);
     }
 
-    // ✅ Student dashboard (My Courses)
     @GetMapping("/my-courses")
-    public List<Course> getMyCourses(HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> getMyCourses(HttpServletRequest request) {
+        try {
+            String uid = (String) request.getAttribute("uid");
 
-        String uid = (String) request.getAttribute("uid");
+            if (uid == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("Unauthorized: UID missing");
+            }
 
-        if (uid == null) {
-            uid = "student123";
+            List<Course> courses = enrollmentService.getMyCourses(uid);
+            return ResponseEntity.ok(courses);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to fetch enrolled courses");
         }
-
-        return enrollmentService.getMyCourses(uid);
     }
 }

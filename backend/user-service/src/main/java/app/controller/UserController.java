@@ -30,7 +30,7 @@ public class UserController {
     @GetMapping("/me")
     public User getCurrentUser(HttpServletRequest request) throws Exception {
 
-        String uid = request.getHeader("uid");
+    	String uid = (String) request.getAttribute("uid");
 
         if (uid == null) {
             throw new RuntimeException("Unauthorized: UID missing");

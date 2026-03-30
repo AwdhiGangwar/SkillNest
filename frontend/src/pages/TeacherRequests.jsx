@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
 import { CardSkeleton, EmptyState, Badge } from "../components/ui";
 import { getTeacherRequests, approveTeacherRequest, rejectTeacherRequest } from "../services/api";
@@ -8,6 +9,7 @@ export default function TeacherRequests() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState(null);
+  const navigate = useNavigate();
 
   const fetchRequests = async () => {
     try {
@@ -95,6 +97,13 @@ export default function TeacherRequests() {
                 </div>
 
                 <div className="flex md:flex-col gap-3 justify-end shrink-0">
+                  <button
+                    onClick={() => navigate(`/admin/create-teacher?email=${req.email}`)}
+                    disabled={!!processingId}
+                    className="flex-1 px-6 py-2.5 rounded-xl bg-brand-500/20 hover:bg-brand-500/30 text-brand-400 font-semibold transition-all border border-brand-500/30 flex items-center justify-center gap-2"
+                  >
+                    Create Account
+                  </button>
                   <button
                     onClick={() => handleAction(req.id, "approve")}
                     disabled={!!processingId}

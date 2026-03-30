@@ -21,9 +21,8 @@ public class CourseService {
     private RestTemplate restTemplate;
 
     public boolean isTeacher(String uid, String token) {
-
         try {
-        	String url = "http://localhost:8081/api/me";
+            String url = "http://localhost:8080/api/me"; // 🔥 use gateway
 
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", token);
@@ -35,7 +34,7 @@ public class CourseService {
 
             User user = response.getBody();
 
-            return user != null && User.ROLE_TEACHER.equals(user.getRole());
+            return user != null && "teacher".equalsIgnoreCase(user.getRole());
 
         } catch (Exception e) {
             return false;
@@ -64,11 +63,11 @@ public class CourseService {
                 .map(doc -> doc.toObject(Course.class))
                 .collect(Collectors.toList());
     }
-    public Course getCourseById(String id) throws Exception {
 
+    public Course getCourseById(String id) throws Exception {
         Firestore db = FirestoreClient.getFirestore();
 
-        return db.collection("courses")
+        return db.collection(COLLECTION)
                 .document(id)
                 .get()
                 .get()

@@ -15,7 +15,7 @@ public class SecurityConfig {
         registration.setFilter(new FirebaseTokenFilter());
 
         // 🔥 IMPORTANT: kis URLs pe filter lagega
-        registration.addUrlPatterns("/api/*");
+        registration.addUrlPatterns("/*");
 
         // priority
         registration.setOrder(1);
