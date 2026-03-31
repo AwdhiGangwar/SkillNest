@@ -1,9 +1,7 @@
-// src/services/api.js
-
 import axios from "axios";
 import { auth } from "./firebase";
 
-// ✅ Always use API Gateway
+// 🌐 Base URL
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8080";
 
 // Axios instance
@@ -19,7 +17,6 @@ api.interceptors.request.use(
   async (config) => {
     let user = auth.currentUser;
 
-    // 🔥 wait until user available
     if (!user) {
       await new Promise((resolve) => {
         const unsubscribe = auth.onAuthStateChanged((u) => {
@@ -41,34 +38,31 @@ api.interceptors.request.use(
 );
 
 // ─────────────────────────────────────────────
-// ⚠️ Global Error Handling
+// ⚠️ Global Error Handling (FIXED)
 // ─────────────────────────────────────────────
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // 🚨 Network / CORS / Backend down
+    console.log("🔥 FULL ERROR:", error);
+    console.log("🔥 STATUS:", error.response?.status);
+    console.log("🔥 DATA:", error.response?.data);
+
+    // 🚨 Network Error
     if (error.code === "ERR_NETWORK") {
       return Promise.reject(
-        new Error("🚨 Server not reachable. Make sure API Gateway is running on port 8080")
+        new Error("🚨 Server not reachable. Check backend (port 8080)")
       );
     }
 
-    // 🚨 HTML response (proxy / backend crash)
-    if (
-      typeof error.response?.data === "string" &&
-      error.response.data.startsWith("<")
-    ) {
-      return Promise.reject(
-        new Error(`🚨 Server Error: ${error.response.status}`)
-      );
-    }
+    let message = "Something went wrong";
 
-    // 🧠 Proper message extraction
-    const message =
-      error.response?.data?.message ||
-      error.response?.data ||
-      error.message ||
-      "Something went wrong";
+    if (error.response?.data?.message) {
+      message = error.response.data.message;
+    } else if (typeof error.response?.data === "string") {
+      message = error.response.data;
+    } else if (error.message) {
+      message = error.message;
+    }
 
     const customError = new Error(message);
     customError.status = error.response?.status;
@@ -155,10 +149,13 @@ export const getTeacherRequests = () =>
   api.get("/api/teacher-requests");
 
 export const approveTeacherRequest = (id) =>
-  api.put(`/admin/approve/${id}`);
+  api.put(`/api/admin/approve/${id}`);
 
 export const rejectTeacherRequest = (id) =>
-  api.put(`/admin/reject/${id}`);
+  api.put(`/api/admin/reject/${id}`);
 
-// ─────────────────────────────────────────────
+// 🔥 IMPORTANT: CREATE TEACHER
+export const createTeacher = (data) =>
+  api.post("/api/admin/create-teacher", data);
+
 export default api;

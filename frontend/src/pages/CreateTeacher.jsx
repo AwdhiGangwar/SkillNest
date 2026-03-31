@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Layout from "../components/Layout";
-import api from "../services/api"; // Updated relative path
+import { createTeacher } from "../services/api";
 import toast from "react-hot-toast";
 
 export default function CreateTeacher() {
@@ -37,7 +37,7 @@ export default function CreateTeacher() {
     setLoading(true);
     try {
       // Using the existing axios instance logic
-      await api.post("/admin/create-teacher", form);
+     await createTeacher(form);
       
       toast.success("Teacher account created! Invitation link sent via email.");
       navigate("/admin/teacher-requests");
