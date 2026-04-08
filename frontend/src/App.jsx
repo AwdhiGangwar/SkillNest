@@ -30,6 +30,7 @@ import Earnings from "./pages/teacher/Earnings";
 import AdminDashboard from "./pages/AdminDashboard";
 import TeacherRequests from "./pages/TeacherRequests";
 import CreateTeacher from "./pages/CreateTeacher";
+import AdminUsers from "./services/AdminUsers";
 
 export default function App() {
   return (
@@ -164,6 +165,14 @@ export default function App() {
             element={
               <ProtectedRoute role="admin">
                 <CreateTeacher />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <ProtectedRoute role="admin">
+                <AdminUsers />
               </ProtectedRoute>
             }
           />

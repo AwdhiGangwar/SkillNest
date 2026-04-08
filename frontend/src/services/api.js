@@ -15,6 +15,9 @@ const api = axios.create({
 // ─────────────────────────────────────────────
 api.interceptors.request.use(
   async (config) => {
+    // Support bypassing interceptor for isolation/debugging
+    if (config._skipInterceptor) return config;
+
     let user = auth.currentUser;
 
     if (!user) {
@@ -43,29 +46,30 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.log("🔥 FULL ERROR:", error);
-    console.log("🔥 STATUS:", error.response?.status);
-    console.log("🔥 DATA:", error.response?.data);
+    const status = error.response?.status;
+    const responseData = error.response?.data;
+
+    console.error(`[API Error] Status: ${status}`, responseData || error.message);
 
     // 🚨 Network Error
     if (error.code === "ERR_NETWORK") {
       return Promise.reject(
-        new Error("🚨 Server not reachable. Check backend (port 8080)")
+        new Error("Server not reachable. Please check your internet or backend status.")
       );
     }
 
     let message = "Something went wrong";
 
-    if (error.response?.data?.message) {
-      message = error.response.data.message;
-    } else if (typeof error.response?.data === "string") {
-      message = error.response.data;
+    if (responseData?.message) {
+      message = responseData.message;
+    } else if (typeof responseData === "string" && responseData.length > 0) {
+      message = responseData;
     } else if (error.message) {
       message = error.message;
     }
 
     const customError = new Error(message);
-    customError.status = error.response?.status;
+    customError.status = status;
 
     return Promise.reject(customError);
   }
@@ -149,13 +153,25 @@ export const getTeacherRequests = () =>
   api.get("/api/teacher-requests");
 
 export const approveTeacherRequest = (id) =>
-  api.put(`/api/admin/approve/${id}`);
+  api.post(`/api/admin/teacher-requests/${id}/approve`);
 
 export const rejectTeacherRequest = (id) =>
-  api.put(`/api/admin/reject/${id}`);
+  api.put(`/api/admin/teacher-requests/${id}/reject`);
 
-// 🔥 IMPORTANT: CREATE TEACHER
-export const createTeacher = (data) =>
-  api.post("/api/admin/create-teacher", data);
+export const getAllUsers = () => api.get("/api/admin/users");
+
+export const blockUser = (id) => api.put(`/api/admin/user/${id}/block`);
+
+export const unblockUser = (id) => api.put(`/api/admin/user/${id}/unblock`);
+
+export const getAdminDashboard = () => api.get("/api/admin/dashboard");
+
+// Refactored to use more descriptive parameter name to avoid scope confusion
+export const createTeacher = (teacherData) =>
+  api.post("/api/admin/create-teacher", teacherData);
+
+// Debug function to bypass interceptors if needed
+export const createTeacherRaw = (teacherData) =>
+  api.post("/admin/create-teacher", teacherData, { _skipInterceptor: true });
 
 export default api;

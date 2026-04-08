@@ -1,6 +1,6 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate ,useLocation} from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 
@@ -19,8 +19,6 @@ export default function Login() {
     try {
       await login(email, password);
       toast.success("Welcome back! 🎉");
-      // redirect based on role after profile loads
-      // handled via useEffect below
     } catch (err) {
       toast.error(err.message || "Login failed");
     } finally {
@@ -28,15 +26,28 @@ export default function Login() {
     }
   };
 
-  // Redirect after profile loads
-  React.useEffect(() => {
-    if (profile) {
-      if (profile.role === "admin") navigate("/admin/dashboard");
-      else if (profile.role === "teacher") navigate("/teacher/dashboard");
-      else navigate("/student/dashboard");
-    }
-  }, [profile, navigate]);
+  
 
+const location = useLocation();
+
+React.useEffect(() => {
+  if (profile) {
+    // 🔥 Get original path user tried to access
+    const redirectTo = location.state?.from;
+
+    const role = profile.role?.toLowerCase();
+
+    if (redirectTo) {
+      navigate(redirectTo, { replace: true });
+      return;
+    }
+
+    // fallback if no previous route
+    if (role === "admin") navigate("/admin/dashboard", { replace: true });
+    else if (role === "teacher") navigate("/teacher/dashboard", { replace: true });
+    else navigate("/student/dashboard", { replace: true });
+  }
+}, [profile, navigate, location]);
   return (
     <div className="min-h-screen bg-surface flex items-center justify-center p-4">
       {/* Background effects */}

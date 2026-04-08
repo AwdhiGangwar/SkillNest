@@ -26,36 +26,43 @@ export default function CreateTeacher() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    // Form Validation
-    if (!form.name.trim() || !form.email.trim()) {
-      return toast.error("Please fill in both Name and Email");
-    }
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    setLoading(true);
-    try {
-      // Using the existing axios instance logic
-     await createTeacher(form);
-      
-      toast.success("Teacher account created! Invitation link sent via email.");
-      navigate("/admin/teacher-requests");
-    } catch (error) {
-      const message = error.response?.data?.message || "Failed to create teacher account";
-      toast.error(message);
-      console.error("Create Teacher Error:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  console.log("🔥 SUBMIT CLICKED");
+  console.log("FORM DATA:", form);
 
+  if (!form.name || !form.email) {
+    alert("Fill all fields");
+    return;
+  }
+
+  try {
+    console.log("🚀 Calling API...");
+
+    const res = await fetch("http://localhost:8080/admin/create-teacher", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(form),
+    });
+
+    const text = await res.text();
+    console.log("✅ RESPONSE:", text);
+
+    alert("Success");
+
+  } catch (err) {
+    console.error("❌ ERROR:", err);
+  }
+};
   return (
     <Layout 
       title="Create Teacher Account" 
       subtitle="Provision a new account. An invitation link will be sent to the email provided."
     >
-      <div className="max-w-xl mx-auto">
+      <div className="max-w-full mx-auto">
         <div className="glass-card p-8 animate-fade-in border border-surface-border">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>

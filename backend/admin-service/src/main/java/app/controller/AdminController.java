@@ -4,12 +4,17 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import app.model.TeacherRequest;
+import app.dto.DashboardDTO;
 import app.model.User;
 import app.service.AdminService;
-import app.service.UserService;
 
 @RestController
 @RequestMapping("/admin")
@@ -18,30 +23,32 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
-    @Autowired
-    private UserService userService;
-
-    // 🔹 Get all teacher requests
-    @GetMapping("/teacher-requests")
-    public List<TeacherRequest> getRequests() throws Exception {
-        return adminService.getAllRequests();
+    @GetMapping("/dashboard")
+    public DashboardDTO getDashboard() {
+        return adminService.getDashboardData();
     }
 
-    // 🔹 Approve teacher request
-    @PutMapping("/approve/{id}")
-    public String approve(@PathVariable String id) throws Exception {
-        adminService.approveRequest(id);
-        return "Approved";
+    @PutMapping("/teacher/{id}/approve")
+    public String approveTeacher(@PathVariable String id) {
+        adminService.approveTeacher(id);
+        return "Teacher Approved";
     }
 
-    // 🔹 Reject teacher request
-    @PutMapping("/reject/{id}")
-    public String reject(@PathVariable String id) throws Exception {
-        adminService.rejectRequest(id);
-        return "Rejected";
+    @PutMapping("/user/{id}/block")
+    public String blockUser(@PathVariable String id) {
+        adminService.blockUser(id);
+        return "User Blocked";
     }
-
-    // 🔥 NEW FEATURE: CREATE TEACHER ACCOUNT
+    @GetMapping("/users")
+    public List<?> getAllUsers() {
+        return adminService.getAllUsers();
+    }
+    @PutMapping("/user/{id}/unblock")
+    public String unblockUser(@PathVariable String id) {
+        adminService.unblockUser(id);
+        return "User Unblocked";
+    }
+ // 🔥 NEW FEATURE: CREATE TEACHER ACCOUNT
     @PostMapping("/create-teacher")
     public ResponseEntity<?> createTeacher(@RequestBody User user) {
         try {
@@ -64,24 +71,21 @@ public class AdminController {
             // Force role to teacher
             user.setRole("teacher");
 
-            // Create teacher with authentication and email invitation
-            User createdTeacher = userService.createTeacherWithAuth(user);
+            // Create teacher via admin service
+            adminService.createTeacher(user);
 
-            // ✅ Return the created teacher with success message
-            return ResponseEntity.ok()
-                    .body("Teacher account created successfully! Invitation link sent to " + createdTeacher.getEmail());
+            return ResponseEntity.ok("Teacher account created successfully! Invitation link sent to " + user.getEmail());
 
         } catch (IllegalArgumentException e) {
-            // Input validation errors from service
             return ResponseEntity.badRequest().body(e.getMessage());
             
         } catch (Exception e) {
             System.err.println("Error creating teacher: " + e.getMessage());
             e.printStackTrace();
             
-            // Return meaningful error message
             String errorMsg = e.getMessage() != null ? e.getMessage() : "Failed to create teacher account";
             return ResponseEntity.internalServerError().body(errorMsg);
         }
     }
+    
 }

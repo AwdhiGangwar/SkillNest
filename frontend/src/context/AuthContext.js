@@ -1,5 +1,5 @@
 // src/context/AuthContext.js
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState, useMemo } from "react";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -78,10 +78,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const value = useMemo(
+    () => ({ user, profile, loading, register, login, logout, refreshProfile }),
+    [user, profile, loading, register, login, logout, refreshProfile]
+  );
+
   return (
-    <AuthContext.Provider
-      value={{ user, profile, loading, register, login, logout, refreshProfile }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

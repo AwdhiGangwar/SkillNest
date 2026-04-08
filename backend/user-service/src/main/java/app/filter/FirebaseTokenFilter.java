@@ -20,6 +20,13 @@ public class FirebaseTokenFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
+     // 🔥 INTERNAL SERVICE CALL BYPASS
+        String internalHeader = request.getHeader("X-Internal-Call");
+
+        if ("true".equals(internalHeader)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         // ✅ PUBLIC ENDPOINTS (no auth required)
         boolean isPublic =
                 path.startsWith("/api/health") ||
