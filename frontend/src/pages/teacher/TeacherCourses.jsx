@@ -53,12 +53,21 @@ export default function TeacherCourses() {
         createdAt: Date.now(),
       };
       const res = await createCourse(payload);
-      toast.success(typeof res.data === "string" ? res.data : "Course created! 🎉");
+      
+      // Handle both string and object responses
+      const successMessage = res.data?.success || 
+                            (typeof res.data === "string" ? res.data : "Course created! 🎉");
+      toast.success(successMessage);
       setShowModal(false);
       setForm(EMPTY_FORM);
       await fetchCourses();
     } catch (err) {
-      toast.error(err.message || "Failed to create course");
+      // Better error handling
+      const errorMsg = err.response?.data?.error || 
+                       err.message || 
+                       "Failed to create course";
+      console.error("Course creation error:", err);
+      toast.error(errorMsg);
     } finally {
       setSaving(false);
     }

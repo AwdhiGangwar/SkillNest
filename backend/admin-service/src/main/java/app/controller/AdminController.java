@@ -1,6 +1,7 @@
 package app.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,10 +12,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.servlet.http.HttpServletRequest;
 
 import app.dto.DashboardDTO;
+import app.dto.TeacherApprovalDTO;
 import app.model.User;
 import app.service.AdminService;
+import app.service.AnalyticsService;
+import app.service.PaymentService;
+import app.service.SupportService;
 
 @RestController
 @RequestMapping("/admin")
@@ -22,6 +28,15 @@ public class AdminController {
 
     @Autowired
     private AdminService adminService;
+
+    @Autowired
+    private AnalyticsService analyticsService;
+
+    @Autowired
+    private PaymentService paymentService;
+
+    @Autowired
+    private SupportService supportService;
 
     @GetMapping("/dashboard")
     public DashboardDTO getDashboard() {
@@ -85,6 +100,111 @@ public class AdminController {
             
             String errorMsg = e.getMessage() != null ? e.getMessage() : "Failed to create teacher account";
             return ResponseEntity.internalServerError().body(errorMsg);
+        }
+    }
+
+    // 🔥 NEW: APPROVE TEACHER REQUEST WITH PASSWORD
+    @PostMapping("/teacher-requests/{id}/approve")
+    public ResponseEntity<?> approveTeacherRequest(@PathVariable String id, 
+                                                   @RequestBody TeacherApprovalDTO approvalData) {
+        try {
+            if (approvalData == null || approvalData.getPassword() == null || approvalData.getPassword().isEmpty()) {
+                return ResponseEntity.badRequest()
+                        .body("Password is required");
+            }
+
+            if (approvalData.getPassword().length() < 8) {
+                return ResponseEntity.badRequest()
+                        .body("Password must be at least 8 characters long");
+            }
+
+            // Approve request and create teacher with password
+            adminService.approveTeacherWithPassword(id, approvalData);
+
+            return ResponseEntity.ok("Teacher account created and approved successfully!");
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Error approving teacher: " + e.getMessage());
+            e.printStackTrace();
+            String errorMsg = e.getMessage() != null ? e.getMessage() : "Failed to approve teacher";
+            return ResponseEntity.internalServerError().body(errorMsg);
+        }
+    }
+
+    // ======================= ANALYTICS =======================
+    @GetMapping("/analytics")
+    public ResponseEntity<?> getAnalytics(HttpServletRequest request) {
+        try {
+            String uid = (String) request.getAttribute("uid");
+            if (uid == null) uid = "";
+            
+            Map<String, Object> analytics = analyticsService.getUserAnalytics(uid);
+            return ResponseEntity.ok(analytics);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Failed to fetch analytics");
+        }
+    }
+
+    // ======================= PAYMENTS =======================
+    @GetMapping("/payments")
+    public ResponseEntity<?> getPayments(HttpServletRequest request) {
+        try {
+            String uid = (String) request.getAttribute("uid");
+            if (uid == null) uid = "";
+            
+            List<Map<String, Object>> transactions = paymentService.getUserTransactions(uid);
+            return ResponseEntity.ok(transactions);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Failed to fetch payments");
+        }
+    }
+
+    @PostMapping("/payments/process")
+    public ResponseEntity<?> processPayment(@RequestBody Map<String, Object> paymentData,
+                                           HttpServletRequest request) {
+        try {
+            String uid = (String) request.getAttribute("uid");
+            double amount = ((Number) paymentData.get("amount")).doubleValue();
+            String courseId = (String) paymentData.get("courseId");
+            
+            Map<String, Object> result = paymentService.processPayment(uid, amount, courseId);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Failed to process payment");
+        }
+    }
+
+    // ======================= SUPPORT =======================
+    @GetMapping("/support/tickets")
+    public ResponseEntity<?> getSupportTickets(HttpServletRequest request) {
+        try {
+            String uid = (String) request.getAttribute("uid");
+            if (uid == null) uid = "";
+            
+            List<Map<String, Object>> tickets = supportService.getUserTickets(uid);
+            return ResponseEntity.ok(tickets);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Failed to fetch support tickets");
+        }
+    }
+
+    @PostMapping("/support/tickets")
+    public ResponseEntity<?> createSupportTicket(@RequestBody Map<String, String> ticketData,
+                                                HttpServletRequest request) {
+        try {
+            String uid = (String) request.getAttribute("uid");
+            if (uid == null) uid = "";
+            
+            if (ticketData.get("subject") == null || ticketData.get("message") == null) {
+                return ResponseEntity.badRequest().body("Subject and message are required");
+            }
+            
+            Map<String, Object> ticket = supportService.createTicket(uid, ticketData);
+            return ResponseEntity.ok(ticket);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Failed to create support ticket");
         }
     }
     

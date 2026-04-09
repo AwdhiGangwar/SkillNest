@@ -1,8 +1,11 @@
 package app.controller;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,8 +33,10 @@ public class UserController {
     @PostMapping("/users")
     public String createUser(@RequestBody User user) throws Exception {
 
-        if ("TEACHER".equals(user.getRole())) {
-            throw new RuntimeException("Teachers cannot self register");
+        // Allow both students and teachers to register
+        // Teachers will have limited access until approved by admin
+        if (user.getRole() == null || user.getRole().isEmpty()) {
+            user.setRole("student"); // Default to student if no role specified
         }
 
         return userService.createUser(user);
@@ -68,5 +73,53 @@ public class UserController {
     public String unblockUser(@PathVariable String id) throws Exception {
         userService.unblockUser(id);
         return "User unblocked successfully";
+    }
+
+    // ================== UPDATE USER PROFILE ==================
+    @PutMapping("/users/profile")
+    public ResponseEntity<?> updateProfile(@RequestBody User profileData, 
+                                          HttpServletRequest request) {
+        try {
+            String uid = (String) request.getAttribute("uid");
+            if (uid == null) {
+                return ResponseEntity.status(401).body("Unauthorized: UID missing");
+            }
+
+            User updatedUser = userService.updateUserProfile(uid, profileData);
+            return ResponseEntity.ok(updatedUser);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body("Failed to update profile: " + e.getMessage());
+        }
+    }
+
+    // ================== CHANGE PASSWORD ==================
+    @PostMapping("/users/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody Map<String, String> passwordData,
+                                           HttpServletRequest request) {
+        try {
+            String uid = (String) request.getAttribute("uid");
+            if (uid == null) {
+                return ResponseEntity.status(401).body("Unauthorized: UID missing");
+            }
+
+            String oldPassword = passwordData.get("oldPassword");
+            String newPassword = passwordData.get("newPassword");
+
+            if (oldPassword == null || newPassword == null) {
+                return ResponseEntity.badRequest()
+                        .body("Old password and new password are required");
+            }
+
+            boolean success = userService.changePassword(uid, oldPassword, newPassword);
+            if (success) {
+                return ResponseEntity.ok("Password changed successfully");
+            } else {
+                return ResponseEntity.badRequest().body("Old password is incorrect");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body("Failed to change password: " + e.getMessage());
+        }
     }
 }

@@ -47,4 +47,25 @@ public class EmailService {
 
         mailSender.send(message);
     }
+
+    // ✅ SEND TEACHER ACCOUNT CREATED EMAIL
+    public void sendTeacherAccountCreatedEmail(String to, String teacherName) {
+
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        message.setTo(to);
+        message.setSubject("Welcome to SkillNest - Your Account is Ready!");
+
+        message.setText(
+            "Hi " + teacherName + ",\n\n" +
+            "Your teacher account has been approved and created!\n\n" +
+            "You can now login to SkillNest with your email and password.\n" +
+            "Visit: https://skillnest.com or your local instance\n\n" +
+            "If you have any issues, please contact support.\n\n" +
+            "Happy teaching!\n\n" +
+            "Regards,\nSkillNest Team"
+        );
+
+        mailSender.send(message);
+    }
 }

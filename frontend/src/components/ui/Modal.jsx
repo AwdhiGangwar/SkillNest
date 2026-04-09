@@ -18,7 +18,7 @@ import PropTypes from "prop-types";
  * </Modal>
  */
 function Modal({ 
-  isOpen, 
+  isOpen = true, 
   title, 
   children, 
   onClose, 
@@ -77,7 +77,7 @@ function Modal({
 }
 
 Modal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
+  isOpen: PropTypes.bool,
   title: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
   onClose: PropTypes.func.isRequired,

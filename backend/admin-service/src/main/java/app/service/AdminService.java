@@ -9,6 +9,7 @@ import app.client.CourseServiceClient;
 import app.client.EnrollmentServiceClient;
 import app.client.UserServiceClient;
 import app.dto.DashboardDTO;
+import app.dto.TeacherApprovalDTO;
 import app.model.User;
 
 @Service
@@ -60,5 +61,10 @@ public class AdminService {
     // ================== Accoutn creating of  USER ==================
     public void createTeacher(User user) throws Exception {
         userClient.createTeacher(user);
+    }
+
+    // ================== APPROVE TEACHER WITH PASSWORD ==================
+    public void approveTeacherWithPassword(String requestId, TeacherApprovalDTO approvalData) throws Exception {
+        userClient.approveTeacherWithPassword(requestId, approvalData);
     }
 }

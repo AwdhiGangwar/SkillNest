@@ -28,33 +28,21 @@ export default function CreateTeacher() {
 
 const handleSubmit = async (e) => {
   e.preventDefault();
-
-  console.log("🔥 SUBMIT CLICKED");
-  console.log("FORM DATA:", form);
-
   if (!form.name || !form.email) {
-    alert("Fill all fields");
+    toast.error("Please fill all fields");
     return;
   }
 
   try {
-    console.log("🚀 Calling API...");
-
-    const res = await fetch("http://localhost:8080/admin/create-teacher", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(form),
-    });
-
-    const text = await res.text();
-    console.log("✅ RESPONSE:", text);
-
-    alert("Success");
-
+    setLoading(true);
+    await createTeacher(form);
+    toast.success("Teacher account created successfully");
+    navigate("/admin/users");
   } catch (err) {
-    console.error("❌ ERROR:", err);
+    console.error("Create teacher failed:", err);
+    toast.error(err?.message || "Failed to create teacher account");
+  } finally {
+    setLoading(false);
   }
 };
   return (
@@ -63,7 +51,7 @@ const handleSubmit = async (e) => {
       subtitle="Provision a new account. An invitation link will be sent to the email provided."
     >
       <div className="max-w-full mx-auto">
-        <div className="glass-card p-8 animate-fade-in border border-surface-border">
+        <div className="glass-card p-8 animate-fade-in border border-surface-border bg-surface-card">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
@@ -73,7 +61,7 @@ const handleSubmit = async (e) => {
                 name="name"
                 value={form.name}
                 onChange={handleChange}
-                placeholder="e.g. Jane Smith"
+                placeholder="Jane Doe"
                 className="input-field w-full"
                 required
               />
@@ -81,11 +69,11 @@ const handleSubmit = async (e) => {
 
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
-                Email Address
+                Email address
               </label>
               <input
-                type="email"
                 name="email"
+                type="email"
                 value={form.email}
                 onChange={handleChange}
                 placeholder="jane@example.com"

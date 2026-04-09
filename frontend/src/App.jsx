@@ -31,6 +31,12 @@ import AdminDashboard from "./pages/AdminDashboard";
 import TeacherRequests from "./pages/TeacherRequests";
 import CreateTeacher from "./pages/CreateTeacher";
 import AdminUsers from "./services/AdminUsers";
+import AdminCourses from "./pages/admin/AdminCourses";
+import AdminEnrollments from "./pages/admin/AdminEnrollments";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import AdminPayments from "./pages/admin/AdminPayments";
+import AdminSupport from "./pages/admin/AdminSupport";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 export default function App() {
   return (
@@ -173,6 +179,54 @@ export default function App() {
             element={
               <ProtectedRoute role="admin">
                 <AdminUsers />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/courses"
+            element={
+              <ProtectedRoute role="admin">
+                <AdminCourses />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/enrollments"
+            element={
+              <ProtectedRoute role="admin">
+                <AdminEnrollments />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/analytics"
+            element={
+              <ProtectedRoute role="admin">
+                <AdminAnalytics />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/payments"
+            element={
+              <ProtectedRoute role="admin">
+                <AdminPayments />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/support"
+            element={
+              <ProtectedRoute role="admin">
+                <AdminSupport />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/settings"
+            element={
+              <ProtectedRoute role="admin">
+                <AdminSettings />
               </ProtectedRoute>
             }
           />

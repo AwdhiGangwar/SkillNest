@@ -49,18 +49,26 @@ api.interceptors.response.use(
     const status = error.response?.status;
     const responseData = error.response?.data;
 
-    console.error(`[API Error] Status: ${status}`, responseData || error.message);
+    // 🔍 Enhanced logging for debugging
+    console.error(`[API Error] Status: ${status}`, {
+      path: error.config?.url,
+      method: error.config?.method,
+      data: responseData,
+      message: error.message
+    });
 
     // 🚨 Network Error
     if (error.code === "ERR_NETWORK") {
-      return Promise.reject(
-        new Error("Server not reachable. Please check your internet or backend status.")
-      );
+      const networkError = new Error("Server not reachable. Please check if backend is running (http://localhost:8080).");
+      networkError.status = status;
+      return Promise.reject(networkError);
     }
 
     let message = "Something went wrong";
 
-    if (responseData?.message) {
+    if (responseData?.error) {
+      message = responseData.error;
+    } else if (responseData?.message) {
       message = responseData.message;
     } else if (typeof responseData === "string" && responseData.length > 0) {
       message = responseData;
@@ -70,6 +78,7 @@ api.interceptors.response.use(
 
     const customError = new Error(message);
     customError.status = status;
+    customError.response = error.response;
 
     return Promise.reject(customError);
   }
@@ -152,8 +161,8 @@ export const applyAsTeacher = (data) =>
 export const getTeacherRequests = () =>
   api.get("/api/teacher-requests");
 
-export const approveTeacherRequest = (id) =>
-  api.post(`/api/admin/teacher-requests/${id}/approve`);
+export const approveTeacherRequest = (id, approvalData) =>
+  api.post(`/api/admin/teacher-requests/${id}/approve`, approvalData);
 
 export const rejectTeacherRequest = (id) =>
   api.put(`/api/admin/teacher-requests/${id}/reject`);
@@ -173,5 +182,32 @@ export const createTeacher = (teacherData) =>
 // Debug function to bypass interceptors if needed
 export const createTeacherRaw = (teacherData) =>
   api.post("/admin/create-teacher", teacherData, { _skipInterceptor: true });
+
+// ─────────────────────────────────────────────
+// 📊 ANALYTICS APIs
+// ─────────────────────────────────────────────
+export const getAnalytics = () => api.get("/api/analytics");
+
+// ─────────────────────────────────────────────
+// 💳 PAYMENTS APIs
+// ─────────────────────────────────────────────
+export const getPayments = () => api.get("/api/payments");
+export const processPayment = (amount, courseId) =>
+  api.post("/api/payments/process", { amount, courseId });
+
+// ─────────────────────────────────────────────
+// 🎧 SUPPORT APIs
+// ─────────────────────────────────────────────
+export const getSupportTickets = () => api.get("/api/support/tickets");
+export const createSupportTicket = (data) =>
+  api.post("/api/support/tickets", data);
+
+// ─────────────────────────────────────────────
+// ⚙️ SETTINGS APIs
+// ─────────────────────────────────────────────
+export const updateUserProfile = (data) =>
+  api.put("/api/users/profile", data);
+export const changePassword = (data) =>
+  api.post("/api/users/change-password", data);
 
 export default api;

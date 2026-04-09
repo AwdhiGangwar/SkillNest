@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import app.dto.TeacherApprovalDTO;
 import app.dto.UserDTO;
 import app.model.User;
 import jakarta.servlet.http.HttpServletRequest;
@@ -67,7 +68,7 @@ public class UserServiceClient {
         HttpEntity<String> entity = new HttpEntity<>(getHeaders());
 
         restTemplate.exchange(
-                BASE_URL + "/api/admin/teacher/" + userId + "/approve",
+                BASE_URL + "/admin/approve/" + userId,
                 HttpMethod.PUT,
                 entity,
                 Void.class
@@ -113,7 +114,18 @@ public class UserServiceClient {
         HttpEntity<User> entity = new HttpEntity<>(user, getHeaders());
 
         restTemplate.exchange(
-            BASE_URL + "/api/admin/create-teacher",
+            BASE_URL + "/admin/create-teacher",
+            HttpMethod.POST,
+            entity,
+            Void.class
+        );
+    }
+
+    public void approveTeacherWithPassword(String requestId, TeacherApprovalDTO approvalData) {
+        HttpEntity<TeacherApprovalDTO> entity = new HttpEntity<>(approvalData, getHeaders());
+
+        restTemplate.exchange(
+            BASE_URL + "/admin/approve-teacher/" + requestId,
             HttpMethod.POST,
             entity,
             Void.class

@@ -10,6 +10,8 @@ public class User {
     private String name;
     private String email;
     private String role;
+    private String phone;
+    private String bio;
     private long createdAt;
 
     public User() {
@@ -37,6 +39,12 @@ public class User {
 
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+
+    public String getBio() { return bio; }
+    public void setBio(String bio) { this.bio = bio; }
 
     public long getCreatedAt() { return createdAt; }
     public void setCreatedAt(long createdAt) { this.createdAt = createdAt; }
