@@ -11,6 +11,7 @@ public class Course {
     private String title;
     private String description;
     private double price;
+    private int maxStudents = 30;
     private String status = "active";
     private String imageUrl;
     private String category;
@@ -37,6 +38,9 @@ public class Course {
 
     public double getPrice() { return price; }
     public void setPrice(double price) { this.price = price; }
+
+    public int getMaxStudents() { return maxStudents; }
+    public void setMaxStudents(int maxStudents) { this.maxStudents = maxStudents; }
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }

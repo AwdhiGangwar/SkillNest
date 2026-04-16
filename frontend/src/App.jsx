@@ -30,7 +30,7 @@ import Earnings from "./pages/teacher/Earnings";
 import AdminDashboard from "./pages/AdminDashboard";
 import TeacherRequests from "./pages/TeacherRequests";
 import CreateTeacher from "./pages/CreateTeacher";
-import AdminUsers from "./services/AdminUsers";
+import AdminUsers from "./pages/admin/AdminUsers";
 import AdminCourses from "./pages/admin/AdminCourses";
 import AdminEnrollments from "./pages/admin/AdminEnrollments";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";

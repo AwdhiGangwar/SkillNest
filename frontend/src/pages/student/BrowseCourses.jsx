@@ -1,12 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getAllCourses, enrollInCourse } from '../../services/api';
+import { getAllCourses, enrollInCourse, createEnrollmentRequest } from '../../services/api';
+import toast from 'react-hot-toast';
 
 const BrowseCourses = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [enrollingId, setEnrollingId] = useState(null);
   const { user } = useAuth();
+  const [showRequestModal, setShowRequestModal] = useState(false);
+  const [requestCourse, setRequestCourse] = useState(null);
+  const [requestMessage, setRequestMessage] = useState("");
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState(null);
 
   useEffect(() => {
     fetchCourses();
@@ -31,13 +37,18 @@ const BrowseCourses = () => {
 
     try {
       await enrollInCourse(courseId); // ✅ gateway + token handled
-      alert('✅ Enrollment Successful!');
+      toast.success('✅ Enrollment Successful!');
       fetchCourses();
     } catch (err) {
-      alert(err.message || 'Enrollment failed');
+      toast.error(err.message || 'Enrollment failed');
     } finally {
       setEnrollingId(null);
     }
+  };
+
+  const handleOpenDetailModal = (course) => {
+    setSelectedCourse(course);
+    setShowDetailModal(true);
   };
 
   if (loading) return <div className="text-center py-10">Loading courses...</div>;
@@ -50,7 +61,8 @@ const BrowseCourses = () => {
         {courses.map((course) => (
           <div
             key={course.id}
-            className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden"
+            onClick={() => handleOpenDetailModal(course)}
+            className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-105"
           >
             {course.imageUrl && (
               <img
@@ -71,13 +83,28 @@ const BrowseCourses = () => {
                   ₹{course.price}
                 </span>
 
-                <button
-                  onClick={() => handleEnroll(course.id, course.title)}
-                  disabled={enrollingId === course.id}
-                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-6 py-3 rounded-xl font-medium transition"
-                >
-                  {enrollingId === course.id ? "Enrolling..." : "Enroll Now"}
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEnroll(course.id, course.title);
+                    }}
+                    disabled={enrollingId === course.id}
+                    className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-xl font-medium transition"
+                  >
+                    {enrollingId === course.id ? "Enrolling..." : "Enroll Now"}
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setRequestCourse(course);
+                      setShowRequestModal(true);
+                    }}
+                    className="bg-amber-500 hover:bg-amber-600 text-white px-3 py-2 rounded-xl font-medium transition"
+                  >
+                    Request
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -88,6 +115,126 @@ const BrowseCourses = () => {
         <p className="text-center text-gray-500 mt-10">
           No courses available at the moment.
         </p>
+      )}
+
+      {/* Request Enrollment Modal */}
+      {showRequestModal && requestCourse && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setShowRequestModal(false)} />
+          <div className="bg-white rounded-xl p-6 z-10 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-3">Request Enrollment: {requestCourse.title}</h3>
+            <p className="text-sm text-gray-600 mb-4">You can add an optional message for the admin.</p>
+            <textarea value={requestMessage} onChange={(e) => setRequestMessage(e.target.value)} className="w-full input-field mb-4" rows={4} />
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setShowRequestModal(false)} className="btn-ghost">Cancel</button>
+              <button
+                onClick={async () => {
+                  try {
+                    await createEnrollmentRequest({ courseId: requestCourse.id, message: requestMessage });
+                    toast.success('Request submitted');
+                    setShowRequestModal(false);
+                    setRequestMessage("");
+                  } catch (err) {
+                    toast.error(err.message || 'Failed to submit request');
+                  }
+                }}
+                className="btn-primary"
+              >Send Request</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Course Detail Modal */}
+      {showDetailModal && selectedCourse && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setShowDetailModal(false)} />
+          <div className="bg-white rounded-2xl z-10 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            {selectedCourse.imageUrl && (
+              <img
+                src={selectedCourse.imageUrl}
+                alt={selectedCourse.title}
+                className="w-full h-64 object-cover"
+              />
+            )}
+            
+            <div className="p-8">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">{selectedCourse.title}</h2>
+                  <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <span>👨‍🏫 Teacher ID: {selectedCourse.teacherId}</span>
+                    <span>👥 Max Students: {selectedCourse.maxStudents || 'Unlimited'}</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowDetailModal(false)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Course Description</h3>
+                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                  {selectedCourse.description}
+                </p>
+              </div>
+
+              {selectedCourse.category && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Category</h3>
+                  <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                    {selectedCourse.category}
+                  </span>
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-6 mb-8 pt-6 border-t">
+                <div>
+                  <p className="text-gray-600 text-sm mb-1">Price</p>
+                  <p className="text-3xl font-bold text-green-600">₹{selectedCourse.price}</p>
+                </div>
+                <div>
+                  <p className="text-gray-600 text-sm mb-1">Duration</p>
+                  <p className="text-lg font-semibold text-gray-900">
+                    {selectedCourse.duration || 'Not specified'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowDetailModal(false);
+                    handleEnroll(selectedCourse.id, selectedCourse.title);
+                  }}
+                  disabled={enrollingId === selectedCourse.id}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-6 py-3 rounded-xl font-semibold transition"
+                >
+                  {enrollingId === selectedCourse.id ? "Enrolling..." : "Enroll Now"}
+                </button>
+                <button
+                  onClick={() => {
+                    setShowDetailModal(false);
+                    setRequestCourse(selectedCourse);
+                    setShowRequestModal(true);
+                  }}
+                  className="flex-1 bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-xl font-semibold transition"
+                >
+                  Request Enrollment
+                </button>
+                <button
+                  onClick={() => setShowDetailModal(false)}
+                  className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-900 px-6 py-3 rounded-xl font-semibold transition"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -110,6 +110,17 @@ public class UserServiceClient {
         );
     }
     
+    // ================== GET USER BY ID ==================
+    public UserDTO getUserById(String userId) {
+        HttpEntity<String> entity = new HttpEntity<>(getHeaders());
+        return restTemplate.exchange(
+                BASE_URL + "/api/users/" + userId,
+                HttpMethod.GET,
+                entity,
+                UserDTO.class
+        ).getBody();
+    }
+    
     public void createTeacher(User user) {
         HttpEntity<User> entity = new HttpEntity<>(user, getHeaders());
 

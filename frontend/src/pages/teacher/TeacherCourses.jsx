@@ -2,11 +2,11 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
 import { CardSkeleton, EmptyState, Modal } from "../../components/ui";
-import { getAllCourses, createCourse } from "../../services/api";
+import { getAllCourses, createCourse, createSupportTicket } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
 
-const EMPTY_FORM = { id: "", title: "", description: "", price: "" };
+const EMPTY_FORM = { id: "", title: "", description: "", price: "", maxStudents: 30, additionalTeachers: "" };
 
 export default function TeacherCourses() {
   const { profile } = useAuth();
@@ -15,6 +15,8 @@ export default function TeacherCourses() {
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [showTicketModal, setShowTicketModal] = useState(false);
+  const [ticketForm, setTicketForm] = useState({ subject: "", message: "" });
 
   const fetchCourses = async () => {
     try {
@@ -44,12 +46,20 @@ export default function TeacherCourses() {
 
     setSaving(true);
     try {
+      // client-side cap for safety
+      let max = parseInt(form.maxStudents) || 30;
+      if (max > 120) max = 120;
+
+      const additional = (form.additionalTeachers || "").split(",").map(s => s.trim()).filter(Boolean);
+
       const payload = {
         id: form.id || `course_${Date.now()}`,
         title: form.title.trim(),
         description: form.description.trim(),
         price: parseFloat(form.price),
         teacherId: profile?.id,
+        teacherIds: Array.from(new Set([...(additional || []), profile?.id].filter(Boolean))),
+        maxStudents: max,
         createdAt: Date.now(),
       };
       const res = await createCourse(payload);
@@ -78,9 +88,14 @@ export default function TeacherCourses() {
       title="My Courses"
       subtitle={`${courses.length} course${courses.length !== 1 ? "s" : ""} created`}
       actions={
-        <button onClick={() => setShowModal(true)} className="btn-primary">
-          + New Course
-        </button>
+        <>
+          <button onClick={() => setShowModal(true)} className="btn-primary">
+            + New Course
+          </button>
+          <button onClick={() => setShowTicketModal(true)} className="btn-ghost ml-2">
+            Raise Ticket
+          </button>
+        </>
       }
     >
       {loading ? (
@@ -123,6 +138,32 @@ export default function TeacherCourses() {
               onChange={handleChange}
               placeholder="e.g. Advanced Python Programming"
               className="input-field"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Max Students</label>
+            <input
+              type="number"
+              name="maxStudents"
+              value={form.maxStudents}
+              onChange={handleChange}
+              placeholder="30"
+              min="1"
+              max="120"
+              className="input-field w-full"
+            />
+            <p className="text-xs text-slate-500 mt-1">Maximum allowed per course is 120 students.</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Additional Teachers (comma-separated IDs)</label>
+            <input
+              name="additionalTeachers"
+              value={form.additionalTeachers}
+              onChange={handleChange}
+              placeholder="teacher_uid_1, teacher_uid_2"
+              className="input-field w-full"
             />
           </div>
 
@@ -181,6 +222,34 @@ export default function TeacherCourses() {
                 "Create Course"
               )}
             </button>
+          </div>
+        </form>
+      </Modal>
+      {/* Raise Support Ticket Modal for teachers */}
+      <Modal isOpen={showTicketModal} onClose={() => setShowTicketModal(false)} title="Raise Support Ticket">
+        <form onSubmit={async (e) => {
+          e.preventDefault();
+          if (!ticketForm.subject || !ticketForm.message) return toast.error("Fill subject and message");
+          try {
+            await createSupportTicket(ticketForm);
+            toast.success("Ticket submitted");
+            setTicketForm({ subject: "", message: "" });
+            setShowTicketModal(false);
+          } catch (err) {
+            toast.error("Failed to submit ticket");
+          }
+        }} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Subject</label>
+            <input value={ticketForm.subject} onChange={(e) => setTicketForm(s => ({...s, subject: e.target.value}))} className="input-field w-full" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Message</label>
+            <textarea value={ticketForm.message} onChange={(e) => setTicketForm(s => ({...s, message: e.target.value}))} rows={5} className="input-field w-full resize-none" />
+          </div>
+          <div className="flex gap-3">
+            <button type="button" onClick={() => setShowTicketModal(false)} className="btn-ghost flex-1">Cancel</button>
+            <button type="submit" className="btn-primary flex-1">Submit Ticket</button>
           </div>
         </form>
       </Modal>

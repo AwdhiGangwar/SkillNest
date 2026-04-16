@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
-import { getMyCourses } from '../../services/api'; // ✅ use api.js
+import { getMyCourses, createSupportTicket } from '../../services/api'; // ✅ use api.js
+import { Modal } from '../../components/ui';
+import toast from 'react-hot-toast';
 
 const MyCoursesPage = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showTicketModal, setShowTicketModal] = useState(false);
+  const [ticketForm, setTicketForm] = useState({ subject: "", message: "" });
 
   useEffect(() => {
     fetchMyCourses();
@@ -41,6 +45,7 @@ const MyCoursesPage = () => {
               <span className="bg-green-100 text-green-700 px-4 py-1.5 rounded-full">
                 Enrolled
               </span>
+              <button className="btn-ghost" onClick={() => setShowTicketModal(true)}>Raise Ticket</button>
             </div>
           </div>
         ))}
@@ -54,6 +59,33 @@ const MyCoursesPage = () => {
           </a>
         </div>
       )}
+      <Modal isOpen={showTicketModal} onClose={() => setShowTicketModal(false)} title="Raise Support Ticket">
+        <form onSubmit={async (e) => {
+          e.preventDefault();
+          if (!ticketForm.subject || !ticketForm.message) return toast.error("Fill subject and message");
+          try {
+            await createSupportTicket(ticketForm);
+            toast.success("Ticket submitted");
+            setTicketForm({ subject: "", message: "" });
+            setShowTicketModal(false);
+          } catch (err) {
+            toast.error("Failed to submit ticket");
+          }
+        }} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Subject</label>
+            <input value={ticketForm.subject} onChange={(e) => setTicketForm(s => ({...s, subject: e.target.value}))} className="input-field w-full" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Message</label>
+            <textarea value={ticketForm.message} onChange={(e) => setTicketForm(s => ({...s, message: e.target.value}))} rows={5} className="input-field w-full resize-none" />
+          </div>
+          <div className="flex gap-3">
+            <button type="button" onClick={() => setShowTicketModal(false)} className="btn-ghost flex-1">Cancel</button>
+            <button type="submit" className="btn-primary flex-1">Submit Ticket</button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };

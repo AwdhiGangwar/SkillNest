@@ -73,17 +73,24 @@ export default function Support() {
             }
           />
         ) : (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {tickets.map((ticket) => (
-              <div key={ticket.id} className="glass-card p-6 rounded-xl border border-surface-border">
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-lg font-display font-bold text-white">{ticket.subject}</h3>
-                  <Badge variant={ticket.status === "open" ? "info" : "success"}>
-                    {ticket.status}
-                  </Badge>
+              <div key={ticket.id} className="glass-card p-6 rounded-xl border border-surface-border flex flex-col justify-between">
+                <div>
+                  <div className="flex items-start justify-between mb-3">
+                    <h3 className="text-lg font-display font-bold text-white">{ticket.subject}</h3>
+                    <Badge variant={ticket.status === "open" ? "info" : "success"}>
+                      {ticket.status}
+                    </Badge>
+                  </div>
+                  <p className="text-slate-300 mb-3">{ticket.message}</p>
                 </div>
-                <p className="text-slate-300 mb-3">{ticket.message}</p>
-                <p className="text-slate-500 text-xs">Created {new Date(ticket.createdAt).toLocaleDateString()}</p>
+                <div className="flex items-center justify-between mt-4">
+                  <p className="text-slate-500 text-xs">Created {ticket.createdAt ? new Date(ticket.createdAt).toLocaleDateString() : 'N/A'}</p>
+                  <div className="flex items-center gap-2">
+                    <button className="btn-ghost text-xs" onClick={() => { navigator.clipboard?.writeText(ticket.id || '') }}>Copy ID</button>
+                  </div>
+                </div>
               </div>
             ))}
           </div>

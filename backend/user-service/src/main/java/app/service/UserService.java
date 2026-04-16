@@ -2,6 +2,7 @@ package app.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,9 +10,11 @@ import org.springframework.stereotype.Service;
 import com.google.cloud.firestore.Firestore;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserRecord;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.cloud.FirestoreClient;
 
 import app.model.User;
+import app.dto.UserDTO;
 
 @Service
 public class UserService {
@@ -108,30 +111,39 @@ public class UserService {
         UserRecord.CreateRequest request = new UserRecord.CreateRequest()
                 .setEmail(user.getEmail());
 
-        UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);
-
-        // 🔥 Send reset password link
-        String link = FirebaseAuth.getInstance()
-                .generatePasswordResetLink(user.getEmail());
-        
-        // ✅ Send welcome email with reset link
+        UserRecord userRecord;
         try {
-            emailService.sendTeacherWelcomeEmail(user.getEmail(), link);
-        } catch (Exception e) {
-            System.err.println("Warning: Failed to send welcome email: " + e.getMessage());
-            // Continue with creating the account even if email fails
+            userRecord = FirebaseAuth.getInstance().createUser(request);
+
+            // 🔥 Send reset password link
+            String link = FirebaseAuth.getInstance()
+                    .generatePasswordResetLink(user.getEmail());
+
+            // ✅ Send welcome email with reset link
+            try {
+                emailService.sendTeacherWelcomeEmail(user.getEmail(), link);
+            } catch (Exception e) {
+                System.err.println("Warning: Failed to send welcome email: " + e.getMessage());
+            }
+
+        } catch (FirebaseAuthException fae) {
+            // If email already exists, recover existing user instead of failing
+            if (fae.getMessage() != null && fae.getMessage().contains("EMAIL_EXISTS")) {
+                UserRecord existing = FirebaseAuth.getInstance().getUserByEmail(user.getEmail());
+                userRecord = existing;
+            } else {
+                throw fae;
+            }
         }
 
-        // 🔥 Save in Firestore
+        // 🔥 Save in Firestore (ensure idempotent)
         user.setId(userRecord.getUid());
         user.setRole("teacher");
 
         Firestore db = FirestoreClient.getFirestore();
 
-        db.collection("users")
-                .document(user.getId())
-                .set(user)
-                .get();
+        // Create or update the Firestore document so repeat requests are idempotent
+        db.collection("users").document(user.getId()).set(user).get();
 
         return user;
     }
@@ -154,45 +166,72 @@ public class UserService {
                 .setPassword(password)
                 .setDisplayName(user.getName());
 
-        UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);
-
-        // ✅ Send welcome email (no reset link needed since teacher set password)
+        UserRecord userRecord;
         try {
-            emailService.sendTeacherAccountCreatedEmail(user.getEmail(), user.getName());
-        } catch (Exception e) {
-            System.err.println("Warning: Failed to send welcome email: " + e.getMessage());
-            // Continue with creating the account even if email fails
+            userRecord = FirebaseAuth.getInstance().createUser(request);
+
+            // ✅ Send welcome email (no reset link needed since teacher set password)
+            try {
+                emailService.sendTeacherAccountCreatedEmail(user.getEmail(), user.getName());
+            } catch (Exception e) {
+                System.err.println("Warning: Failed to send welcome email: " + e.getMessage());
+            }
+
+        } catch (FirebaseAuthException fae) {
+            if (fae.getMessage() != null && fae.getMessage().contains("EMAIL_EXISTS")) {
+                // Recover existing user and ensure password is set
+                userRecord = FirebaseAuth.getInstance().getUserByEmail(user.getEmail());
+                try {
+                    // update password on existing account so login works
+                    FirebaseAuth.getInstance().updateUser(
+                        new com.google.firebase.auth.UserRecord.UpdateRequest(userRecord.getUid())
+                            .setPassword(password)
+                            .setDisplayName(user.getName())
+                    );
+                    // refresh userRecord after update
+                    userRecord = FirebaseAuth.getInstance().getUser(userRecord.getUid());
+                } catch (Exception updEx) {
+                    System.err.println("Warning: Failed to update existing Firebase user password: " + updEx.getMessage());
+                }
+            } else {
+                throw fae;
+            }
         }
 
-        // 🔥 Save in Firestore
+        // 🔥 Save in Firestore (idempotent)
         user.setId(userRecord.getUid());
         user.setRole("teacher");
 
         Firestore db = FirestoreClient.getFirestore();
 
-        db.collection("users")
-                .document(user.getId())
-                .set(user)
-                .get();
+        db.collection("users").document(user.getId()).set(user).get();
 
         return user;
     }
  // ================== BLOCK USER ==================
     public void blockUser(String id) throws Exception {
         Firestore db = FirestoreClient.getFirestore();
-
+        
+        // Use a Map to update only the status field
+        Map<String, Object> updates = new java.util.HashMap<>();
+        updates.put("status", User.STATUS_BLOCKED);
+        
         db.collection(COLLECTION_NAME)
                 .document(id)
-                .update("status", "BLOCKED")
+                .set(updates, com.google.cloud.firestore.SetOptions.merge())
                 .get();
     }
    //=======================UNBLOCK USER ==================
     public void unblockUser(String id) throws Exception {
         Firestore db = FirestoreClient.getFirestore();
+        
+        // Use a Map to update only the status field
+        Map<String, Object> updates = new java.util.HashMap<>();
+        updates.put("status", User.STATUS_ACTIVE);
 
         db.collection("users")
             .document(id)
-            .update("status", "ACTIVE")
+            .set(updates, com.google.cloud.firestore.SetOptions.merge())
             .get();
     }
 
@@ -246,5 +285,23 @@ public class UserService {
         } catch (Exception e) {
             throw new Exception("Failed to change password: " + e.getMessage());
         }
+    }
+
+    // ==================== GET ALL USERS AS DTO ====================
+    public List<UserDTO> getAllUsersAsDTO() throws Exception {
+        List<User> users = getAllUsers();
+        List<UserDTO> userDTOs = new ArrayList<>();
+        
+        for (User user : users) {
+            UserDTO dto = new UserDTO();
+            dto.setId(user.getId());
+            dto.setName(user.getName());
+            dto.setEmail(user.getEmail());
+            dto.setRole(user.getRole());
+            dto.setStatus(user.getStatus() != null ? user.getStatus() : "active");
+            userDTOs.add(dto);
+        }
+        
+        return userDTOs;
     }
 }

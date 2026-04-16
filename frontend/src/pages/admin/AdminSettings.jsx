@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Layout from "../../components/Layout";
 import toast from "react-hot-toast";
+import { changePassword } from "../../services/api";
 
 export default function AdminSettings() {
   const [settings, setSettings] = useState({
@@ -22,6 +23,27 @@ export default function AdminSettings() {
   const handleSave = (e) => {
     e.preventDefault();
     toast.success("Platform settings saved successfully!");
+  };
+
+  // Change password state
+  const [pwd, setPwd] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" });
+
+  const handlePwdChange = (e) => {
+    const { name, value } = e.target;
+    setPwd({ ...pwd, [name]: value });
+  };
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    if (!pwd.currentPassword || !pwd.newPassword || !pwd.confirmPassword) return toast.error("Fill all password fields");
+    if (pwd.newPassword !== pwd.confirmPassword) return toast.error("New passwords do not match");
+    try {
+      await changePassword({ oldPassword: pwd.currentPassword, newPassword: pwd.newPassword });
+      toast.success("Password changed successfully");
+      setPwd({ currentPassword: "", newPassword: "", confirmPassword: "" });
+    } catch (err) {
+      toast.error(err.message || "Failed to change password");
+    }
   };
 
   return (
@@ -107,6 +129,50 @@ export default function AdminSettings() {
               Save Settings
             </button>
           </form>
+
+          {/* Change Password */}
+          <div className="mt-8">
+            <h3 className="text-lg font-display font-bold text-white mb-3">Change Admin Password</h3>
+            <form onSubmit={handleChangePassword} className="space-y-4 max-w-md">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Current Password</label>
+                <input
+                  type="password"
+                  name="currentPassword"
+                  value={pwd.currentPassword}
+                  onChange={handlePwdChange}
+                  className="input-field w-full"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">New Password</label>
+                <input
+                  type="password"
+                  name="newPassword"
+                  value={pwd.newPassword}
+                  onChange={handlePwdChange}
+                  className="input-field w-full"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Confirm New Password</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={pwd.confirmPassword}
+                  onChange={handlePwdChange}
+                  className="input-field w-full"
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <button type="button" onClick={() => setPwd({ currentPassword: "", newPassword: "", confirmPassword: "" })} className="btn-ghost flex-1">Cancel</button>
+                <button type="submit" className="btn-primary flex-1">Change Password</button>
+              </div>
+            </form>
+          </div>
 
           {/* Info Section */}
           <div className="mt-8 pt-8 border-t border-surface-border">

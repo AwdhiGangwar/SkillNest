@@ -53,8 +53,21 @@ public class CourseController {
             if (course.getId() == null || course.getId().isEmpty()) {
                 course.setId(UUID.randomUUID().toString());
             }
-            
+            // Ensure max students is capped at 120
+            if (course.getMaxStudents() > 120) {
+                course.setMaxStudents(120);
+            }
+
+            // set primary teacher and also add to teacherIds for multi-teacher support
             course.setTeacherId(uid);
+            if (course.getTeacherIds() == null) {
+                java.util.ArrayList<String> t = new java.util.ArrayList<>();
+                t.add(uid);
+                course.setTeacherIds(t);
+            } else if (!course.getTeacherIds().contains(uid)) {
+                course.getTeacherIds().add(uid);
+            }
+
             String result = courseService.createCourse(course);
             
             return ResponseEntity.ok(Map.of("success", result, "courseId", course.getId()));
@@ -91,7 +104,19 @@ public class CourseController {
             }
 
             course.setId(id);
+            // cap max students
+            if (course.getMaxStudents() > 120) {
+                course.setMaxStudents(120);
+            }
             course.setTeacherId(uid);
+            if (course.getTeacherIds() == null) {
+                java.util.ArrayList<String> t = new java.util.ArrayList<>();
+                t.add(uid);
+                course.setTeacherIds(t);
+            } else if (!course.getTeacherIds().contains(uid)) {
+                course.getTeacherIds().add(uid);
+            }
+
             String result = courseService.updateCourse(id, course);
 
             return ResponseEntity.ok(Map.of("success", result, "courseId", id));

@@ -64,4 +64,14 @@ public class TeacherRequestService {
 
         return req;
     }
+
+    public TeacherRequest getRequestById(String id) throws Exception {
+        Firestore db = FirestoreClient.getFirestore();
+
+        return db.collection(COLLECTION)
+                .document(id)
+                .get()
+                .get()
+                .toObject(TeacherRequest.class);
+    }
 }

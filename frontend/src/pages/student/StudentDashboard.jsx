@@ -2,13 +2,14 @@
 
 import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
-import { StatCard, CardSkeleton, EmptyState } from "../../components/ui";
+import { StatCard, CardSkeleton, EmptyState, Modal } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 // ✅ IMPORTANT: use API functions instead of axios
 import { getMyCourses } from "../../services/api";
+import { createSupportTicket } from "../../services/api";
 
 export default function StudentDashboard() {
   const { profile } = useAuth();
@@ -17,6 +18,8 @@ export default function StudentDashboard() {
   const [courses, setCourses] = useState([]);
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showTicketModal, setShowTicketModal] = useState(false);
+  const [ticketForm, setTicketForm] = useState({ subject: "", message: "" });
 
   useEffect(() => {
     loadDashboardData();
@@ -48,6 +51,7 @@ export default function StudentDashboard() {
     hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
   return (
+    <>
     <Layout
       title={`${greeting}, ${profile?.name?.split(" ")[0] || "there"} 👋`}
       subtitle="Here's an overview of your learning journey"
@@ -60,6 +64,9 @@ export default function StudentDashboard() {
         </button>
       }
     >
+      <div className="mb-4">
+        <button onClick={() => setShowTicketModal(true)} className="btn-ghost">Raise Support Ticket</button>
+      </div>
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {loading ? (
@@ -95,5 +102,33 @@ export default function StudentDashboard() {
         )}
       </div>
     </Layout>
+    <Modal isOpen={showTicketModal} onClose={() => setShowTicketModal(false)} title="Raise Support Ticket">
+      <form onSubmit={async (e) => {
+        e.preventDefault();
+        if (!ticketForm.subject || !ticketForm.message) return toast.error("Fill subject and message");
+        try {
+          await createSupportTicket(ticketForm);
+          toast.success("Ticket submitted");
+          setTicketForm({ subject: "", message: "" });
+          setShowTicketModal(false);
+        } catch (err) {
+          toast.error("Failed to submit ticket");
+        }
+      }} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-slate-300 mb-2">Subject</label>
+          <input value={ticketForm.subject} onChange={(e) => setTicketForm(s => ({...s, subject: e.target.value}))} className="input-field w-full" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-slate-300 mb-2">Message</label>
+          <textarea value={ticketForm.message} onChange={(e) => setTicketForm(s => ({...s, message: e.target.value}))} rows={5} className="input-field w-full resize-none" />
+        </div>
+        <div className="flex gap-3">
+          <button type="button" onClick={() => setShowTicketModal(false)} className="btn-ghost flex-1">Cancel</button>
+          <button type="submit" className="btn-primary flex-1">Submit Ticket</button>
+        </div>
+      </form>
+    </Modal>
+    </>
   );
 }

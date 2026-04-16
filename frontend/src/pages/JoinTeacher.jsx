@@ -7,6 +7,7 @@ export default function JoinTeacher() {
   const [form, setForm] = useState({
     name: "",
     email: "",
+    phone: "",
     skills: "",
     experience: "",
     bio: "",
@@ -67,6 +68,18 @@ export default function JoinTeacher() {
                   required
                   className="input-field w-full"
                   placeholder="john@example.com"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Phone Number</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={form.phone}
+                  onChange={handleChange}
+                  required
+                  className="input-field w-full"
+                  placeholder="e.g. +1 (555) 123-4567"
                 />
               </div>
             </div>

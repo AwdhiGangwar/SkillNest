@@ -2,6 +2,9 @@ package app.filter;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.DocumentSnapshot;
+import com.google.firebase.cloud.FirestoreClient;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,9 +32,8 @@ public class FirebaseTokenFilter extends OncePerRequestFilter {
         }
         // ✅ PUBLIC ENDPOINTS (no auth required)
         boolean isPublic =
-                path.startsWith("/api/health") ||
-                path.startsWith("/api/users") ||
-                (path.startsWith("/api/teacher-requests") && request.getMethod().equals("POST"));
+            path.startsWith("/api/health") ||
+            (path.startsWith("/api/teacher-requests") && request.getMethod().equals("POST"));
 
         if (isPublic) {
             filterChain.doFilter(request, response);
@@ -59,6 +61,23 @@ public class FirebaseTokenFilter extends OncePerRequestFilter {
             // Attach to request (you can use in controllers/services)
             request.setAttribute("uid", uid);
             request.setAttribute("email", email);
+
+            // 🔒 Enforce Firestore "status" block: reject if status == "BLOCKED"
+            try {
+                Firestore db = FirestoreClient.getFirestore();
+                DocumentSnapshot doc = db.collection("users").document(uid).get().get();
+                if (doc.exists()) {
+                    String status = doc.getString("status");
+                    if (status != null && "BLOCKED".equalsIgnoreCase(status)) {
+                        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                        response.getWriter().write("Account is blocked");
+                        return;
+                    }
+                }
+            } catch (Exception e) {
+                // if Firestore check fails, log and continue with caution (do not block by default)
+                System.err.println("Warning: failed to verify user status: " + e.getMessage());
+            }
 
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

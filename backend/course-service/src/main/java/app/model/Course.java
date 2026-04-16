@@ -2,6 +2,8 @@ package app.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -14,6 +16,7 @@ public class Course {
     private double price;
     private int maxStudents;
     private String teacherId;
+    private List<String> teacherIds = new ArrayList<>();
     private long createdAt;
     private long updatedAt;
 
@@ -28,6 +31,7 @@ public class Course {
         this.description = description;
         this.price = price;
         this.teacherId = teacherId;
+        if (teacherId != null) this.teacherIds.add(teacherId);
         this.createdAt = System.currentTimeMillis();
         this.updatedAt = System.currentTimeMillis();
     }
@@ -56,6 +60,10 @@ public class Course {
 
     public int getMaxStudents() {
         return maxStudents;
+    }
+
+    public List<String> getTeacherIds() {
+        return teacherIds;
     }
 
     public String getTeacherId() {
@@ -98,6 +106,10 @@ public class Course {
 
     public void setTeacherId(String teacherId) {
         this.teacherId = teacherId;
+    }
+
+    public void setTeacherIds(List<String> teacherIds) {
+        this.teacherIds = teacherIds;
     }
 
     public void setCreatedAt(long createdAt) {

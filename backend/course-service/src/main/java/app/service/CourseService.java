@@ -84,6 +84,11 @@ public class CourseService {
             }
             
             logger.info("Creating course with ID: {}, title: {}", course.getId(), course.getTitle());
+            // Defensive: cap max students to 120
+            if (course.getMaxStudents() > 120) {
+                logger.warn("Max students for course {} is >120, capping to 120", course.getId());
+                course.setMaxStudents(120);
+            }
             Firestore db = FirestoreClient.getFirestore();
 
             db.collection(COLLECTION)
@@ -103,6 +108,12 @@ public class CourseService {
         try {
             logger.info("Updating course with ID: {}", courseId);
             Firestore db = FirestoreClient.getFirestore();
+
+            // Defensive: cap max students
+            if (course.getMaxStudents() > 120) {
+                logger.warn("Max students for course {} is >120, capping to 120", courseId);
+                course.setMaxStudents(120);
+            }
 
             course.setUpdatedAt(System.currentTimeMillis());
             db.collection(COLLECTION)

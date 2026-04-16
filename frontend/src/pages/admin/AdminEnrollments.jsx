@@ -1,15 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Layout from "../../components/Layout";
 import { CardSkeleton, EmptyState, Badge, Modal } from "../../components/ui";
 import toast from "react-hot-toast";
+import { getEnrollmentRequests, approveEnrollmentRequest, rejectEnrollmentRequest, getAllCourses, getAllUsers, getEnrollmentsByCourse } from "../../services/api";
 
 export default function AdminEnrollments() {
   const [enrollments, setEnrollments] = useState([]);
   const [courses, setCourses] = useState([]);
   const [students, setStudents] = useState([]);
+  const [enrollmentsByCourse, setEnrollmentsByCourse] = useState({});
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
+  const [requests, setRequests] = useState([]);
   const [deletingId, setDeletingId] = useState(null);
+  const [weeklyCount, setWeeklyCount] = useState(0);
+  const [monthlyCount, setMonthlyCount] = useState(0);
+  const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({
     studentId: "",
     courseId: "",
@@ -40,10 +45,69 @@ export default function AdminEnrollments() {
   ];
 
   useEffect(() => {
-    setEnrollments(mockEnrollments);
-    setCourses(mockCourses);
-    setStudents(mockStudents);
-    setLoading(false);
+    (async () => {
+      try {
+        // fetch real data; fallback to mocks on failure
+        let courseRes;
+        try {
+          courseRes = await getAllCourses();
+          setCourses(courseRes.data || []);
+        } catch (e) {
+          console.warn('Failed to fetch courses, using mock', e);
+          setCourses(mockCourses);
+          courseRes = { data: mockCourses };
+        }
+
+        let usersRes;
+        try {
+          usersRes = await getAllUsers();
+          setStudents(usersRes.data || []);
+        } catch (e) {
+          console.warn('Failed to fetch users, using mock', e);
+          setStudents(mockStudents);
+          usersRes = { data: mockStudents };
+        }
+
+        // load enrollment requests
+        try {
+          const res = await getEnrollmentRequests();
+          setRequests(res.data || []);
+        } catch (e) {
+          console.warn('Failed to fetch enrollment requests', e);
+        }
+
+        // For each course, fetch enrollments
+        const currentCourses = courseRes?.data || mockCourses;
+        const enrollPromises = currentCourses.map((c) =>
+          getEnrollmentsByCourse(c.id).then((r) => ({ courseId: c.id, enrolls: r.data || [] })).catch(() => ({ courseId: c.id, enrolls: [] }))
+        );
+
+        const enrollResults = await Promise.all(enrollPromises);
+        const map = {};
+        enrollResults.forEach(er => { map[er.courseId] = er.enrolls; });
+        setEnrollmentsByCourse(map);
+
+        // fetch stats
+        try {
+          const sres = await getEnrollmentStats();
+          const data = sres.data || {};
+          setWeeklyCount(data.weeklyCount || data.weekly || 0);
+          setMonthlyCount(data.monthlyCount || data.monthly || 0);
+        } catch (e) {
+          console.warn('Failed to fetch enrollment stats', e);
+        }
+
+      } catch (err) {
+        console.error('AdminEnrollments init error', err);
+        // fallback to mocks
+        setEnrollments(mockEnrollments);
+        setCourses(mockCourses);
+        setStudents(mockStudents);
+        setEnrollmentsByCourse({});
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
   // Calculate unique students
@@ -59,6 +123,21 @@ export default function AdminEnrollments() {
       occupancy: Math.round((enrolled / course.maxSeats) * 100),
     };
   });
+
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to remove this enrollment?")) return;
+
+    setDeletingId(id);
+    try {
+      setEnrollments((prev) => prev.filter((e) => e.id !== id));
+      toast.success("Enrollment removed successfully!");
+    } catch (err) {
+      toast.error("Failed to remove enrollment");
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   const handleOpenModal = () => {
     setForm({ studentId: "", courseId: "" });
@@ -112,30 +191,27 @@ export default function AdminEnrollments() {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to remove this enrollment?")) return;
-
-    setDeletingId(id);
-    try {
-      setEnrollments((prev) => prev.filter((e) => e.id !== id));
-      toast.success("Enrollment removed successfully!");
-    } catch (err) {
-      toast.error("Failed to remove enrollment");
-    } finally {
-      setDeletingId(null);
-    }
-  };
-
   const avgCoursesPerStudent = enrollments.length > 0 ? (enrollments.length / uniqueStudents).toFixed(1) : 0;
+  const requestsRef = useRef(null);
 
   return (
     <Layout
       title="Enrollment Management"
       subtitle={`${enrollments.length} total enrollment${enrollments.length !== 1 ? "s" : ""}`}
       actions={
-        <button onClick={handleOpenModal} className="btn-primary">
-          + Enroll Student
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={handleOpenModal} className="btn-primary">+ Enroll Student</button>
+          <button
+            onClick={() => requestsRef.current?.scrollIntoView({ behavior: 'smooth' })}
+            className="btn-ghost flex items-center gap-2"
+            title="View enrollment requests"
+          >
+            Requests
+            {requests.length > 0 && (
+              <span className="ml-1 inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-500 text-white text-xs">{requests.length}</span>
+            )}
+          </button>
+        </div>
       }
     >
       <div className="space-y-6">
@@ -150,6 +226,16 @@ export default function AdminEnrollments() {
             <p className="text-slate-400 text-sm mb-2">Total Enrollments</p>
             <h3 className="text-3xl font-bold text-emerald-400">{enrollments.length}</h3>
             <p className="text-slate-500 text-xs mt-2">Active enrollments</p>
+          </div>
+          <div className="glass-card p-6 rounded-xl border border-surface-border">
+            <p className="text-slate-400 text-sm mb-2">Weekly Enrollments</p>
+            <h3 className="text-3xl font-bold text-emerald-400">{weeklyCount}</h3>
+            <p className="text-slate-500 text-xs mt-2">Last 7 days</p>
+          </div>
+          <div className="glass-card p-6 rounded-xl border border-surface-border">
+            <p className="text-slate-400 text-sm mb-2">Monthly Enrollments</p>
+            <h3 className="text-3xl font-bold text-amber-400">{monthlyCount}</h3>
+            <p className="text-slate-500 text-xs mt-2">Last 30 days</p>
           </div>
           <div className="glass-card p-6 rounded-xl border border-surface-border">
             <p className="text-slate-400 text-sm mb-2">Avg Courses/Student</p>
@@ -195,9 +281,109 @@ export default function AdminEnrollments() {
             ))}
           </div>
         </div>
+        {/* Enrollments by Category */}
+        <div className="glass-card p-6 rounded-xl border border-surface-border">
+          <h3 className="text-lg font-display font-bold text-white mb-4">Enrollments by Category</h3>
+          {courses.length === 0 ? (
+            <p className="text-slate-400">No courses found</p>
+          ) : (
+            <div className="space-y-4">
+              {Object.entries(courses.reduce((acc, c) => {
+                const k = c.category || 'general';
+                acc[k] = acc[k] || [];
+                acc[k].push(c);
+                return acc;
+              }, {})).map(([cat, catCourses]) => {
+                const totalInCategory = catCourses.reduce((s, cc) => s + ((enrollmentsByCourse[cc.id] || []).length), 0);
+                return (
+                  <div key={cat} className="border-b border-surface-border pb-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <div>
+                        <p className="text-sm text-slate-400 uppercase">{cat}</p>
+                        <h4 className="text-lg font-semibold">{totalInCategory} student{totalInCategory !== 1 ? 's' : ''} enrolled</h4>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                      {catCourses.map((course) => {
+                        const enrolls = enrollmentsByCourse[course.id] || [];
+                        return (
+                          <div key={course.id} className="p-3 rounded bg-surface/20">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <div className="font-medium">{course.title || course.name || course.title}</div>
+                                <div className="text-sm text-slate-400">{enrolls.length} enrolled</div>
+                              </div>
+                              <div className="text-sm text-slate-400">Seats: {course.maxStudents || course.maxSeats || '-'}</div>
+                            </div>
+                            <div className="mt-2 text-sm">
+                              {enrolls.length === 0 ? (
+                                <div className="text-slate-500">No students enrolled</div>
+                              ) : (
+                                <ul className="list-disc ml-5 mt-1 max-h-36 overflow-y-auto text-slate-300">
+                                  {enrolls.map((en) => (
+                                    <li key={en.id || en.studentId}>{(students.find(s => s.id === en.studentId)?.name) || en.studentId}</li>
+                                  ))}
+                                </ul>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
 
         {/* Enrollments Table */}
-        {loading ? (
+        {/* Enrollment Requests */}
+        <div ref={requestsRef} className="glass-card overflow-hidden border border-surface-border p-6 mb-6">
+          <h3 className="text-lg font-display font-bold text-white mb-4">Enrollment Requests</h3>
+          {requests.length === 0 ? (
+            <p className="text-slate-400">No pending requests</p>
+          ) : (
+            <div className="space-y-3">
+              {requests.map((r) => (
+                <div key={r.id} className="flex items-center justify-between bg-surface/20 p-3 rounded">
+                  <div>
+                    <div className="font-medium">Student: {r.studentId}</div>
+                    <div className="text-sm text-slate-400">Course: {r.courseId}</div>
+                    {r.message && <div className="text-sm mt-1">"{r.message}"</div>}
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={async () => {
+                        try {
+                          await approveEnrollmentRequest(r.id);
+                          toast.success('Approved');
+                          setRequests((prev) => prev.filter(x => x.id !== r.id));
+                        } catch (err) {
+                          toast.error(err.message || 'Failed to approve');
+                        }
+                      }}
+                      className="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-semibold hover:bg-emerald-500 hover:text-white transition-all"
+                    >Approve</button>
+                    <button
+                      onClick={async () => {
+                        try {
+                          await rejectEnrollmentRequest(r.id);
+                          toast.success('Rejected');
+                          setRequests((prev) => prev.filter(x => x.id !== r.id));
+                        } catch (err) {
+                          toast.error(err.message || 'Failed to reject');
+                        }
+                      }}
+                      className="px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 text-xs font-semibold hover:bg-red-500 hover:text-white transition-all"
+                    >Reject</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+          {loading ? (
           <div className="space-y-3">
             {Array(5).fill(0).map((_, i) => <CardSkeleton key={i} />)}
           </div>
@@ -238,13 +424,7 @@ export default function AdminEnrollments() {
                       </Badge>
                     </td>
                     <td className="px-6 py-5 text-right">
-                      <button
-                        onClick={() => handleDelete(enrollment.id)}
-                        disabled={deletingId === enrollment.id}
-                        className="px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 text-xs font-semibold hover:bg-red-500 hover:text-white transition-all disabled:opacity-50"
-                      >
-                        {deletingId === enrollment.id ? "..." : "Remove"}
-                      </button>
+                      {/* Remove action intentionally hidden per request */}
                     </td>
                   </tr>
                 ))}

@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
-import { getSupportTickets } from "../../services/api";
-import { CardSkeleton, EmptyState, Badge } from "../../components/ui";
+import { getSupportTickets, updateSupportTicket, deleteSupportTicket } from "../../services/api";
+import { CardSkeleton, EmptyState, Badge, Modal } from "../../components/ui";
 import toast from "react-hot-toast";
 
 export default function AdminSupport() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showResolvedOnly, setShowResolvedOnly] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
 
   useEffect(() => {
     const fetchTickets = async () => {
@@ -22,10 +25,31 @@ export default function AdminSupport() {
     fetchTickets();
   }, []);
 
+  const refresh = async () => {
+    setLoading(true);
+    try {
+      const res = await getSupportTickets();
+      setTickets(res.data || []);
+    } catch (e) {
+      toast.error("Failed to refresh tickets");
+    } finally { setLoading(false); }
+  };
+
+  const handleResolve = async (id) => {
+    try {
+      await updateSupportTicket(id, { status: "resolved" });
+      toast.success("Ticket marked resolved");
+      await refresh();
+    } catch (e) {
+      toast.error("Failed to update ticket");
+    }
+  };
+
   const openCount = tickets.filter((t) => t.status === "open").length;
   const resolvedCount = tickets.filter((t) => t.status === "resolved").length;
 
   return (
+    <>
     <Layout
       title="Support Tickets"
       subtitle={`${tickets.length} ticket${tickets.length !== 1 ? "s" : ""} (${openCount} open)`}
@@ -47,6 +71,16 @@ export default function AdminSupport() {
           </div>
         </div>
 
+        <div className="flex items-center justify-between mb-4">
+          <div />
+          <div className="flex items-center gap-3">
+            <button onClick={() => { setShowResolvedOnly(s => !s); }} className="btn-ghost text-sm">
+              {showResolvedOnly ? 'Show All' : 'Show Resolved'}
+            </button>
+            <button onClick={refresh} className="btn-ghost text-sm">Refresh</button>
+          </div>
+        </div>
+
         {/* Tickets Table */}
         {loading ? (
           <div className="space-y-3">
@@ -63,18 +97,52 @@ export default function AdminSupport() {
                   <th className="px-6 py-4">From</th>
                   <th className="px-6 py-4">Date</th>
                   <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4 w-44">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-surface-border">
-                {tickets.map((ticket) => (
+                {tickets.filter(t => showResolvedOnly ? t.status === 'resolved' : true).map((ticket) => (
                   <tr key={ticket.id} className="hover:bg-surface-hover/30 transition-colors">
                     <td className="px-6 py-5 font-medium text-white">{ticket.subject}</td>
-                    <td className="px-6 py-5 text-slate-400">{ticket.userEmail || "Unknown"}</td>
-                    <td className="px-6 py-5 text-slate-500 text-sm">{ticket.createdAt || "N/A"}</td>
+                    <td className="px-6 py-5 text-slate-400">
+                      {ticket.raiser?.name ? (
+                        <div>
+                          <div className="font-medium text-white">{ticket.raiser.name}</div>
+                          <div className="text-xs text-slate-400">{ticket.raiser.email || ticket.userEmail}</div>
+                        </div>
+                      ) : (
+                        (ticket.userEmail || ticket.userId || "Unknown")
+                      )}
+                    </td>
+                    <td className="px-6 py-5 text-slate-500 text-sm">{ticket.createdAt ? new Date(ticket.createdAt).toLocaleString() : "N/A"}</td>
                     <td className="px-6 py-5">
-                      <Badge variant={ticket.status === "open" ? "warn" : "success"}>
-                        {ticket.status}
-                      </Badge>
+                      <div className="flex items-center gap-3">
+                        <Badge variant={ticket.status === "open" ? "warn" : "success"}>
+                          {ticket.status}
+                        </Badge>
+                      </div>
+                    </td>
+                    <td className="px-6 py-5">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <button onClick={() => { setSelectedTicket(ticket); setShowDetailModal(true); }} className="btn-ghost text-xs">View</button>
+                        {ticket.status === "open" && (
+                          <button onClick={() => handleResolve(ticket.id)} className="btn-ghost text-xs">
+                            Mark Resolved
+                          </button>
+                        )}
+                        {ticket.status === 'resolved' && (
+                          <button onClick={async () => {
+                            // confirm before deleting
+                            const ok = window.confirm('Delete this resolved ticket?');
+                            if (!ok) return;
+                            try {
+                              await deleteSupportTicket(ticket.id);
+                              toast.success('Deleted ticket');
+                              await refresh();
+                            } catch (e) { toast.error('Failed to delete ticket'); }
+                          }} className="btn-ghost text-xs text-red-400">Delete</button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -84,5 +152,33 @@ export default function AdminSupport() {
         )}
       </div>
     </Layout>
+    <Modal isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} title="Ticket details">
+      {selectedTicket ? (
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-lg font-semibold">{selectedTicket.subject}</h3>
+            <p className="text-sm text-slate-400">{selectedTicket.createdAt ? new Date(selectedTicket.createdAt).toLocaleString() : 'N/A'}</p>
+          </div>
+          <div>
+            <p className="text-slate-300">{selectedTicket.message}</p>
+          </div>
+          <div>
+            <h4 className="text-sm font-medium">From</h4>
+            {selectedTicket.raiser ? (
+              <div>
+                <div className="font-medium">{selectedTicket.raiser.name}</div>
+                <div className="text-xs text-slate-400">{selectedTicket.raiser.email}</div>
+              </div>
+            ) : (
+              <div className="text-xs text-slate-400">{selectedTicket.userEmail || selectedTicket.userId || 'Unknown'}</div>
+            )}
+          </div>
+          <div className="flex gap-3">
+            <button onClick={() => setShowDetailModal(false)} className="btn-ghost">Close</button>
+          </div>
+        </div>
+      ) : null}
+    </Modal>
+    </>
   );
 }

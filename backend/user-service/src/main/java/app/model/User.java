@@ -5,6 +5,8 @@ public class User {
     public static final String ROLE_STUDENT = "student";
     public static final String ROLE_TEACHER = "teacher";
     public static final String ROLE_ADMIN = "admin";
+    public static final String STATUS_ACTIVE = "active";
+    public static final String STATUS_BLOCKED = "blocked";
 
     private String id;
     private String name;
@@ -12,10 +14,14 @@ public class User {
     private String role;
     private String phone;
     private String bio;
+    private String skills;
+    private String experience;
+    private String status;
     private long createdAt;
 
     public User() {
         this.createdAt = System.currentTimeMillis();
+        this.status = STATUS_ACTIVE;
     }
 
     public User(String id, String name, String email, String role) {
@@ -24,6 +30,7 @@ public class User {
         this.email = email;
         this.role = role;
         this.createdAt = System.currentTimeMillis();
+        this.status = STATUS_ACTIVE;
     }
 
     // getters & setters
@@ -45,6 +52,15 @@ public class User {
 
     public String getBio() { return bio; }
     public void setBio(String bio) { this.bio = bio; }
+
+    public String getSkills() { return skills; }
+    public void setSkills(String skills) { this.skills = skills; }
+
+    public String getExperience() { return experience; }
+    public void setExperience(String experience) { this.experience = experience; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
     public long getCreatedAt() { return createdAt; }
     public void setCreatedAt(long createdAt) { this.createdAt = createdAt; }

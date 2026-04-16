@@ -31,10 +31,19 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public String createUser(@RequestBody User user) throws Exception {
+    public String createUser(@RequestBody User user, HttpServletRequest request) throws Exception {
+
+        // Ensure caller is authenticated and use verified UID from token
+        String uid = (String) request.getAttribute("uid");
+        if (uid == null) {
+            // If no UID available, reject the request to avoid trusting client-provided id
+            throw new RuntimeException("Unauthorized: UID missing");
+        }
+
+        // Use server-verified UID to prevent mismatches
+        user.setId(uid);
 
         // Allow both students and teachers to register
-        // Teachers will have limited access until approved by admin
         if (user.getRole() == null || user.getRole().isEmpty()) {
             user.setRole("student"); // Default to student if no role specified
         }

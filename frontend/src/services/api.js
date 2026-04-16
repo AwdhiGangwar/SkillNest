@@ -111,6 +111,22 @@ export const getMyCourses = () => api.get("/api/my-courses");
 export const getEnrollmentsByCourse = (courseId) =>
   api.get(`/api/enrollments/course/${courseId}`);
 
+// ===================== ENROLLMENT REQUEST APIs =====================
+export const createEnrollmentRequest = (data) =>
+  api.post("/api/enrollment-requests", data);
+
+export const getEnrollmentRequests = () =>
+  api.get("/api/enrollment-requests");
+
+export const approveEnrollmentRequest = (id) =>
+  api.post(`/api/enrollment-requests/${id}/approve`);
+
+export const rejectEnrollmentRequest = (id, reason) =>
+  api.post(`/api/enrollment-requests/${id}/reject`, reason || "");
+
+// Enrollment stats
+export const getEnrollmentStats = () => api.get('/api/enrollments/stats');
+
 // ─────────────────────────────────────────────
 // 📅 CLASS APIs
 // ─────────────────────────────────────────────
@@ -167,7 +183,16 @@ export const approveTeacherRequest = (id, approvalData) =>
 export const rejectTeacherRequest = (id) =>
   api.put(`/api/admin/teacher-requests/${id}/reject`);
 
-export const getAllUsers = () => api.get("/api/admin/users");
+// Request users from the user-service route. The gateway routes `/api/users/**` to user-service.
+export const getAllUsers = () => api.get("/api/users");
+
+// =============== NEW: CATEGORIZED USERS APIs ===============
+export const getCategorizedUsers = () => api.get("/api/admin/users/categorized");
+export const getAllStudents = () => api.get("/api/admin/users/students");
+export const getAllTeachers = () => api.get("/api/admin/users/teachers");
+export const getAllBlockedUsers = () => api.get("/api/admin/users/blocked");
+export const getStudentsByStatus = (status) => api.get(`/api/admin/users/students/${status}`);
+export const getTeachersByStatus = (status) => api.get(`/api/admin/users/teachers/${status}`);
 
 export const blockUser = (id) => api.put(`/api/admin/user/${id}/block`);
 
@@ -194,13 +219,65 @@ export const getAnalytics = () => api.get("/api/analytics");
 export const getPayments = () => api.get("/api/payments");
 export const processPayment = (amount, courseId) =>
   api.post("/api/payments/process", { amount, courseId });
+export const getPaymentSummary = () => api.get("/api/payments/summary");
+export const getTeacherPayouts = () => api.get("/api/payments/teacher-payouts");
 
 // ─────────────────────────────────────────────
 // 🎧 SUPPORT APIs
 // ─────────────────────────────────────────────
-export const getSupportTickets = () => api.get("/api/support/tickets");
-export const createSupportTicket = (data) =>
-  api.post("/api/support/tickets", data);
+export const getSupportTickets = async () => {
+  try {
+    return await api.get("/api/admin/support/tickets");
+  } catch (err) {
+    if (err.status === 404) {
+      return api.get("/api/support/tickets");
+    }
+    throw err;
+  }
+};
+
+export const createSupportTicket = async (data) => {
+  try {
+    const payload = { ...data };
+    // attach user email when available so admin can see raiser even if auth middleware isn't present
+    try {
+      const user = auth.currentUser;
+      if (user && user.email) payload.userEmail = user.email;
+    } catch (e) {}
+    return await api.post("/api/admin/support/tickets", payload);
+  } catch (err) {
+    if (err.status === 404) {
+      return api.post("/api/support/tickets", data);
+    }
+    throw err;
+  }
+};
+
+export const syncSupportTicket = (ticket) => api.post('/api/admin/support/tickets/sync', ticket);
+
+export const updateSupportTicket = async (id, updates) => {
+  try {
+    return await api.put(`/api/admin/support/tickets/${id}`, updates);
+  } catch (err) {
+    if (err.status === 404) {
+      return api.put(`/api/support/tickets/${id}`, updates);
+    }
+    throw err;
+  }
+};
+
+export const deleteSupportTicket = async (id) => {
+  try {
+    return await api.delete(`/api/admin/support/tickets/${id}`);
+  } catch (err) {
+    // Try non-admin route when admin route is not available or permission is denied
+    if (err.status === 404 || err.status === 403) {
+      console.warn('[deleteSupportTicket] falling back to non-admin endpoint', { id, status: err.status });
+      return api.delete(`/api/support/tickets/${id}`);
+    }
+    throw err;
+  }
+};
 
 // ─────────────────────────────────────────────
 // ⚙️ SETTINGS APIs

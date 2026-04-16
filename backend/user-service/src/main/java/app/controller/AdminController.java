@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import app.model.TeacherRequest;
 import app.model.User;
+import app.dto.UserDTO;
 import app.service.AdminService;
 import app.service.UserService;
 
@@ -21,6 +22,8 @@ public class AdminController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private app.service.TeacherRequestService teacherRequestService;
 
     // 🔹 Get all teacher requests
     @GetMapping("/teacher-requests")
@@ -104,10 +107,23 @@ public class AdminController {
             }
 
             // Create teacher with Firebase auth using email and password
+            // Also merge teacher-request details into the created user profile
             User teacher = new User();
             teacher.setName(name);
             teacher.setEmail(email);
             teacher.setRole("teacher");
+
+            // Try to fetch the teacher request and copy additional profile fields
+            try {
+                TeacherRequest req = teacherRequestService.getRequestById(requestId);
+                if (req != null) {
+                    if (req.getSkills() != null) teacher.setSkills(req.getSkills());
+                    if (req.getExperience() != null) teacher.setExperience(req.getExperience());
+                    if (req.getBio() != null) teacher.setBio(req.getBio());
+                }
+            } catch (Exception e) {
+                System.err.println("Warning: Could not fetch teacher request details: " + e.getMessage());
+            }
 
             User createdTeacher = userService.createTeacherWithPassword(teacher, password);
 
@@ -127,6 +143,45 @@ public class AdminController {
             e.printStackTrace();
             String errorMsg = e.getMessage() != null ? e.getMessage() : "Failed to approve teacher";
             return ResponseEntity.internalServerError().body(errorMsg);
+        }
+    }
+
+    // 🔥 NEW: GET ALL USERS FOR ADMIN CATEGORIZATION
+    @GetMapping("/users")
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        try {
+            List<UserDTO> users = userService.getAllUsersAsDTO();
+            return ResponseEntity.ok(users);
+        } catch (Exception e) {
+            System.err.println("Error fetching all users: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // 🔥 NEW: BLOCK USER
+    @PutMapping("/user/{id}/block")
+    public ResponseEntity<String> blockUser(@PathVariable String id) {
+        try {
+            userService.blockUser(id);
+            return ResponseEntity.ok("User blocked successfully");
+        } catch (Exception e) {
+            System.err.println("Error blocking user: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Failed to block user");
+        }
+    }
+
+    // 🔥 NEW: UNBLOCK USER
+    @PutMapping("/user/{id}/unblock")
+    public ResponseEntity<String> unblockUser(@PathVariable String id) {
+        try {
+            userService.unblockUser(id);
+            return ResponseEntity.ok("User unblocked successfully");
+        } catch (Exception e) {
+            System.err.println("Error unblocking user: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Failed to unblock user");
         }
     }
 }

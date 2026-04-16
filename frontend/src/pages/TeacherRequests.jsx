@@ -142,7 +142,11 @@ export default function TeacherRequests() {
                     <Badge variant="info" className="ml-auto md:ml-0">Pending</Badge>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div>
+                      <span className="text-slate-500 block mb-1">Phone</span>
+                      <p className="text-slate-200">{req.phone}</p>
+                    </div>
                     <div>
                       <span className="text-slate-500 block mb-1">Skills</span>
                       <p className="text-slate-200">{req.skills}</p>

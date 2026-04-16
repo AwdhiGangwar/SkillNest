@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
 import { CardSkeleton, EmptyState, Table } from "../../components/ui";
-import { getTeacherClasses } from "../../services/api";
+import { getTeacherClasses, getAllCourses, getEnrollmentsByCourse, getUserById } from "../../services/api";
+import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
 
 export default function TeacherStudents() {
@@ -10,12 +11,66 @@ export default function TeacherStudents() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
+  const { profile } = useAuth();
+
   useEffect(() => {
-    getTeacherClasses()
-      .then((r) => setClasses(r.data || []))
-      .catch(() => toast.error("Failed to load student data"))
-      .finally(() => setLoading(false));
-  }, []);
+    async function load() {
+      try {
+        // 1. Fetch all courses and filter those taught by this teacher
+        const coursesRes = await getAllCourses();
+        const all = coursesRes.data || [];
+        const myCourses = all.filter(c => (c.teacherIds || []).includes(profile?.id) || c.teacherId === profile?.id);
+
+        // 2. For each course fetch enrollments
+        const enrollPromises = myCourses.map(c => getEnrollmentsByCourse(c.id).then(r => ({ course: c, enrollments: r.data || [] })).catch(() => ({ course: c, enrollments: [] })));
+        const courseEnrollments = await Promise.all(enrollPromises);
+
+        // 3. Build classes-like entries from enrollments for table reuse
+        const cls = [];
+        const studentIdSet = new Set();
+        for (const ce of courseEnrollments) {
+          const course = ce.course;
+          const enrolls = ce.enrollments || [];
+          enrolls.forEach(en => {
+            const sId = en.studentId;
+            studentIdSet.add(sId);
+            cls.push({
+              studentId: sId,
+              studentName: en.studentName || sId,
+              studentEmail: en.studentEmail || en.email || "—",
+              courseId: course.id,
+              courseName: course.title,
+              status: en.status || "enrolled",
+              startTime: en.enrollmentDate ? new Date(en.enrollmentDate).getTime() : null,
+            });
+          });
+        }
+
+        // 4. Optionally enrich students with user details (fetch in parallel)
+        const studentIds = Array.from(studentIdSet).filter(Boolean);
+        const userPromises = studentIds.map(id => getUserById(id).then(r => ({ id, user: r.data })).catch(() => ({ id, user: null })));
+        const users = await Promise.all(userPromises);
+        const userMap = {};
+        users.forEach(u => { if (u.user) userMap[u.id] = u.user; });
+
+        // 5. Attach user details to cls entries
+        const enriched = cls.map(item => ({
+          ...item,
+          studentName: (userMap[item.studentId]?.name) || item.studentName,
+          studentEmail: (userMap[item.studentId]?.email) || item.studentEmail,
+        }));
+
+        setClasses(enriched);
+      } catch (e) {
+        console.error(e);
+        toast.error("Failed to load student data");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    load();
+  }, [profile]);
 
   // Build unique students from classes
   const studentMap = {};
