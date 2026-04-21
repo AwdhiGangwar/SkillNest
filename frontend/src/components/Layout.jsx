@@ -28,6 +28,7 @@ function Layout({ title, subtitle, actions, children }) {
       { label: "Dashboard", path: "/student/dashboard", icon: "📊" },
       { label: "Browse Courses", path: "/student/courses", icon: "🔍" },
       { label: "My Courses", path: "/student/my-courses", icon: "📚" },
+      { label: "My Progress", path: "/student/progress", icon: "📈" },
       { label: "Classes", path: "/student/classes", icon: "📅" },
     ],
     teacher: [

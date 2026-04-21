@@ -54,18 +54,22 @@ public class CourseService {
 
     public Course getCourseById(String courseId) {
         try {
-            logger.info("Fetching course: {}", courseId);
-            Course course = restTemplate.getForObject(COURSE_SERVICE_URL + "/" + courseId, Course.class);
+            logger.info("Fetching course from service: {}", courseId);
+            String url = COURSE_SERVICE_URL + "/" + courseId;
+            logger.info("Course service URL: {}", url);
+            
+            Course course = restTemplate.getForObject(url, Course.class);
             
             if (course == null) {
-                logger.warn("Course not found: {}", courseId);
+                logger.warn("Course service returned null for courseId: {}", courseId);
                 return null;
             }
             
-            logger.info("Course found: {}", courseId);
+            logger.info("Course found from service: {} - {}", courseId, course.getTitle() != null ? course.getTitle() : "N/A");
             return course;
         } catch (org.springframework.web.client.ResourceAccessException e) {
-            logger.warn("Connection error fetching course {}, retrying: {}", courseId, e.getMessage());
+            logger.warn("Connection error fetching course {} (will retry): {}", courseId, e.getMessage());
+            // Retry once
             try {
                 Thread.sleep(500);
                 return restTemplate.getForObject(COURSE_SERVICE_URL + "/" + courseId, Course.class);
@@ -74,10 +78,13 @@ public class CourseService {
                 return null;
             }
         } catch (org.springframework.web.client.HttpClientErrorException.NotFound e) {
-            logger.warn("Course not found: {}", courseId);
+            logger.warn("Course not found (404): {}", courseId);
+            return null;
+        } catch (org.springframework.web.client.HttpClientErrorException e) {
+            logger.error("HTTP Error fetching course {}: {} - {}", courseId, e.getStatusCode(), e.getMessage());
             return null;
         } catch (Exception e) {
-            logger.error("Failed to fetch course {}: {}", courseId, e.getMessage());
+            logger.error("Failed to fetch course {}: {} - {}", courseId, e.getClass().getSimpleName(), e.getMessage());
             return null;
         }
     }

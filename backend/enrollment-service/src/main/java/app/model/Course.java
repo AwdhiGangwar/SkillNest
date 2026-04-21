@@ -1,13 +1,16 @@
 package app.model;
 
-import com.google.cloud.firestore.annotation.DocumentId;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.Instant;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Course {
 
-    @DocumentId
     private String id;
     private String teacherId;
+    private String teacherName;    // Added: cached teacher name
     private String title;
     private String description;
     private double price;
@@ -17,10 +20,14 @@ public class Course {
     private String category;
     private int duration;           // in hours
     private String level;           // beginner, intermediate, advanced
+    private int totalClasses;       // Added: total number of classes
+    private String modules;         // Added: comma-separated or JSON list of modules
     private long createdAt;
+    private long updatedAt;
 
     public Course() {
         this.createdAt = System.currentTimeMillis();
+        this.updatedAt = System.currentTimeMillis();
     }
 
     // Getters and Setters
@@ -29,6 +36,9 @@ public class Course {
 
     public String getTeacherId() { return teacherId; }
     public void setTeacherId(String teacherId) { this.teacherId = teacherId; }
+
+    public String getTeacherName() { return teacherName; }
+    public void setTeacherName(String teacherName) { this.teacherName = teacherName; }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
@@ -57,6 +67,15 @@ public class Course {
     public String getLevel() { return level; }
     public void setLevel(String level) { this.level = level; }
 
+    public int getTotalClasses() { return totalClasses; }
+    public void setTotalClasses(int totalClasses) { this.totalClasses = totalClasses; }
+
+    public String getModules() { return modules; }
+    public void setModules(String modules) { this.modules = modules; }
+
     public long getCreatedAt() { return createdAt; }
     public void setCreatedAt(long createdAt) { this.createdAt = createdAt; }
+
+    public long getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(long updatedAt) { this.updatedAt = updatedAt; }
 }

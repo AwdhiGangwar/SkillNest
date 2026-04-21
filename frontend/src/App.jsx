@@ -17,6 +17,8 @@ import StudentDashboard from "./pages/student/StudentDashboard";
 import BrowseCourses from "./pages/student/BrowseCourses";     // Browse Courses Page
 import MyCourses from "./pages/student/MyCoursesPage";        // My Enrolled Courses
 import StudentClasses from "./pages/student/StudentClasses";
+import CourseLearning from "./pages/student/CourseLearning";  // Course Learning Module
+import ProgressDashboard from "./pages/student/ProgressDashboard"; // Progress Dashboard
 
 // Teacher Pages
 import TeacherDashboard from "./pages/teacher/TeacherDashboard";
@@ -37,6 +39,7 @@ import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminPayments from "./pages/admin/AdminPayments";
 import AdminSupport from "./pages/admin/AdminSupport";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminContentManager from "./pages/admin/AdminContentManager"; // Content Manager
 
 export default function App() {
   return (
@@ -95,6 +98,22 @@ export default function App() {
             element={
               <ProtectedRoute role="student">
                 <StudentClasses />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/course-learning/:courseId"
+            element={
+              <ProtectedRoute role="student">
+                <CourseLearning />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student/progress"
+            element={
+              <ProtectedRoute role="student">
+                <ProgressDashboard />
               </ProtectedRoute>
             }
           />
@@ -227,6 +246,14 @@ export default function App() {
             element={
               <ProtectedRoute role="admin">
                 <AdminSettings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/content/:courseId"
+            element={
+              <ProtectedRoute>
+                <AdminContentManager />
               </ProtectedRoute>
             }
           />

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import Layout from "../../components/Layout";
 import { CardSkeleton, EmptyState, Badge, Modal } from "../../components/ui";
 import toast from "react-hot-toast";
-import { getEnrollmentRequests, approveEnrollmentRequest, rejectEnrollmentRequest, getAllCourses, getAllUsers, getEnrollmentsByCourse } from "../../services/api";
+import { getEnrollmentRequests, approveEnrollmentRequest, rejectEnrollmentRequest, getAllCourses, getAllUsers, getEnrollmentsByCourse, getEnrollmentStats } from "../../services/api";
 
 export default function AdminEnrollments() {
   const [enrollments, setEnrollments] = useState([]);
@@ -71,7 +71,25 @@ export default function AdminEnrollments() {
         // load enrollment requests
         try {
           const res = await getEnrollmentRequests();
-          setRequests(res.data || []);
+          const plainRequests = res.data || [];
+          
+          // Enrich requests with student and course details from already-loaded data
+          const currentCourses = courseRes?.data || mockCourses;
+          const currentStudents = usersRes?.data || mockStudents;
+          
+          const enrichedRequests = plainRequests.map(req => {
+            const student = currentStudents.find(s => s.id === req.studentId);
+            const course = currentCourses.find(c => c.id === req.courseId);
+            
+            return {
+              ...req,
+              studentName: student?.name || req.studentId,
+              studentEmail: student?.email || 'unknown@example.com',
+              courseName: course?.title || course?.name || req.courseId
+            };
+          });
+          
+          setRequests(enrichedRequests);
         } catch (e) {
           console.warn('Failed to fetch enrollment requests', e);
         }
@@ -95,6 +113,9 @@ export default function AdminEnrollments() {
           setMonthlyCount(data.monthlyCount || data.monthly || 0);
         } catch (e) {
           console.warn('Failed to fetch enrollment stats', e);
+          // Fallback: calculate from loaded enrollments
+          setWeeklyCount(0);
+          setMonthlyCount(0);
         }
 
       } catch (err) {
@@ -347,17 +368,23 @@ export default function AdminEnrollments() {
             <div className="space-y-3">
               {requests.map((r) => (
                 <div key={r.id} className="flex items-center justify-between bg-surface/20 p-3 rounded">
-                  <div>
-                    <div className="font-medium">Student: {r.studentId}</div>
-                    <div className="text-sm text-slate-400">Course: {r.courseId}</div>
-                    {r.message && <div className="text-sm mt-1">"{r.message}"</div>}
+                  <div className="flex-1">
+                    <div className="font-medium">
+                      👤 {r.studentName || r.studentId}
+                      {r.studentEmail && <span className="text-slate-400 text-sm ml-2">({r.studentEmail})</span>}
+                    </div>
+                    <div className="text-sm text-slate-400">📚 Course: {r.courseName || r.courseTitle || r.courseId}</div>
+                    {r.message && <div className="text-sm mt-1 text-slate-300">💬 "{r.message}"</div>}
+                    <div className="text-xs text-slate-500 mt-1">
+                      Requested: {new Date(r.createdAt).toLocaleDateString()}
+                    </div>
                   </div>
                   <div className="flex gap-2">
                     <button
                       onClick={async () => {
                         try {
                           await approveEnrollmentRequest(r.id);
-                          toast.success('Approved');
+                          toast.success('✅ Approved');
                           setRequests((prev) => prev.filter(x => x.id !== r.id));
                         } catch (err) {
                           toast.error(err.message || 'Failed to approve');
@@ -369,7 +396,7 @@ export default function AdminEnrollments() {
                       onClick={async () => {
                         try {
                           await rejectEnrollmentRequest(r.id);
-                          toast.success('Rejected');
+                          toast.success('❌ Rejected');
                           setRequests((prev) => prev.filter(x => x.id !== r.id));
                         } catch (err) {
                           toast.error(err.message || 'Failed to reject');

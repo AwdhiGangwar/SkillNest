@@ -1,26 +1,40 @@
 package app.controller;
-
 import app.model.Course;
 import app.model.Enrollment;
+import app.model.User;
 import app.service.EnrollmentService;
+import app.service.CourseService;
+import app.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import app.model.EnrollmentRequest;
+import app.model.EnrollmentRequestDto;
 import com.google.cloud.firestore.Firestore;
 import com.google.firebase.cloud.FirestoreClient;
 import app.model.EnrollmentStats;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api")
+
 public class EnrollmentController {
+
+    private static final Logger logger = LoggerFactory.getLogger(EnrollmentController.class);
 
     @Autowired
     private EnrollmentService enrollmentService;
+    
+    @Autowired
+    private CourseService courseService;
+    
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/health")
     public ResponseEntity<String> health() {
@@ -132,6 +146,46 @@ public class EnrollmentController {
         }
     }
 
+    @GetMapping("/enrollment-requests/enriched/all")
+    public ResponseEntity<?> listEnrollmentRequestsEnriched() {
+        try {
+            Firestore db = FirestoreClient.getFirestore();
+            List<EnrollmentRequest> list = db.collection("enrollment_requests").get().get().getDocuments()
+                    .stream().map(d -> d.toObject(EnrollmentRequest.class)).toList();
+            
+            // Enrich each request with student and course details
+            List<EnrollmentRequestDto> enriched = list.stream().map(req -> {
+                String studentName = "Unknown";
+                String studentEmail = "unknown@example.com";
+                String courseName = "Unknown Course";
+                
+                // Fetch student details
+                if (req.getStudentId() != null) {
+                    User user = userService.getUserById(req.getStudentId());
+                    if (user != null) {
+                        studentName = user.getName() != null ? user.getName() : user.getId();
+                        studentEmail = user.getEmail() != null ? user.getEmail() : "unknown@example.com";
+                    }
+                }
+                
+                // Fetch course details
+                if (req.getCourseId() != null) {
+                    Course course = courseService.getCourseById(req.getCourseId());
+                    if (course != null) {
+                        courseName = course.getTitle() != null ? course.getTitle() : "Unknown Course";
+                    }
+                }
+                
+                return new EnrollmentRequestDto(req, studentName, studentEmail, courseName);
+            }).collect(Collectors.toList());
+            
+            return ResponseEntity.ok(enriched);
+        } catch (Exception e) {
+            logger.error("Failed to fetch enriched requests", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch requests");
+        }
+    }
+
     @PostMapping("/enrollment-requests/{id}/approve")
     public ResponseEntity<?> approveRequest(@PathVariable String id, HttpServletRequest request) {
         try {
@@ -146,7 +200,9 @@ public class EnrollmentController {
             if (req == null) return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Invalid request data");
             if (!"pending".equalsIgnoreCase(req.getStatus())) return ResponseEntity.badRequest().body("Request already processed");
 
-            // Create enrollment
+            logger.info("Processing enrollment request: {} for student: {} in course: {}", id, req.getStudentId(), req.getCourseId());
+
+            // Create enrollment (enrollAsAdmin will validate course exists)
             Enrollment e = enrollmentService.enrollAsAdmin(req.getStudentId(), req.getCourseId());
 
             // Update request
@@ -155,12 +211,14 @@ public class EnrollmentController {
             req.setProcessedBy(adminUid);
             db.collection("enrollment_requests").document(id).set(req).get();
 
+            logger.info("Enrollment request approved: {}", id);
             return ResponseEntity.ok(e);
         } catch (RuntimeException re) {
+            logger.error("RuntimeException during approval: {}", re.getMessage());
             return ResponseEntity.badRequest().body(re.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to approve request");
+            logger.error("Exception during approval: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to approve request: " + e.getMessage());
         }
     }
 

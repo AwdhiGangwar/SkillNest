@@ -17,6 +17,10 @@ export default function AdminCourses() {
     price: 0,
     maxStudents: 30,
     teacherIds: [],
+    duration: 0,           // Added
+    level: "beginner",     // Added
+    totalClasses: 0,       // Added
+    modules: "",           // Added
   });
   const [users, setUsers] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -166,6 +170,10 @@ export default function AdminCourses() {
         price: course.price || 0,
         maxStudents: course.maxStudents || 30,
         teacherIds: course.teacherIds || (course.teacherId ? [course.teacherId] : []),
+        duration: course.duration || 0,
+        level: course.level || "beginner",
+        totalClasses: course.totalClasses || 0,
+        modules: course.modules || "",
       });
     } else {
       setEditingId(null);
@@ -176,6 +184,10 @@ export default function AdminCourses() {
         price: 0,
         maxStudents: 30,
         teacherIds: [],
+        duration: 0,
+        level: "beginner",
+        totalClasses: 0,
+        modules: "",
       });
     }
     setShowModal(true);
@@ -205,7 +217,7 @@ export default function AdminCourses() {
         toast.success("Course created successfully! ✅");
       }
       setShowModal(false);
-      setForm({ title: "", description: "", category: "general", price: 0, maxStudents: 30, teacherIds: [] });
+      setForm({ title: "", description: "", category: "general", price: 0, maxStudents: 30, teacherIds: [], duration: 0, level: "beginner", totalClasses: 0, modules: "" });
       await fetchCourses();
     } catch (err) {
       console.error("[AdminCourses] Course save error:", {
@@ -449,24 +461,77 @@ export default function AdminCourses() {
                   </div>
                 </div>
 
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Level</label>
+                    <select
+                      value={form.level}
+                      onChange={(e) => setForm({ ...form, level: e.target.value })}
+                      className="input-field w-full cursor-pointer"
+                    >
+                      <option value="beginner">Beginner</option>
+                      <option value="intermediate">Intermediate</option>
+                      <option value="advanced">Advanced</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Duration (Hours)</label>
+                    <input
+                      type="number"
+                      value={form.duration}
+                      onChange={(e) => setForm({ ...form, duration: parseInt(e.target.value) || 0 })}
+                      placeholder="0"
+                      min="0"
+                      className="input-field w-full"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Total Classes</label>
+                    <input
+                      type="number"
+                      value={form.totalClasses}
+                      onChange={(e) => setForm({ ...form, totalClasses: parseInt(e.target.value) || 0 })}
+                      placeholder="0"
+                      min="0"
+                      className="input-field w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Max Students</label>
+                    <input
+                      type="number"
+                      value={form.maxStudents}
+                      onChange={(e) => {
+                        let v = parseInt(e.target.value) || 0;
+                        if (v < 1) v = 1;
+                        if (v > 120) {
+                          toast.error('Maximum students per course is 120');
+                          v = 120;
+                        }
+                        setForm({ ...form, maxStudents: v });
+                      }}
+                      placeholder="30"
+                      min="1"
+                      className="input-field w-full"
+                    />
+                  </div>
+                </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Max Students</label>
-                  <input
-                    type="number"
-                    value={form.maxStudents}
-                    onChange={(e) => {
-                      let v = parseInt(e.target.value) || 0;
-                      if (v < 1) v = 1;
-                      if (v > 120) {
-                        toast.error('Maximum students per course is 120');
-                        v = 120;
-                      }
-                      setForm({ ...form, maxStudents: v });
-                    }}
-                    placeholder="30"
-                    min="1"
-                    className="input-field w-full"
+                  <label className="block text-sm font-medium text-slate-300 mb-2">Course Modules (comma-separated)</label>
+                  <textarea
+                    value={form.modules}
+                    onChange={(e) => setForm({ ...form, modules: e.target.value })}
+                    placeholder="e.g., Introduction to Python, Variables and Data Types, Functions, Object Oriented Programming"
+                    rows={4}
+                    className="input-field w-full resize-none"
                   />
+                  <p className="text-xs text-slate-400 mt-1">List each module on a new line or separated by commas</p>
                 </div>
 
                 {/* Assign teachers removed from admin modal per request */}

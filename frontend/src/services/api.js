@@ -124,6 +124,10 @@ export const approveEnrollmentRequest = (id) =>
 export const rejectEnrollmentRequest = (id, reason) =>
   api.post(`/api/enrollment-requests/${id}/reject`, reason || "");
 
+// Get enriched enrollment requests with student and course details
+export const getEnrollmentRequestsEnriched = () =>
+  api.get("/api/enrollment-requests/enriched/all");
+
 // Enrollment stats
 export const getEnrollmentStats = () => api.get('/api/enrollments/stats');
 
@@ -286,5 +290,104 @@ export const updateUserProfile = (data) =>
   api.put("/api/users/profile", data);
 export const changePassword = (data) =>
   api.post("/api/users/change-password", data);
+
+// ─────────────────────────────────────────────
+// 📖 MODULE APIs (Course Content Management)
+// ─────────────────────────────────────────────
+export const createModule = (data) =>
+  api.post("/api/modules", data);
+
+export const getModule = (moduleId) =>
+  api.get(`/api/modules/${moduleId}`);
+
+export const getModulesByCourse = (courseId) =>
+  api.get(`/api/modules/course/${courseId}`);
+
+export const updateModule = (moduleId, data) =>
+  api.put(`/api/modules/${moduleId}`, data);
+
+export const deleteModule = (moduleId) =>
+  api.delete(`/api/modules/${moduleId}`);
+
+export const reorderModules = (moduleId, moduleIds) =>
+  api.post(`/api/modules/${moduleId}/reorder`, { moduleIds });
+
+// ─────────────────────────────────────────────
+// 🎬 LESSON APIs (Course Content Management)
+// ─────────────────────────────────────────────
+export const createLesson = (data) =>
+  api.post("/api/lessons", data);
+
+export const getLesson = (lessonId) =>
+  api.get(`/api/lessons/${lessonId}`);
+
+export const getLessonsByModule = (moduleId) =>
+  api.get(`/api/lessons/module/${moduleId}`);
+
+export const updateLesson = (lessonId, data) =>
+  api.put(`/api/lessons/${lessonId}`, data);
+
+export const deleteLesson = (lessonId) =>
+  api.delete(`/api/lessons/${lessonId}`);
+
+export const reorderLessons = (lessonId, lessonIds) =>
+  api.post(`/api/lessons/${lessonId}/reorder`, { lessonIds });
+
+// ─────────────────────────────────────────────
+// 📊 PROGRESS APIs (Course Content Management)
+// ─────────────────────────────────────────────
+export const createProgress = (data) =>
+  api.post("/api/progress", data);
+
+export const getProgress = (progressId) =>
+  api.get(`/api/progress/${progressId}`);
+
+export const getProgressByLesson = (studentId, lessonId) =>
+  api.get(`/api/progress/lesson/${studentId}/${lessonId}`);
+
+export const getCourseProgress = (studentId, courseId, totalLessons) =>
+  api.get(`/api/progress/course/${studentId}/${courseId}`, { params: { totalLessons } });
+
+export const markLessonComplete = (studentId, courseId, lessonId) =>
+  api.post(`/api/progress/${studentId}/${courseId}/${lessonId}/mark-complete`);
+
+export const updateProgress = (progressId, data) =>
+  api.put(`/api/progress/${progressId}`, data);
+
+// ─────────────────────────────────────────────
+// ❓ QUIZ APIs (Course Content Management)
+// ─────────────────────────────────────────────
+export const createQuiz = (data) =>
+  api.post("/api/quizzes", data);
+
+export const getQuiz = (quizId) =>
+  api.get(`/api/quizzes/${quizId}`);
+
+export const getQuizzesByLesson = (lessonId) =>
+  api.get(`/api/quizzes/lesson/${lessonId}`);
+
+export const updateQuiz = (quizId, data) =>
+  api.put(`/api/quizzes/${quizId}`, data);
+
+export const deleteQuiz = (quizId) =>
+  api.delete(`/api/quizzes/${quizId}`);
+
+// ─────────────────────────────────────────────
+// 📝 ASSIGNMENT APIs (Course Content Management)
+// ─────────────────────────────────────────────
+export const createAssignment = (data) =>
+  api.post("/api/assignments", data);
+
+export const getAssignment = (assignmentId) =>
+  api.get(`/api/assignments/${assignmentId}`);
+
+export const getAssignmentsByLesson = (lessonId) =>
+  api.get(`/api/assignments/lesson/${lessonId}`);
+
+export const updateAssignment = (assignmentId, data) =>
+  api.put(`/api/assignments/${assignmentId}`, data);
+
+export const deleteAssignment = (assignmentId) =>
+  api.delete(`/api/assignments/${assignmentId}`);
 
 export default api;

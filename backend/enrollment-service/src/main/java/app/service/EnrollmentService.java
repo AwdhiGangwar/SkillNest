@@ -177,13 +177,20 @@ public class EnrollmentService {
                 .map(doc -> doc.toObject(Enrollment.class))
                 .toList();
 
-        // 🔥 Fetch course details safely
+        // 🔥 Fetch course details directly from Firebase (avoid API call 401 issues)
         return enrollments.stream()
                 .map(e -> {
                     try {
-                        return courseService.getCourseById(e.getCourseId());
+                        var courseDoc = db.collection("courses").document(e.getCourseId()).get().get();
+                        if (courseDoc.exists()) {
+                            logger.info("Course found in Firebase: {}", e.getCourseId());
+                            return courseDoc.toObject(Course.class);
+                        } else {
+                            logger.warn("Course not found in Firebase: {}", e.getCourseId());
+                            return null;
+                        }
                     } catch (Exception ex) {
-                        logger.warn("Failed to fetch course {}: {}", e.getCourseId(), ex.getMessage());
+                        logger.error("Failed to fetch course {} from Firebase: {}", e.getCourseId(), ex.getMessage());
                         return null;
                     }
                 })
@@ -211,12 +218,31 @@ public class EnrollmentService {
     public Enrollment enrollAsAdmin(String studentId, String courseId) throws Exception {
         Firestore db = FirestoreClient.getFirestore();
 
-        // Validate course
+        logger.info("Admin enrollment: studentId={}, courseId={}", studentId, courseId);
+        
+        // Validate course exists (with detailed logging)
+        Course course = null;
         try {
-            Course course = courseService.getCourseById(courseId);
+            logger.info("Attempting to fetch course from service: {}", courseId);
+            course = courseService.getCourseById(courseId);
+            
             if (course == null) {
-                throw new RuntimeException("Course not found");
+                logger.warn("Course service returned null for courseId: {}", courseId);
+                // Try to fetch from Firebase directly as fallback
+                logger.info("Attempting fallback: fetching course from Firebase");
+                var courseDoc = db.collection("courses").document(courseId).get().get();
+                if (courseDoc.exists()) {
+                    logger.info("Course found in Firebase");
+                    course = courseDoc.toObject(Course.class);
+                } else {
+                    logger.error("Course not found in Firebase either: {}", courseId);
+                    throw new RuntimeException("Course not found. The course may have been deleted.");
+                }
+            } else {
+                logger.info("Course found from service: {}", course.getTitle() != null ? course.getTitle() : course.getId());
             }
+            
+            // Validate capacity if course found
             int max = course.getMaxStudents();
             if (max > 0) {
                 long enrolledCount = db.collection(ENROLLMENTS_COLLECTION)
@@ -228,12 +254,15 @@ public class EnrollmentService {
                         .size();
 
                 if (enrolledCount >= max) {
+                    logger.warn("Course {} is full ({} / {})", courseId, enrolledCount, max);
                     throw new RuntimeException("Enrollment failed: course is full");
                 }
             }
         } catch (RuntimeException e) {
+            logger.error("Course validation error: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
+            logger.error("Failed to validate course: {}", e.getMessage());
             throw new RuntimeException("Failed to validate course: " + e.getMessage());
         }
 
@@ -245,11 +274,13 @@ public class EnrollmentService {
                     .get().get().isEmpty();
 
             if (already) {
+                logger.warn("Student {} already enrolled in course {}", studentId, courseId);
                 throw new RuntimeException("Student already enrolled in this course");
             }
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
+            logger.error("Failed to check enrollment: {}", e.getMessage());
             throw new RuntimeException("Failed to check enrollment: " + e.getMessage());
         }
 
@@ -268,8 +299,10 @@ public class EnrollmentService {
                     .set(enrollment)
                     .get();
 
+            logger.info("Admin enrollment completed: {}", enrollment.getId());
             return enrollment;
         } catch (Exception e) {
+            logger.error("Failed to save enrollment: {}", e.getMessage());
             throw new RuntimeException("Failed to save enrollment: " + e.getMessage());
         }
     }
@@ -281,56 +314,86 @@ public class EnrollmentService {
 
     // ==================== ENROLLMENT STATS ====================
     public EnrollmentStats getEnrollmentStats() throws Exception {
-        Firestore db = FirestoreClient.getFirestore();
+        try {
+            Firestore db = FirestoreClient.getFirestore();
 
-        long now = System.currentTimeMillis();
-        long weekAgo = now - 7L * 24 * 60 * 60 * 1000;
-        long monthAgo = now - 30L * 24 * 60 * 60 * 1000;
+            long now = System.currentTimeMillis();
+            long weekAgo = now - 7L * 24 * 60 * 60 * 1000;
+            long monthAgo = now - 30L * 24 * 60 * 60 * 1000;
 
-        // fetch recent month enrollments and aggregate
-        List<Enrollment> recent = db.collection(ENROLLMENTS_COLLECTION)
-                .whereGreaterThanOrEqualTo("createdAt", monthAgo)
-                .whereEqualTo("status", "enrolled")
-                .get().get().getDocuments()
-                .stream().map(d -> d.toObject(Enrollment.class)).toList();
+            logger.info("Calculating enrollment stats - now: {}, weekAgo: {}, monthAgo: {}", now, weekAgo, monthAgo);
 
-        int monthlyCount = recent.size();
+            // Fetch all enrolled enrollments (avoids composite index requirement)
+            // Then filter by createdAt in application code
+            List<Enrollment> allEnrolled = db.collection(ENROLLMENTS_COLLECTION)
+                    .whereEqualTo("status", "enrolled")
+                    .get().get().getDocuments()
+                    .stream()
+                    .map(d -> d.toObject(Enrollment.class))
+                    .filter(e -> e != null && e.getCreatedAt() > 0)
+                    .toList();
 
-        // weekly count = those with createdAt >= weekAgo
-        int weeklyCount = 0;
-        for (Enrollment e : recent) {
-            if (e.getCreatedAt() >= weekAgo) weeklyCount++;
+            // Filter for recent enrollments (last 30 days) in application code
+            List<Enrollment> recent = allEnrolled.stream()
+                    .filter(e -> e.getCreatedAt() >= monthAgo)
+                    .toList();
+
+            logger.info("Found {} recent enrollments", recent.size());
+
+            int monthlyCount = recent.size();
+
+            // weekly count = those with createdAt >= weekAgo
+            int weeklyCount = 0;
+            for (Enrollment e : recent) {
+                if (e != null && e.getCreatedAt() >= weekAgo) {
+                    weeklyCount++;
+                }
+            }
+
+            logger.info("Weekly count: {}, Monthly count: {}", weeklyCount, monthlyCount);
+
+            // daily counts for last 7 days
+            Map<String, Integer> dayMap = new HashMap<>();
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneId.systemDefault());
+            
+            // Initialize dayMap with last 7 days
+            for (int i = 6; i >= 0; --i) {
+                long dayStart = now - (i * 24L * 60 * 60 * 1000);
+                String label = fmt.format(Instant.ofEpochMilli(dayStart));
+                dayMap.put(label, 0);
+                logger.debug("Initialized day {}: {}", i, label);
+            }
+
+            // Aggregate enrollments by day
+            for (Enrollment e : recent) {
+                if (e != null && e.getCreatedAt() > 0) {
+                    String d = fmt.format(Instant.ofEpochMilli(e.getCreatedAt()));
+                    dayMap.put(d, dayMap.getOrDefault(d, 0) + 1);
+                }
+            }
+
+            List<String> labels = new ArrayList<>();
+            List<Integer> counts = new ArrayList<>();
+            // ensure ordered by date ascending
+            for (int i = 6; i >= 0; --i) {
+                long dayStart = now - (i * 24L * 60 * 60 * 1000);
+                String label = fmt.format(Instant.ofEpochMilli(dayStart));
+                labels.add(label);
+                counts.add(dayMap.getOrDefault(label, 0));
+                logger.debug("Day label: {}, count: {}", label, dayMap.getOrDefault(label, 0));
+            }
+
+            EnrollmentStats stats = new EnrollmentStats();
+            stats.setMonthlyCount(monthlyCount);
+            stats.setWeeklyCount(weeklyCount);
+            stats.setDailyLabels(labels);
+            stats.setDailyCounts(counts);
+            
+            logger.info("Enrollment stats calculated successfully");
+            return stats;
+        } catch (Exception e) {
+            logger.error("Error calculating enrollment stats", e);
+            throw new RuntimeException("Failed to calculate enrollment stats: " + e.getMessage(), e);
         }
-
-        // daily counts for last 7 days
-        Map<String, Integer> dayMap = new HashMap<>();
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneId.systemDefault());
-        for (int i = 6; i >= 0; --i) {
-            long dayStart = Instant.ofEpochMilli(now).minusSeconds(i * 24L * 60 * 60).toEpochMilli();
-            String label = fmt.format(Instant.ofEpochMilli(dayStart));
-            dayMap.put(label, 0);
-        }
-
-        for (Enrollment e : recent) {
-            String d = fmt.format(Instant.ofEpochMilli(e.getCreatedAt()));
-            dayMap.put(d, dayMap.getOrDefault(d, 0) + 1);
-        }
-
-        List<String> labels = new ArrayList<>();
-        List<Integer> counts = new ArrayList<>();
-        // ensure ordered by date ascending
-        for (int i = 6; i >= 0; --i) {
-            long dayStart = Instant.ofEpochMilli(now).minusSeconds(i * 24L * 60 * 60).toEpochMilli();
-            String label = fmt.format(Instant.ofEpochMilli(dayStart));
-            labels.add(label);
-            counts.add(dayMap.getOrDefault(label, 0));
-        }
-
-        EnrollmentStats stats = new EnrollmentStats();
-        stats.setMonthlyCount(monthlyCount);
-        stats.setWeeklyCount(weeklyCount);
-        stats.setDailyLabels(labels);
-        stats.setDailyCounts(counts);
-        return stats;
     }
 }

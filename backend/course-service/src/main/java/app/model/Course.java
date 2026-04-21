@@ -17,6 +17,11 @@ public class Course {
     private int maxStudents;
     private String teacherId;
     private List<String> teacherIds = new ArrayList<>();
+    private String teacherName;
+    private int totalClasses;
+    private String modules;
+    private String level;
+    private int duration;
     private long createdAt;
     private long updatedAt;
 
@@ -78,6 +83,26 @@ public class Course {
         return updatedAt;
     }
 
+    public String getTeacherName() {
+        return teacherName;
+    }
+
+    public int getTotalClasses() {
+        return totalClasses;
+    }
+
+    public String getModules() {
+        return modules;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
     // SETTERS
 
     public void setId(String id) {
@@ -118,5 +143,25 @@ public class Course {
 
     public void setUpdatedAt(long updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public void setTeacherName(String teacherName) {
+        this.teacherName = teacherName;
+    }
+
+    public void setTotalClasses(int totalClasses) {
+        this.totalClasses = totalClasses;
+    }
+
+    public void setModules(String modules) {
+        this.modules = modules;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }
