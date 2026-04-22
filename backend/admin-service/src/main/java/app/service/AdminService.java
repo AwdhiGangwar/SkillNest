@@ -1,8 +1,11 @@
 package app.service;
 
+import java.util.Map;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +21,8 @@ import app.model.User;
 @Service
 public class AdminService {
 
+    private static final Logger logger = LoggerFactory.getLogger(AdminService.class);
+
     @Autowired
     private UserServiceClient userClient;
 
@@ -27,22 +32,69 @@ public class AdminService {
     @Autowired
     private EnrollmentServiceClient enrollmentClient;
 
+    @Autowired
+    private PaymentService paymentService;
+
+    @Autowired
+    private SupportService supportService;
+
     // ================== DASHBOARD ==================
     public DashboardDTO getDashboardData() {
 
-        List<?> users = userClient.getAllUsers();
-        List<?> courses = courseClient.getAllCourses();
-        List<?> enrollments = enrollmentClient.getAllEnrollments();
+        // Use null-safe checks to prevent 500 errors if a downstream service is down
+        List<?> users = null;
+        List<?> courses = null;
+        List<?> enrollments = null;
+        
+        try {
+         users = userClient.getAllUsersAdmin();
+        } catch (Exception e) {
+            logger.error("Failed to fetch users for dashboard: {}", e.getMessage());
+        }
+
+        try {
+            courses = courseClient.getAllCourses();
+        } catch (Exception e) {
+            logger.error("Failed to fetch courses for dashboard: {}", e.getMessage());
+        }
+
+        try {
+            enrollments = enrollmentClient.getAllEnrollments();
+        } catch (Exception e) {
+            logger.error("Failed to fetch enrollments for dashboard: {}", e.getMessage());
+        }
 
         int totalUsers = (users != null) ? users.size() : 0;
         int totalCourses = (courses != null) ? courses.size() : 0;
         int totalEnrollments = (enrollments != null) ? enrollments.size() : 0;
 
-        return new DashboardDTO(
-                totalUsers,
-                totalCourses,
-                totalEnrollments
-        );
+        // Fetch Revenue from PaymentService
+        double revenue = 0.0;
+        try {
+            Map<String, Object> paymentSummary = paymentService.getSummary();
+            if (paymentSummary != null && paymentSummary.get("totalRevenue") != null) {
+                revenue = ((Number) paymentSummary.get("totalRevenue")).doubleValue();
+            }
+        } catch (Exception e) {
+            logger.error("Failed to fetch revenue for dashboard: {}", e.getMessage());
+            revenue = 0.0;
+        }
+
+        // Fetch Open Tickets from SupportService
+        int openTickets = 0;
+        try {
+            List<Map<String, Object>> tickets = supportService.getUserTickets(null);
+            if (tickets != null) {
+                openTickets = (int) tickets.stream()
+                    .filter(t -> t != null && "open".equals(t.get("status")))
+                    .count();
+            }
+        } catch (Exception e) {
+            logger.error("Failed to fetch support tickets for dashboard: {}", e.getMessage());
+            openTickets = 0;
+        }
+
+        return new DashboardDTO(totalUsers, totalCourses, totalEnrollments, revenue, openTickets);
     }
 
     // ================== APPROVE TEACHER ==================

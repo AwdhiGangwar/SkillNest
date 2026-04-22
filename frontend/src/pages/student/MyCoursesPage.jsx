@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { getMyCourses, createSupportTicket } from '../../services/api'; // ✅ use api.js
 import { Modal } from '../../components/ui';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 const MyCoursesPage = () => {
+  const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showTicketModal, setShowTicketModal] = useState(false);
@@ -97,6 +99,12 @@ const MyCoursesPage = () => {
                 </div>
 
                 <div className="flex gap-2">
+                  <button
+                    onClick={() => navigate(`/course-learning/${course.id}`)}
+                    className="flex-1 bg-brand-500 text-white px-4 py-2 rounded-lg font-semibold transition hover:bg-brand-600"
+                  >
+                    Start Learning
+                  </button>
                   <button
                     onClick={() => {
                       setSelectedCourse(course);

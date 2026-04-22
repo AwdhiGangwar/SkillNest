@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getLessonsByModule } from "../services/api";
+import { getLessonsByModule } from "../services/api"; // अगर यह src/components में है, तो ../services/api सही है
 import toast from "react-hot-toast";
 
 const ModuleSidebar = ({

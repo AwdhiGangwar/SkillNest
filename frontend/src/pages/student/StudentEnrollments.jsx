@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
 import { CardSkeleton, EmptyState, Badge } from "../../components/ui";
 import { getMyCourses } from "../../services/api";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 export default function StudentEnrollments() {
+  const navigate = useNavigate();
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -56,10 +58,11 @@ export default function StudentEnrollments() {
               
               <div className="flex items-center justify-between mb-4">
                 <span className="text-brand-400 font-semibold">${course.price}</span>
-                <span className="text-slate-500 text-sm">👨‍🏫 {course.teacherId}</span>
+                <span className="text-slate-500 text-sm">👨‍🏫 {course.teacherName}</span>
               </div>
 
               <button
+                onClick={() => navigate(`/course-learning/${course.id}`)}
                 className="w-full btn-primary py-2 rounded-lg text-sm"
               >
                 View Course

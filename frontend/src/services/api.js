@@ -98,6 +98,7 @@ export const getAllCourses = () => api.get("/api/courses");
 export const getCourseById = (id) => api.get(`/api/courses/${id}`);
 export const createCourse = (data) => api.post("/api/courses", data);
 export const updateCourse = (id, data) => api.put(`/api/courses/${id}`, data);
+export const updateCourseStatus = (id, isPublished) => api.patch(`/api/courses/${id}/status`, { isPublished });
 export const deleteCourse = (id) => api.delete(`/api/courses/${id}`);
 
 // ─────────────────────────────────────────────
@@ -128,7 +129,7 @@ export const rejectEnrollmentRequest = (id, reason) =>
 export const getEnrollmentRequestsEnriched = () =>
   api.get("/api/enrollment-requests/enriched/all");
 
-// Enrollment stats
+// Enrollment and Admin stats
 export const getEnrollmentStats = () => api.get('/api/enrollments/stats');
 
 // ─────────────────────────────────────────────
@@ -137,6 +138,8 @@ export const getEnrollmentStats = () => api.get('/api/enrollments/stats');
 export const getTeacherClasses = () => api.get("/api/classes/teacher");
 export const getStudentClasses = () => api.get("/api/classes/student");
 export const createClass = (data) => api.post("/api/classes", data);
+export const getClassesByCourseId = (courseId) => api.get(`/api/classes/course/${courseId}`);
+
 export const rescheduleClass = (id, data) =>
   api.put(`/api/classes/${id}/reschedule`, data);
 export const cancelClass = (id) =>
@@ -202,7 +205,17 @@ export const blockUser = (id) => api.put(`/api/admin/user/${id}/block`);
 
 export const unblockUser = (id) => api.put(`/api/admin/user/${id}/unblock`);
 
-export const getAdminDashboard = () => api.get("/api/admin/dashboard");
+export const getAdminDashboard = async () => {
+  try {
+    return await api.get("/api/admin/dashboard");
+  } catch (err) {
+    // If the aggregator fails, attempt to fetch enrollment stats as a fallback for partial UI load
+    if (err.status === 500) {
+      console.warn("[api.js] Admin Dashboard aggregator failed, might be a downstream service issue.");
+    }
+    throw err;
+  }
+};
 
 // Refactored to use more descriptive parameter name to avoid scope confusion
 export const createTeacher = (teacherData) =>
@@ -309,8 +322,8 @@ export const updateModule = (moduleId, data) =>
 export const deleteModule = (moduleId) =>
   api.delete(`/api/modules/${moduleId}`);
 
-export const reorderModules = (moduleId, moduleIds) =>
-  api.post(`/api/modules/${moduleId}/reorder`, { moduleIds });
+export const reorderModules = (courseId, moduleIds) =>
+  api.post(`/api/courses/${courseId}/modules/reorder`, { moduleIds });
 
 // ─────────────────────────────────────────────
 // 🎬 LESSON APIs (Course Content Management)
@@ -330,8 +343,9 @@ export const updateLesson = (lessonId, data) =>
 export const deleteLesson = (lessonId) =>
   api.delete(`/api/lessons/${lessonId}`);
 
-export const reorderLessons = (lessonId, lessonIds) =>
-  api.post(`/api/lessons/${lessonId}/reorder`, { lessonIds });
+// Reordering uses the parent ID to update the sequence of child IDs
+export const reorderLessons = (moduleId, lessonIds) =>
+  api.post(`/api/modules/${moduleId}/lessons/reorder`, { lessonIds });
 
 // ─────────────────────────────────────────────
 // 📊 PROGRESS APIs (Course Content Management)
@@ -389,5 +403,12 @@ export const updateAssignment = (assignmentId, data) =>
 
 export const deleteAssignment = (assignmentId) =>
   api.delete(`/api/assignments/${assignmentId}`);
+
+// ─────────────────────────────────────────────
+// 📅 LIVE CLASS CRUD
+// ─────────────────────────────────────────────
+export const getClassesByCourse = (courseId) => api.get(`/api/classes/course/${courseId}`);
+export const deleteClass = (classId) => api.delete(`/api/classes/${classId}`);
+export const updateClass = (classId, data) => api.put(`/api/classes/${classId}`, data);
 
 export default api;

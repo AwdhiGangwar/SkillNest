@@ -94,9 +94,18 @@ export default function StudentDashboard() {
           />
         ) : (
           courses.map((course) => (
-            <div key={course.id} className="p-3 border-b">
-              <h3 className="text-white">{course.title}</h3>
-              <p className="text-gray-400 text-sm">{course.description}</p>
+            <div 
+              key={course.id} 
+              onClick={() => navigate(`/course-learning/${course.id}`)}
+              className="p-4 border-b border-surface-border last:border-0 hover:bg-surface-hover cursor-pointer transition-all rounded-lg group mb-2"
+            >
+              <div className="flex justify-between items-center">
+                <h3 className="text-white group-hover:text-brand-400 transition-colors font-semibold">{course.title}</h3>
+                <span className="text-xs text-brand-400 font-medium group-hover:underline">Resume Learning →</span>
+              </div>
+              <p className="text-slate-400 text-sm line-clamp-1 mt-1">
+                {course.description}
+              </p>
             </div>
           ))
         )}

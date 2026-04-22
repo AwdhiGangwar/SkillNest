@@ -85,6 +85,18 @@ public class EnrollmentController {
         }
     }
 
+       @GetMapping("/enrollments")
+    public ResponseEntity<?> getAllEnrollments() {
+        try {
+            List<app.model.Enrollment> list = enrollmentService.getAllEnrollments();
+            return ResponseEntity.ok(list);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to fetch all enrollments");
+        }
+    }
+
     @GetMapping("/enrollments/course/{courseId}")
     public ResponseEntity<?> getEnrollmentsByCourse(@PathVariable String courseId) {
         try {

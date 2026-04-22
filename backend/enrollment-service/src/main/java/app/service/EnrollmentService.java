@@ -198,6 +198,23 @@ public class EnrollmentService {
                 .toList();
     }
 
+       public List<Enrollment> getAllEnrollments() throws Exception {
+        try {
+            Firestore db = FirestoreClient.getFirestore();
+            return db.collection(ENROLLMENTS_COLLECTION)
+                    .get()
+                    .get()
+                    .getDocuments()
+                    .stream()
+                    .map(doc -> doc.toObject(Enrollment.class))
+                    .filter(e -> e != null)
+                    .collect(java.util.stream.Collectors.toList());
+        } catch (Exception e) {
+            logger.error("Failed to fetch all enrollments: {}", e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
     // ==================== GET ENROLLMENTS BY COURSE ====================
     public List<Enrollment> getEnrollmentsByCourse(String courseId) throws Exception {
         Firestore db = FirestoreClient.getFirestore();

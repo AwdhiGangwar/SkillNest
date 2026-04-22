@@ -134,7 +134,7 @@ function Layout({ title, subtitle, actions, children }) {
 
         {/* MOBILE MENU */}
         {mobileMenuOpen && (
-          <div className="lg:hidden glass-card border-0 rounded-0 p-4 space-y-2 border-b border-surface-border">
+          <div className="lg:hidden glass-card border-0 rounded-0 p-4 space-y-2 border-b border-surface-border sticky top-[64px] z-40 bg-surface/95 backdrop-blur-md">
             {currentNavItems.map((item) => (
               <button
                 key={item.path}
@@ -142,7 +142,7 @@ function Layout({ title, subtitle, actions, children }) {
                   navigate(item.path);
                   setMobileMenuOpen(false);
                 }}
-                className={`w-full text-left nav-item ${isActive(item.path) ? "active" : ""}`}
+                className={`w-full flex items-center gap-3 text-left nav-item ${isActive(item.path) ? "active" : ""}`}
               >
                 <span className="text-lg">{item.icon}</span>
                 <span>{item.label}</span>

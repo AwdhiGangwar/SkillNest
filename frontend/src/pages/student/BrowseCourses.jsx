@@ -90,7 +90,25 @@ const BrowseCourses = () => {
                 {course.description}
               </p>
 
-              <div className="grid grid-cols-3 gap-2 text-xs text-gray-600 mb-4 py-3 border-y">
+              {course.modules && (
+                <div className="mb-4">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Modules</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {(typeof course.modules === 'string' ? course.modules.split(',') : course.modules)
+                      .slice(0, 3)
+                      .map((module, idx) => (
+                        <span key={idx} className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded border border-blue-100 truncate max-w-[100px]">
+                          {module.trim()}
+                        </span>
+                      ))}
+                    {(typeof course.modules === 'string' ? course.modules.split(',') : course.modules).length > 3 && (
+                      <span className="text-[10px] text-slate-400 font-medium">+ more</span>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div className="grid grid-cols-3 gap-2 text-xs text-blue-600 mb-4 py-3 border-y">
                 {course.totalClasses && (
                   <div className="text-center">
                     <span className="block font-semibold text-gray-900">{course.totalClasses}</span>
@@ -184,7 +202,7 @@ const BrowseCourses = () => {
                   </div>
                   <h2 className="text-3xl font-bold text-gray-900 mb-2">{selectedCourse.title}</h2>
                   {selectedCourse.teacherName && (
-                    <p className="text-lg text-purple-600 font-semibold">
+                    <p className="text-lg text-black font-semibold">
                       👨‍🏫 Instructor: {selectedCourse.teacherName}
                     </p>
                   )}
@@ -211,14 +229,14 @@ const BrowseCourses = () => {
                 </div>
                 {selectedCourse.duration && (
                   <div>
-                    <p className="text-gray-600 text-sm mb-1">Duration</p>
-                    <p className="text-2xl font-bold text-blue-600">{selectedCourse.duration}h</p>
+                    <p className="text-black text-sm mb-1">Duration</p>
+                    <p className="text-2xl font-bold text-black">{selectedCourse.duration}</p>
                   </div>
                 )}
                 {selectedCourse.totalClasses && (
                   <div>
                     <p className="text-gray-600 text-sm mb-1">Total Classes</p>
-                    <p className="text-2xl font-bold text-purple-600">{selectedCourse.totalClasses}</p>
+                    <p className="text-2xl font-bold text-blue-600">{selectedCourse.totalClasses}</p>
                   </div>
                 )}
                 <div>
@@ -243,16 +261,7 @@ const BrowseCourses = () => {
               )}
 
               <div className="flex gap-3">
-                <button
-                  onClick={() => {
-                    setShowDetailModal(false);
-                    handleEnroll(selectedCourse.id, selectedCourse.title);
-                  }}
-                  disabled={enrollingId === selectedCourse.id}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-6 py-3 rounded-xl font-semibold transition"
-                >
-                  {enrollingId === selectedCourse.id ? "Enrolling..." : "Enroll Now"}
-                </button>
+                
                 <button
                   onClick={() => {
                     setShowDetailModal(false);

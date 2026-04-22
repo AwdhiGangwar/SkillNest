@@ -1,5 +1,6 @@
 // src/pages/teacher/TeacherCourses.jsx
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "../../components/Layout";
 import { CardSkeleton, EmptyState, Modal } from "../../components/ui";
 import { getAllCourses, createCourse, createSupportTicket } from "../../services/api";
@@ -258,6 +259,7 @@ export default function TeacherCourses() {
 }
 
 function TeacherCourseCard({ course }) {
+  const navigate = useNavigate();
   const gradients = [
     "from-brand-500/20 to-cyan-500/10",
     "from-violet-500/20 to-purple-500/10",
@@ -284,6 +286,12 @@ function TeacherCourseCard({ course }) {
             Active
           </span>
         </div>
+        <button 
+          onClick={() => navigate(`/course-content/${course.id}`)}
+          className="w-full mt-4 py-2 bg-surface-hover hover:bg-brand-500/20 border border-surface-border hover:border-brand-500/50 text-white text-xs font-semibold rounded-lg transition-all"
+        >
+          Manage Content
+        </button>
       </div>
     </div>
   );

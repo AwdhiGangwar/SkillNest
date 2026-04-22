@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
-import { getAllCourses, createCourse, updateCourse, deleteCourse, getEnrollmentsByCourse, getAllUsers, getUserById } from "../../services/api";
+import { useNavigate } from "react-router-dom";
+import { getAllCourses, createCourse, updateCourse, deleteCourse, getEnrollmentsByCourse, getAllUsers, getUserById, updateCourseStatus } from "../../services/api";
 import { CardSkeleton, EmptyState, Badge, Modal } from "../../components/ui";
 import toast from "react-hot-toast";
 
 export default function AdminCourses() {
+  const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -17,6 +19,7 @@ export default function AdminCourses() {
     price: 0,
     maxStudents: 30,
     teacherIds: [],
+    teacherId: "",         // Track primary teacher
     duration: 0,           // Added
     level: "beginner",     // Added
     totalClasses: 0,       // Added
@@ -72,6 +75,13 @@ export default function AdminCourses() {
     const m = {};
     (users || []).forEach(u => { m[u.uid || u.id] = u; });
     return m;
+  }, [users]);
+
+  // ✅ Define teacherList to fix the ReferenceError
+  const teacherList = React.useMemo(() => {
+    return (users || []).filter(u => 
+      u.role?.toLowerCase() === 'teacher' || u.role?.toLowerCase() === 'admin'
+    );
   }, [users]);
 
   const categories = React.useMemo(() => {
@@ -170,6 +180,7 @@ export default function AdminCourses() {
         price: course.price || 0,
         maxStudents: course.maxStudents || 30,
         teacherIds: course.teacherIds || (course.teacherId ? [course.teacherId] : []),
+        teacherId: course.teacherId || "",
         duration: course.duration || 0,
         level: course.level || "beginner",
         totalClasses: course.totalClasses || 0,
@@ -184,6 +195,7 @@ export default function AdminCourses() {
         price: 0,
         maxStudents: 30,
         teacherIds: [],
+        teacherId: "",
         duration: 0,
         level: "beginner",
         totalClasses: 0,
@@ -237,6 +249,16 @@ export default function AdminCourses() {
       }
       
       toast.error(errorMessage);
+    }
+  };
+
+  const handleTogglePublish = async (id, currentStatus) => {
+    try {
+      await updateCourseStatus(id, !currentStatus);
+      toast.success(currentStatus ? "Course unpublished" : "Course published! 🚀");
+      fetchCourses();
+    } catch (err) {
+      toast.error("Failed to update course status");
     }
   };
 
@@ -344,6 +366,7 @@ export default function AdminCourses() {
                   <th className="px-6 py-4">Teachers</th>
                   <th className="px-6 py-4">Students</th>
                   <th className="px-6 py-4">Max Seats</th>
+                  <th className="px-6 py-4">Status</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
@@ -369,6 +392,14 @@ export default function AdminCourses() {
                         {course.studentCount}
                       </span>
                     </td>
+                    <td className="px-6 py-5">
+                      <button 
+                        onClick={() => handleTogglePublish(course.id, course.isPublished)}
+                        className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${course.isPublished ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-500/20 text-slate-400'}`}
+                      >
+                        {course.isPublished ? "Published" : "Draft"}
+                      </button>
+                    </td>
                     <td className="px-6 py-5 text-slate-300">{course.maxStudents || course.totalSeats}</td>
                       <td className="px-6 py-5 text-right flex items-center justify-end gap-2">
                       <button
@@ -376,6 +407,12 @@ export default function AdminCourses() {
                         className="px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 text-xs font-semibold hover:bg-blue-500 hover:text-white transition-all"
                       >
                         Edit
+                      </button>
+                      <button
+                        onClick={() => navigate(`/course-content/${course.id}`)} // Verified: This is the correct shared path
+                        className="px-3 py-1.5 rounded-lg bg-brand-500/10 text-brand-400 text-xs font-semibold hover:bg-brand-500 hover:text-white transition-all"
+                      >
+                        Manage Content
                       </button>
                       <button
                         onClick={() => handleDelete(course.id)}
@@ -427,6 +464,23 @@ export default function AdminCourses() {
                     rows={4}
                     className="input-field w-full resize-none"
                   />
+                </div>
+
+                {/* Primary Teacher Assignment */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">Assign Primary Instructor</label>
+                  <select
+                    value={form.teacherId}
+                    onChange={(e) => setForm({ ...form, teacherId: e.target.value })}
+                    className="input-field w-full cursor-pointer bg-surface"
+                  >
+                    <option value="">-- Select a Teacher --</option>
+                    {teacherList.map((t) => (
+                      <option key={t.uid || t.id} value={t.uid || t.id}>
+                        {t.name || t.displayName} ({t.email})
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">

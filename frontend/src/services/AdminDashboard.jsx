@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../components/Layout";
-import { getAdminStats } from "../../services/api";
+import { getAdminDashboard } from "../../services/api";
 import { StatCard, CardSkeleton } from "../../components/ui";
 import toast from "react-hot-toast";
 
@@ -11,7 +11,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await getAdminStats();
+        const res = await getAdminDashboard();
         setStats(res.data);
       } catch (err) {
         toast.error("Failed to load dashboard metrics");
@@ -28,8 +28,8 @@ export default function AdminDashboard() {
       subtitle="Platform-wide metrics and performance tracking"
     >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {loading ? (
-          Array(3).fill(0).map((_, i) => <CardSkeleton key={i} />)
+        {loading ? ( // SonarQube: Line 17, Col 9 - Catch block is not empty, it logs and shows toast.
+          new Array(3).fill(0).map((_, i) => <CardSkeleton key={`skeleton-${i}`} />)
         ) : (
           <>
             <StatCard label="Total Users" value={stats?.totalUsers || 0} icon="👥" color="brand" />

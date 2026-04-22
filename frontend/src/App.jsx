@@ -250,7 +250,7 @@ export default function App() {
             }
           />
           <Route
-            path="/admin/content/:courseId"
+            path="/course-content/:courseId"
             element={
               <ProtectedRoute>
                 <AdminContentManager />

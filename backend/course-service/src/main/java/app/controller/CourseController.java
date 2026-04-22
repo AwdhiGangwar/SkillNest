@@ -58,14 +58,18 @@ public class CourseController {
                 course.setMaxStudents(120);
             }
 
-            // set primary teacher and also add to teacherIds for multi-teacher support
-            course.setTeacherId(uid);
+            // ✅ Respect the teacherId sent from Admin Portal
+            if (course.getTeacherId() == null || course.getTeacherId().isEmpty()) {
+                course.setTeacherId(uid);
+            }
+
+            // Synchronize teacherIds list with the primary teacherId
             if (course.getTeacherIds() == null) {
                 java.util.ArrayList<String> t = new java.util.ArrayList<>();
-                t.add(uid);
+                t.add(course.getTeacherId());
                 course.setTeacherIds(t);
-            } else if (!course.getTeacherIds().contains(uid)) {
-                course.getTeacherIds().add(uid);
+            } else if (!course.getTeacherIds().contains(course.getTeacherId())) {
+                course.getTeacherIds().add(course.getTeacherId());
             }
 
             String result = courseService.createCourse(course);
@@ -108,13 +112,15 @@ public class CourseController {
             if (course.getMaxStudents() > 120) {
                 course.setMaxStudents(120);
             }
-            course.setTeacherId(uid);
+            if (course.getTeacherId() == null || course.getTeacherId().isEmpty()) {
+                course.setTeacherId(uid);
+            }
             if (course.getTeacherIds() == null) {
                 java.util.ArrayList<String> t = new java.util.ArrayList<>();
-                t.add(uid);
+                t.add(course.getTeacherId());
                 course.setTeacherIds(t);
-            } else if (!course.getTeacherIds().contains(uid)) {
-                course.getTeacherIds().add(uid);
+            } else if (!course.getTeacherIds().contains(course.getTeacherId())) {
+                course.getTeacherIds().add(course.getTeacherId());
             }
 
             String result = courseService.updateCourse(id, course);
