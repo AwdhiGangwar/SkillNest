@@ -8,6 +8,10 @@ public class ClassEntity {
     private String courseId;
     private long scheduledAt;
     private String status; // scheduled, completed, cancelled
+  // ✅ Yeh 3 fields add karo
+    private String title;
+    private String startTime;
+    private String meetingLink;
 
     // 🔹 Default Constructor (IMPORTANT for Firestore)
     public ClassEntity() {
@@ -72,5 +76,29 @@ public class ClassEntity {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getMeetingLink() {
+        return meetingLink;
+    }
+
+    public void setMeetingLink(String meetingLink) {
+        this.meetingLink = meetingLink;
     }
 }

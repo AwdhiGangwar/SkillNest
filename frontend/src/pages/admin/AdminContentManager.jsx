@@ -57,29 +57,19 @@ const AdminContentManager = () => {
     }
   };
 
+  
   const handleAddModule = async (e) => {
     e.preventDefault();
     const title = e.target.title.value;
     try {
       await createModule({ courseId, title, orderNo: modules.length + 1 });
       toast.success("Module added");
-      fetchModules();
+      fetchModules();        // ← yeh fetch kar raha hai
       setShowModuleModal(false);
     } catch (err) {
       toast.error("Error creating module");
     }
   };
-
-  const handleDeleteModule = async (id) => {
-    if (!window.confirm("Delete module and all its lessons?")) return;
-    try {
-      await deleteModule(id);
-      toast.success("Module deleted");
-      fetchModules();
-      if (selectedModule?.id === id) setSelectedModule(null);
-    } catch (e) { toast.error("Delete failed"); }
-  };
-
   const handleReorder = async (type, index, direction) => {
     const items = type === 'module' ? [...modules] : [...lessons];
     const newIndex = direction === 'up' ? index - 1 : index + 1;
@@ -105,14 +95,15 @@ const AdminContentManager = () => {
     e.preventDefault();
     const formData = new FormData(e.target);
     try {
-      await createLesson({
-        moduleId: selectedModule.id,
-        courseId,
-        title: formData.get("title"),
-        type: formData.get("type"), // VIDEO or PDF
-        videoUrl: formData.get("url"),
-        duration: formData.get("duration"),
-      });
+      // AdminContentManager.jsx mein handleAddLesson fix karo
+await createLesson({
+    moduleId: selectedModule.id,
+    courseId,
+    title: formData.get("title"),
+    type: formData.get("type"),
+    videoUrl: formData.get("url"),
+    duration: parseInt(formData.get("duration")) || 0,  // ✅ int parse karo
+});
       toast.success("Lesson added!");
       handleSelectModule(selectedModule);
     } catch (e) { toast.error("Failed to add lesson"); }

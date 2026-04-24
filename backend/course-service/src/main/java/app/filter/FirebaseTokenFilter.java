@@ -26,9 +26,7 @@ public class FirebaseTokenFilter extends OncePerRequestFilter {
         String method = request.getMethod();
         logger.debug("Processing request: {} {}", method, path);
 
-        // allow public endpoints (for now)
         if (path.equals("/health") || path.equals("/users") || path.equals("/me")) {
-            logger.debug("Allowing public endpoint: {}", path);
             filterChain.doFilter(request, response);
             return;
         }
@@ -36,7 +34,6 @@ public class FirebaseTokenFilter extends OncePerRequestFilter {
         String header = request.getHeader("Authorization");
 
         if (header == null || !header.startsWith("Bearer ")) {
-            logger.warn("Missing or invalid Authorization header for path: {}", path);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
             response.getWriter().write("{\"error\": \"Missing or invalid Authorization header\"}");
@@ -47,11 +44,25 @@ public class FirebaseTokenFilter extends OncePerRequestFilter {
 
         try {
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
-
             String uid = decodedToken.getUid();
             logger.info("Token verified for UID: {}", uid);
-
             request.setAttribute("uid", uid);
+
+            // ✅ Role fetch karo
+            try {
+                com.google.cloud.firestore.Firestore db = 
+                    com.google.firebase.cloud.FirestoreClient.getFirestore();
+                com.google.cloud.firestore.DocumentSnapshot userDoc = 
+                    db.collection("users").document(uid).get().get();
+                
+                if (userDoc.exists()) {
+                    String role = userDoc.getString("role");
+                    request.setAttribute("role", role);
+                    logger.info("Role set for UID: {} -> {}", uid, role);
+                }
+            } catch (Exception roleEx) {
+                logger.warn("Could not fetch role for UID: {}", uid);
+            }
 
         } catch (Exception e) {
             logger.error("Invalid Firebase token: {}", e.getMessage(), e);
@@ -61,6 +72,6 @@ public class FirebaseTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(request, response); // ✅ Yeh missing tha
     }
 }

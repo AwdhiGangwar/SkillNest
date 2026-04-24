@@ -179,16 +179,17 @@ export const applyAsTeacher = (data) =>
   api.post("/api/teacher-requests", data);
 
 // ─────────────────────────────────────────────
-// 🛠️ ADMIN APIs
+// 🛠️ ADMIN APIs   TEACHER REQUEST
 // ─────────────────────────────────────────────
 export const getTeacherRequests = () =>
   api.get("/api/teacher-requests");
 
+
 export const approveTeacherRequest = (id, approvalData) =>
-  api.post(`/api/admin/teacher-requests/${id}/approve`, approvalData);
+  api.post(`/api/teacher-requests/${id}/approve`, approvalData);
 
 export const rejectTeacherRequest = (id) =>
-  api.put(`/api/admin/teacher-requests/${id}/reject`);
+  api.put(`/api/teacher-requests/${id}/reject`); 
 
 // Request users from the user-service route. The gateway routes `/api/users/**` to user-service.
 export const getAllUsers = () => api.get("/api/users");

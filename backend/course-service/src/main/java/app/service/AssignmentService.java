@@ -25,7 +25,7 @@ public class AssignmentService {
             Firestore db = FirestoreClient.getFirestore();
             db.collection(COLLECTION).document(assignment.getId()).set(assignment).get();
 
-            logger.info("Assignment created: {} for lesson: {}", assignment.getId(), assignment.getLessonId());
+            logger.info("Assignment created: {}", assignment.getId());
             return assignment.getId();
         } catch (Exception e) {
             logger.error("Error creating assignment: {}", e.getMessage(), e);
@@ -36,43 +36,34 @@ public class AssignmentService {
     public Assignment getAssignment(String assignmentId) throws Exception {
         try {
             Firestore db = FirestoreClient.getFirestore();
-            Assignment assignment = db.collection(COLLECTION).document(assignmentId)
-                    .get()
-                    .get()
-                    .toObject(Assignment.class);
-
-            return assignment;
+            return db.collection(COLLECTION).document(assignmentId)
+                    .get().get().toObject(Assignment.class);
         } catch (Exception e) {
             logger.error("Error getting assignment: {}", e.getMessage(), e);
             throw e;
         }
     }
 
-    public List<Assignment> getAssignmentsByLesson(String lessonId) throws Exception {
-        try {
-            Firestore db = FirestoreClient.getFirestore();
-            List<Assignment> assignments = db.collection(COLLECTION)
-                    .whereEqualTo("lessonId", lessonId)
-                    .orderBy("orderNo")
-                    .get()
-                    .get()
-                    .toObjects(Assignment.class);
-
-            logger.info("Retrieved {} assignments for lesson: {}", assignments.size(), lessonId);
-            return assignments;
-        } catch (Exception e) {
-            logger.error("Error getting assignments for lesson {}: {}", lessonId, e.getMessage(), e);
-            throw e;
-        }
-    }
+  public List<Assignment> getAssignmentsByCourse(String courseId) throws Exception {
+    Firestore db = FirestoreClient.getFirestore();
+    return db.collection(COLLECTION)
+            .whereEqualTo("courseId", courseId)
+            .get().get().toObjects(Assignment.class);
+}
+// ✅ orderBy hata do
+public List<Assignment> getAssignmentsByLesson(String lessonId) throws Exception {
+    Firestore db = FirestoreClient.getFirestore();
+    return db.collection(COLLECTION)
+            .whereEqualTo("lessonId", lessonId)
+            // .orderBy("orderNo") ← removed
+            .get().get().toObjects(Assignment.class);
+}
 
     public void updateAssignment(String assignmentId, Assignment assignment) throws Exception {
         try {
             assignment.setUpdatedAt(System.currentTimeMillis());
             Firestore db = FirestoreClient.getFirestore();
             db.collection(COLLECTION).document(assignmentId).set(assignment).get();
-
-            logger.info("Assignment updated: {}", assignmentId);
         } catch (Exception e) {
             logger.error("Error updating assignment: {}", e.getMessage(), e);
             throw e;
@@ -83,8 +74,6 @@ public class AssignmentService {
         try {
             Firestore db = FirestoreClient.getFirestore();
             db.collection(COLLECTION).document(assignmentId).delete().get();
-
-            logger.info("Assignment deleted: {}", assignmentId);
         } catch (Exception e) {
             logger.error("Error deleting assignment: {}", e.getMessage(), e);
             throw e;

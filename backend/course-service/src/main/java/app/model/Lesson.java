@@ -18,6 +18,8 @@ public class Lesson {
     private int orderNo;
     private long createdAt;
     private long updatedAt;
+    private String type;      // VIDEO or PDF
+private String courseId;  // ✅ Add karo
 
     public Lesson() {
         this.createdAt = System.currentTimeMillis();
@@ -127,4 +129,9 @@ public class Lesson {
     public void setUpdatedAt(long updatedAt) {
         this.updatedAt = updatedAt;
     }
+    public String getType() { return type; }
+public void setType(String type) { this.type = type; }
+
+public String getCourseId() { return courseId; }
+public void setCourseId(String courseId) { this.courseId = courseId; }
 }

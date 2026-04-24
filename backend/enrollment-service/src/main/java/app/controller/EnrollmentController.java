@@ -149,7 +149,7 @@ public class EnrollmentController {
     public ResponseEntity<?> listEnrollmentRequests() {
         try {
             Firestore db = FirestoreClient.getFirestore();
-            List<EnrollmentRequest> list = db.collection("enrollment_requests").get().get().getDocuments()
+            List<EnrollmentRequest> list = db.collection("enrollment_requests").whereEqualTo("status", "pending").get().get().getDocuments()
                     .stream().map(d -> d.toObject(EnrollmentRequest.class)).toList();
             return ResponseEntity.ok(list);
         } catch (Exception e) {

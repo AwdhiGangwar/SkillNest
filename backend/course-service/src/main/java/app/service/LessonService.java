@@ -55,7 +55,7 @@ public class LessonService {
             Firestore db = FirestoreClient.getFirestore();
             List<Lesson> lessons = db.collection(COLLECTION)
                     .whereEqualTo("moduleId", moduleId)
-                    .orderBy("orderNo")
+                    //.orderBy("orderNo")
                     .get()
                     .get()
                     .toObjects(Lesson.class);

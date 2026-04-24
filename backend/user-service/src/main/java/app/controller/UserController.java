@@ -54,12 +54,14 @@ public class UserController {
     public User getCurrentUser(HttpServletRequest request) throws Exception {
 
     	String uid = (String) request.getAttribute("uid");
+    	String email = (String) request.getAttribute("email");
+    	String name = (String) request.getAttribute("name");
 
         if (uid == null) {
             throw new RuntimeException("Unauthorized: UID missing");
         }
 
-        return userService.getOrCreateUser(uid);
+        return userService.getOrCreateUser(uid, email, name);
     }
     @GetMapping("/users")
     public List<User> getAllUsers() throws Exception {

@@ -12,10 +12,11 @@ public class Assignment {
     private String title;
     private String description;
     private String attachmentUrl;
-    private long dueDate;
+    private String dueDate;
     private int orderNo;
     private long createdAt;
     private long updatedAt;
+    private String courseId;
 
     public Assignment() {
         this.createdAt = System.currentTimeMillis();
@@ -52,7 +53,7 @@ public class Assignment {
         return attachmentUrl;
     }
 
-    public long getDueDate() {
+    public String getDueDate() {
         return dueDate;
     }
 
@@ -89,7 +90,7 @@ public class Assignment {
         this.attachmentUrl = attachmentUrl;
     }
 
-    public void setDueDate(long dueDate) {
+    public void setDueDate(String dueDate) {
         this.dueDate = dueDate;
     }
 
@@ -103,5 +104,13 @@ public class Assignment {
 
     public void setUpdatedAt(long updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(String courseId) {
+        this.courseId = courseId;
     }
 }

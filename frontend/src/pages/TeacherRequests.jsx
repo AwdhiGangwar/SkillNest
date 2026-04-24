@@ -190,7 +190,7 @@ export default function TeacherRequests() {
       {/* Approval Modal */}
       {showApprovalModal && selectedRequest && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-surface-dark rounded-2xl p-8 w-full max-w-md border border-surface-border animate-fade-in">
+          <div className="bg-black rounded-2xl p-8 w-full max-w-md border border-surface-border animate-fade-in">
             <h2 className="text-2xl font-display font-bold text-white mb-2">Create Teacher Account</h2>
             <p className="text-slate-400 mb-6">Set a password for {selectedRequest.name}</p>
 

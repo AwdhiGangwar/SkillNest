@@ -34,6 +34,7 @@ public class TeacherRequestService {
         Firestore db = FirestoreClient.getFirestore();
 
         return db.collection(COLLECTION)
+                .whereEqualTo("status", "PENDING")
                 .get()
                 .get()
                 .getDocuments()
@@ -74,4 +75,24 @@ public class TeacherRequestService {
                 .get()
                 .toObject(TeacherRequest.class);
     }
+    public TeacherRequest rejectRequest(String id) throws Exception {
+    Firestore db = FirestoreClient.getFirestore();
+
+    TeacherRequest req = db.collection(COLLECTION)
+            .document(id)
+            .get()
+            .get()
+            .toObject(TeacherRequest.class);
+
+    if (req == null) throw new RuntimeException("Request not found");
+
+    req.setStatus("REJECTED");
+
+    db.collection(COLLECTION)
+            .document(id)
+            .set(req)
+            .get();
+
+    return req;
+}
 }

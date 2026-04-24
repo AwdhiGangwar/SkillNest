@@ -64,40 +64,38 @@ public class UserService {
     }
 
     // ==================== GET OR CREATE USER ====================
-    public User getOrCreateUser(String uid) throws Exception {
+   // ✅ FIXED: getOrCreateUser method
+public User getOrCreateUser(String uid, String email, String name) throws Exception {
 
-        Firestore db = FirestoreClient.getFirestore();
+    Firestore db = FirestoreClient.getFirestore();
 
-        User user = db.collection(COLLECTION_NAME)
-                .document(uid)
-                .get()
-                .get()
-                .toObject(User.class);
+    User user = db.collection(COLLECTION_NAME)
+            .document(uid)
+            .get()
+            .get()
+            .toObject(User.class);
 
-        if (user != null) {
-            return user;
-        }
-
-        // 🔥 create new user
-        User newUser = new User();
-        newUser.setId(uid);
-        newUser.setName("New User");
-        newUser.setEmail("default@email.com");
-
-        // role logic
-        if (uid.contains("teacher")) {
-            newUser.setRole(User.ROLE_TEACHER);
-        } else {
-            newUser.setRole(User.ROLE_STUDENT);
-        }
-
-        db.collection(COLLECTION_NAME)
-                .document(uid)
-                .set(newUser)
-                .get();
-
-        return newUser;
+    if (user != null) {
+        return user;
     }
+
+    // 🔥 create new user with actual data
+    User newUser = new User();
+    newUser.setId(uid);
+    newUser.setName(name != null && !name.isEmpty() ? name : "");
+    newUser.setEmail(email != null && !email.isEmpty() ? email : "");  // ✅ actual email
+
+   
+        newUser.setRole(User.ROLE_STUDENT);
+    
+
+    db.collection(COLLECTION_NAME)
+            .document(uid)
+            .set(newUser)
+            .get();
+
+    return newUser;
+}
 
     // ==================== 🔥 NEW: CREATE TEACHER WITH FIREBASE AUTH (PASSWORD RESET LINK) ====================
     public User createTeacherWithAuth(User user) throws Exception {

@@ -51,7 +51,7 @@ const handleSubmit = async (e) => {
       subtitle="Provision a new account. An invitation link will be sent to the email provided."
     >
       <div className="max-w-full mx-auto">
-        <div className="glass-card p-8 animate-fade-in border border-surface-border bg-surface-card">
+        <div className="glass-card p-8 animate-fade-in border border-surface-border ">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">

@@ -54,21 +54,14 @@ public class ModuleService {
     }
 
     public List<Module> getModulesByCourse(String courseId) throws Exception {
-        try {
-            Firestore db = FirestoreClient.getFirestore();
-            List<Module> modules = db.collection(COLLECTION)
-                    .whereEqualTo("courseId", courseId)
-                    .orderBy("orderNo")
-                    .get()
-                    .get()
-                    .toObjects(Module.class);
-
-            logger.info("Retrieved {} modules for course: {}", modules.size(), courseId);
-            return modules;
-        } catch (Exception e) {
-            logger.error("Error getting modules for course {}: {}", courseId, e.getMessage(), e);
-            throw e;
-        }
+        Firestore db = FirestoreClient.getFirestore();
+        List<Module> modules = db.collection(COLLECTION)
+                .whereEqualTo("courseId", courseId)
+                // .orderBy("orderNo") // ← Yeh comment kar do temporarily
+                .get()
+                .get()
+                .toObjects(Module.class);
+        return modules;
     }
 
     public void updateModule(String moduleId, Module module) throws Exception {
