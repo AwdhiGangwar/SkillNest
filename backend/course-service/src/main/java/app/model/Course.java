@@ -1,5 +1,6 @@
 package app.model;
 
+<<<<<<< HEAD
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.ArrayList;
@@ -7,11 +8,14 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 public class Course {
 
     private String id;
     private String title;
     private String description;
+<<<<<<< HEAD
     private String category;
     private double price;
     private int maxStudents;
@@ -28,6 +32,14 @@ public class Course {
     public Course() {
         this.createdAt = System.currentTimeMillis();
         this.updatedAt = System.currentTimeMillis();
+=======
+    private double price;
+    private String teacherId;
+    private long createdAt;
+
+    public Course() {
+        this.createdAt = System.currentTimeMillis();
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     }
 
     public Course(String id, String title, String description, double price, String teacherId) {
@@ -36,9 +48,13 @@ public class Course {
         this.description = description;
         this.price = price;
         this.teacherId = teacherId;
+<<<<<<< HEAD
         if (teacherId != null) this.teacherIds.add(teacherId);
         this.createdAt = System.currentTimeMillis();
         this.updatedAt = System.currentTimeMillis();
+=======
+        this.createdAt = System.currentTimeMillis();
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     }
 
     // GETTERS
@@ -55,14 +71,18 @@ public class Course {
         return description;
     }
 
+<<<<<<< HEAD
     public String getCategory() {
         return category;
     }
 
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     public double getPrice() {
         return price;
     }
 
+<<<<<<< HEAD
     public int getMaxStudents() {
         return maxStudents;
     }
@@ -71,6 +91,8 @@ public class Course {
         return teacherIds;
     }
 
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     public String getTeacherId() {
         return teacherId;
     }
@@ -79,6 +101,7 @@ public class Course {
         return createdAt;
     }
 
+<<<<<<< HEAD
     public long getUpdatedAt() {
         return updatedAt;
     }
@@ -103,6 +126,8 @@ public class Course {
         return duration;
     }
 
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     // SETTERS
 
     public void setId(String id) {
@@ -117,22 +142,29 @@ public class Course {
         this.description = description;
     }
 
+<<<<<<< HEAD
     public void setCategory(String category) {
         this.category = category;
     }
 
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     public void setPrice(double price) {
         this.price = price;
     }
 
+<<<<<<< HEAD
     public void setMaxStudents(int maxStudents) {
         this.maxStudents = maxStudents;
     }
 
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     public void setTeacherId(String teacherId) {
         this.teacherId = teacherId;
     }
 
+<<<<<<< HEAD
     public void setTeacherIds(List<String> teacherIds) {
         this.teacherIds = teacherIds;
     }
@@ -164,4 +196,9 @@ public class Course {
     public void setDuration(int duration) {
         this.duration = duration;
     }
+=======
+    public void setCreatedAt(long createdAt) {
+        this.createdAt = createdAt;
+    }
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 }

@@ -1,4 +1,5 @@
 package app.controller;
+<<<<<<< HEAD
 import app.model.Course;
 import app.model.Enrollment;
 import app.model.User;
@@ -257,5 +258,59 @@ public class EnrollmentController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to reject request");
         }
+=======
+
+import app.model.Enrollment;
+import app.model.Course;
+import app.service.EnrollmentService;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api")
+public class EnrollmentController {
+
+    @Autowired
+    private EnrollmentService enrollmentService;
+
+    // ✅ Health check
+    @GetMapping("/health")
+    public String health() {
+        return "Enrollment Service running 🚀";
+    }
+
+    // ✅ Enroll in course (with role check)
+    @PostMapping("/enrollments")
+    public String enroll(@RequestBody Enrollment enrollment,
+                         HttpServletRequest request) throws Exception {
+
+        String uid = (String) request.getAttribute("uid");
+
+        if (uid == null) {
+            uid = "student123"; // temp fallback
+        }
+
+        String token = request.getHeader("Authorization");
+
+        enrollment.setStudentId(uid);
+
+        return enrollmentService.enroll(enrollment, token);
+    }
+
+    // ✅ Student dashboard (My Courses)
+    @GetMapping("/my-courses")
+    public List<Course> getMyCourses(HttpServletRequest request) throws Exception {
+
+        String uid = (String) request.getAttribute("uid");
+
+        if (uid == null) {
+            uid = "student123";
+        }
+
+        return enrollmentService.getMyCourses(uid);
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     }
 }

@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
+<<<<<<< HEAD
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+=======
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.skillnest</groupId>
@@ -19,7 +24,11 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.3.5</version>
+<<<<<<< HEAD
         <relativePath /> <!-- lookup from repository -->
+=======
+        <relativePath/> <!-- lookup from repository -->
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     </parent>
 
     <dependencies>
@@ -55,10 +64,13 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+<<<<<<< HEAD
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     </dependencies>
 
     <build>

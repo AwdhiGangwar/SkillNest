@@ -38,7 +38,11 @@ export default function StudentClasses() {
           <button
             key={tab}
             onClick={() => setFilter(tab)}
+<<<<<<< HEAD
             className={`px-4 py-2 rounded-xl text-sm font-medium capitalize transition-all transform hover:scale-[1.02] duration-200 ${
+=======
+            className={`px-4 py-2 rounded-xl text-sm font-medium capitalize transition-all duration-200 ${
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
               filter === tab
                 ? "bg-brand-500 text-white"
                 : "bg-surface-card border border-surface-border text-slate-400 hover:text-white hover:bg-surface-hover"
@@ -93,13 +97,21 @@ function ClassRow({ cls }) {
   const isUpcoming = cls.status === "scheduled" && start && start > new Date();
 
   return (
+<<<<<<< HEAD
     <div className="glass-card p-5 flex items-center gap-5 hover:border-brand-500/20 transition-all transform hover:scale-[1.005] duration-200 animate-fade-in">
+=======
+    <div className="glass-card p-5 flex items-center gap-5 hover:border-brand-500/20 transition-all duration-200 animate-fade-in">
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
       {/* Date block */}
       <div className="w-14 h-14 rounded-xl bg-brand-500/10 flex flex-col items-center justify-center shrink-0">
         <span className="text-xs text-brand-400 font-medium uppercase">
           {start ? start.toLocaleDateString("en-US", { month: "short" }) : "—"}
         </span>
+<<<<<<< HEAD
         <span className="text-xl font-display font-bold text-surface-text">
+=======
+        <span className="text-xl font-display font-bold text-white">
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
           {start ? start.getDate() : "—"}
         </span>
       </div>

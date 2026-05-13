@@ -2,13 +2,17 @@ package app.filter;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
+<<<<<<< HEAD
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.firebase.cloud.FirestoreClient;
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+<<<<<<< HEAD
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -25,6 +29,14 @@ public class FirebaseTokenFilter extends OncePerRequestFilter {
     private static final Map<String, String[]> userCache = new ConcurrentHashMap<>();
     private static final long CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
+=======
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+
+public class FirebaseTokenFilter extends OncePerRequestFilter {
+
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -32,10 +44,15 @@ public class FirebaseTokenFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String path = request.getRequestURI();
+<<<<<<< HEAD
         String method = request.getMethod();
         logger.debug("Processing request: {} {}", method, path);
 
         // ✅ Public endpoints
+=======
+
+        // allow public endpoints (for now)
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
         if (path.equals("/health") || path.equals("/users") || path.equals("/me")) {
             filterChain.doFilter(request, response);
             return;
@@ -45,8 +62,12 @@ public class FirebaseTokenFilter extends OncePerRequestFilter {
 
         if (header == null || !header.startsWith("Bearer ")) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+<<<<<<< HEAD
             response.setContentType("application/json");
             response.getWriter().write("{\"error\": \"Missing or invalid Authorization header\"}");
+=======
+            response.getWriter().write("Missing or invalid Authorization header");
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
             return;
         }
 
@@ -54,6 +75,7 @@ public class FirebaseTokenFilter extends OncePerRequestFilter {
 
         try {
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
+<<<<<<< HEAD
             String uid = decodedToken.getUid();
             logger.info("Token verified for UID: {}", uid);
             request.setAttribute("uid", uid);
@@ -111,6 +133,16 @@ public class FirebaseTokenFilter extends OncePerRequestFilter {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
             response.getWriter().write("{\"error\": \"Invalid Firebase token\"}");
+=======
+
+            String uid = decodedToken.getUid();
+
+            request.setAttribute("uid", uid);
+
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Invalid Firebase token");
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
             return;
         }
 

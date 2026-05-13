@@ -7,7 +7,10 @@ export default function JoinTeacher() {
   const [form, setForm] = useState({
     name: "",
     email: "",
+<<<<<<< HEAD
     phone: "",
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     skills: "",
     experience: "",
     bio: "",
@@ -70,6 +73,7 @@ export default function JoinTeacher() {
                   placeholder="john@example.com"
                 />
               </div>
+<<<<<<< HEAD
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">Phone Number</label>
                 <input
@@ -82,6 +86,8 @@ export default function JoinTeacher() {
                   placeholder="e.g. +1 (555) 123-4567"
                 />
               </div>
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
             </div>
 
             <div>

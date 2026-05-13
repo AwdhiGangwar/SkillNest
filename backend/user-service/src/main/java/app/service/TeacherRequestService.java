@@ -34,7 +34,10 @@ public class TeacherRequestService {
         Firestore db = FirestoreClient.getFirestore();
 
         return db.collection(COLLECTION)
+<<<<<<< HEAD
                 .whereEqualTo("status", "PENDING")
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
                 .get()
                 .get()
                 .getDocuments()
@@ -65,6 +68,7 @@ public class TeacherRequestService {
 
         return req;
     }
+<<<<<<< HEAD
 
     public TeacherRequest getRequestById(String id) throws Exception {
         Firestore db = FirestoreClient.getFirestore();
@@ -95,4 +99,6 @@ public class TeacherRequestService {
 
     return req;
 }
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 }

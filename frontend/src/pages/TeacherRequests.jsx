@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
+<<<<<<< HEAD
 import { useNavigate } from "react-router-dom";
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 import Layout from "../components/Layout";
 import { CardSkeleton, EmptyState, Badge } from "../components/ui";
 import { getTeacherRequests, approveTeacherRequest, rejectTeacherRequest } from "../services/api";
@@ -9,6 +12,7 @@ export default function TeacherRequests() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState(null);
+<<<<<<< HEAD
   const [showApprovalModal, setShowApprovalModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [approvalForm, setApprovalForm] = useState({
@@ -16,6 +20,8 @@ export default function TeacherRequests() {
     confirmPassword: "",
   });
   const navigate = useNavigate();
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 
   const fetchRequests = async () => {
     try {
@@ -51,6 +57,7 @@ export default function TeacherRequests() {
     }
   };
 
+<<<<<<< HEAD
   const generatePassword = () => {
     const length = 12;
     const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$";
@@ -110,6 +117,8 @@ export default function TeacherRequests() {
     setApprovalForm({ password: "", confirmPassword: "" });
   };
 
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
   return (
     <Layout
       title="Teacher Requests"
@@ -142,11 +151,15 @@ export default function TeacherRequests() {
                     <Badge variant="info" className="ml-auto md:ml-0">Pending</Badge>
                   </div>
 
+<<<<<<< HEAD
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                     <div>
                       <span className="text-slate-500 block mb-1">Phone</span>
                       <p className="text-slate-200">{req.phone}</p>
                     </div>
+=======
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
                     <div>
                       <span className="text-slate-500 block mb-1">Skills</span>
                       <p className="text-slate-200">{req.skills}</p>
@@ -167,12 +180,23 @@ export default function TeacherRequests() {
 
                 <div className="flex md:flex-col gap-3 justify-end shrink-0">
                   <button
+<<<<<<< HEAD
+=======
+                    onClick={() => handleAction(req.id, "approve")}
+                    disabled={!!processingId}
+                    className="flex-1 px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {processingId === req.id ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : "Approve"}
+                  </button>
+                  <button
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
                     onClick={() => handleAction(req.id, "reject")}
                     disabled={!!processingId}
                     className="flex-1 px-6 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {processingId === req.id ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : "Reject"}
                   </button>
+<<<<<<< HEAD
                   <button
                     onClick={() => openApprovalModal(req)}
                     disabled={!!processingId}
@@ -180,12 +204,15 @@ export default function TeacherRequests() {
                   >
                     {processingId === req.id ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : "Approve"}
                   </button>
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
                 </div>
               </div>
             </div>
           ))}
         </div>
       )}
+<<<<<<< HEAD
 
       {/* Approval Modal */}
       {showApprovalModal && selectedRequest && (
@@ -304,6 +331,8 @@ export default function TeacherRequests() {
           </div>
         </div>
       )}
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     </Layout>
   );
 }

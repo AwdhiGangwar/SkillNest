@@ -1,6 +1,7 @@
 package app.controller;
 
 import java.util.List;
+<<<<<<< HEAD
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,18 @@ import app.model.User;
 import app.dto.UserDTO;
 import app.service.AdminService;
 import app.service.UserService;
+=======
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import app.model.TeacherRequest;
+import app.service.AdminService;
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 
 @RestController
 @RequestMapping("/admin")
@@ -20,30 +33,43 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
+<<<<<<< HEAD
     @Autowired
     private UserService userService;
     @Autowired
     private app.service.TeacherRequestService teacherRequestService;
 
     // 🔹 Get all teacher requests
+=======
+    // 🔹 Get all requests
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     @GetMapping("/teacher-requests")
     public List<TeacherRequest> getRequests() throws Exception {
         return adminService.getAllRequests();
     }
 
+<<<<<<< HEAD
     // 🔹 Approve teacher request
+=======
+    // 🔹 Approve
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     @PutMapping("/approve/{id}")
     public String approve(@PathVariable String id) throws Exception {
         adminService.approveRequest(id);
         return "Approved";
     }
 
+<<<<<<< HEAD
     // 🔹 Reject teacher request
+=======
+    // 🔹 Reject
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     @PutMapping("/reject/{id}")
     public String reject(@PathVariable String id) throws Exception {
         adminService.rejectRequest(id);
         return "Rejected";
     }
+<<<<<<< HEAD
 
     // 🔥 NEW FEATURE: CREATE TEACHER ACCOUNT
     @PostMapping("/create-teacher")
@@ -184,4 +210,6 @@ public class AdminController {
             return ResponseEntity.internalServerError().body("Failed to unblock user");
         }
     }
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 }

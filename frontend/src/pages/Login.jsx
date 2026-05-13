@@ -1,6 +1,10 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
+<<<<<<< HEAD
 import { Link, useNavigate ,useLocation} from "react-router-dom";
+=======
+import { Link, useNavigate } from "react-router-dom";
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 
@@ -19,6 +23,11 @@ export default function Login() {
     try {
       await login(email, password);
       toast.success("Welcome back! 🎉");
+<<<<<<< HEAD
+=======
+      // redirect based on role after profile loads
+      // handled via useEffect below
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     } catch (err) {
       toast.error(err.message || "Login failed");
     } finally {
@@ -26,6 +35,7 @@ export default function Login() {
     }
   };
 
+<<<<<<< HEAD
   
 
 const location = useLocation();
@@ -48,6 +58,17 @@ React.useEffect(() => {
     else navigate("/student/dashboard", { replace: true });
   }
 }, [profile, navigate, location]);
+=======
+  // Redirect after profile loads
+  React.useEffect(() => {
+    if (profile) {
+      if (profile.role === "admin") navigate("/admin/dashboard");
+      else if (profile.role === "teacher") navigate("/teacher/dashboard");
+      else navigate("/student/dashboard");
+    }
+  }, [profile, navigate]);
+
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
   return (
     <div className="min-h-screen bg-surface flex items-center justify-center p-4">
       {/* Background effects */}

@@ -2,8 +2,12 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
 import { CardSkeleton, EmptyState, Table } from "../../components/ui";
+<<<<<<< HEAD
 import { getTeacherClasses, getAllCourses, getEnrollmentsByCourse, getUserById } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
+=======
+import { getTeacherClasses } from "../../services/api";
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 import toast from "react-hot-toast";
 
 export default function TeacherStudents() {
@@ -11,6 +15,7 @@ export default function TeacherStudents() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
+<<<<<<< HEAD
   const { profile } = useAuth();
 
   useEffect(() => {
@@ -71,6 +76,14 @@ export default function TeacherStudents() {
 
     load();
   }, [profile]);
+=======
+  useEffect(() => {
+    getTeacherClasses()
+      .then((r) => setClasses(r.data || []))
+      .catch(() => toast.error("Failed to load student data"))
+      .finally(() => setLoading(false));
+  }, []);
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 
   // Build unique students from classes
   const studentMap = {};

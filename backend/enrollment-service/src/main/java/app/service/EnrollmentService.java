@@ -1,15 +1,25 @@
 package app.service;
+<<<<<<< HEAD
+=======
+
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 import app.model.Course;
 import app.model.Enrollment;
 import app.model.User;
 import com.google.cloud.firestore.Firestore;
+<<<<<<< HEAD
 import com.google.firebase.cloud.FirestoreClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+=======
+import com.google.cloud.firestore.QuerySnapshot;
+import com.google.firebase.cloud.FirestoreClient;
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+<<<<<<< HEAD
 import java.util.List;
 import java.util.UUID;
 import java.util.ArrayList;
@@ -19,16 +29,26 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import app.model.EnrollmentStats;
+=======
+
+import java.util.ArrayList;
+import java.util.List;
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 
 @Service
 public class EnrollmentService {
 
+<<<<<<< HEAD
     private static final String ENROLLMENTS_COLLECTION = "enrollments";
     private static final Logger logger = LoggerFactory.getLogger(EnrollmentService.class);
+=======
+    private static final String COLLECTION = "enrollments";
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 
     @Autowired
     private RestTemplate restTemplate;
 
+<<<<<<< HEAD
     @Autowired
     private CourseService courseService;
 
@@ -165,10 +185,65 @@ public class EnrollmentService {
     }
 
     // ==================== GET MY ENROLLED COURSES ====================
+=======
+    // ✅ ENROLL (role check + course validation + duplicate check)
+    public String enroll(Enrollment enrollment, String token) throws Exception {
+
+        Firestore db = FirestoreClient.getFirestore();
+
+        // 🔥 STEP 1: Check user role (only student allowed)
+        String userUrl = "http://localhost:8081/api/me";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", token);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<User> response =
+                restTemplate.exchange(userUrl, HttpMethod.GET, entity, User.class);
+
+        User user = response.getBody();
+
+        if (user == null || !"student".equals(user.getRole())) {
+            return "Only students can enroll ❌";
+        }
+
+        // 🔥 STEP 2: Check course exists
+        String courseUrl = "http://localhost:8082/api/courses/" + enrollment.getCourseId();
+
+        Course course = restTemplate.getForObject(courseUrl, Course.class);
+
+        if (course == null) {
+            return "Course not found ❌";
+        }
+
+        // 🔥 STEP 3: Duplicate check
+        QuerySnapshot snapshot = db.collection(COLLECTION)
+                .whereEqualTo("studentId", enrollment.getStudentId())
+                .whereEqualTo("courseId", enrollment.getCourseId())
+                .get()
+                .get();
+
+        if (!snapshot.isEmpty()) {
+            return "Already enrolled ❌";
+        }
+
+        // ✅ STEP 4: Save enrollment
+        db.collection(COLLECTION)
+                .document(enrollment.getId())
+                .set(enrollment)
+                .get();
+
+        return "Enrollment successful 🎉";
+    }
+
+    // ✅ STUDENT DASHBOARD (optimized)
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     public List<Course> getMyCourses(String studentId) throws Exception {
 
         Firestore db = FirestoreClient.getFirestore();
 
+<<<<<<< HEAD
         List<Enrollment> enrollments = db.collection(ENROLLMENTS_COLLECTION)
                 .whereEqualTo("studentId", studentId)
                 .whereEqualTo("status", "enrolled")
@@ -221,6 +296,11 @@ public class EnrollmentService {
 
         List<Enrollment> enrollments = db.collection(ENROLLMENTS_COLLECTION)
                 .whereEqualTo("courseId", courseId)
+=======
+        // 🔥 Step 1: get enrollments
+        List<Enrollment> enrollments = db.collection(COLLECTION)
+                .whereEqualTo("studentId", studentId)
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
                 .get()
                 .get()
                 .getDocuments()
@@ -228,6 +308,7 @@ public class EnrollmentService {
                 .map(doc -> doc.toObject(Enrollment.class))
                 .toList();
 
+<<<<<<< HEAD
         return enrollments;
     }
 
@@ -412,5 +493,22 @@ public class EnrollmentService {
             logger.error("Error calculating enrollment stats", e);
             throw new RuntimeException("Failed to calculate enrollment stats: " + e.getMessage(), e);
         }
+=======
+        List<Course> myCourses = new ArrayList<>();
+
+        // 🔥 Step 2: fetch each course by ID (optimized)
+        for (Enrollment e : enrollments) {
+
+            String url = "http://localhost:8082/api/courses/" + e.getCourseId();
+
+            Course course = restTemplate.getForObject(url, Course.class);
+
+            if (course != null) {
+                myCourses.add(course);
+            }
+        }
+
+        return myCourses;
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     }
 }

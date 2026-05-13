@@ -1,5 +1,9 @@
 // src/context/AuthContext.js
+<<<<<<< HEAD
 import React, { createContext, useContext, useEffect, useState, useMemo } from "react";
+=======
+import React, { createContext, useContext, useEffect, useState } from "react";
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -78,6 +82,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+<<<<<<< HEAD
   const value = useMemo(
     () => ({ user, profile, loading, register, login, logout, refreshProfile }),
     [user, profile, loading, register, login, logout, refreshProfile]
@@ -85,6 +90,12 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
+=======
+  return (
+    <AuthContext.Provider
+      value={{ user, profile, loading, register, login, logout, refreshProfile }}
+    >
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
       {children}
     </AuthContext.Provider>
   );

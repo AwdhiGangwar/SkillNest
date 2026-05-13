@@ -1,5 +1,6 @@
 // src/pages/teacher/TeacherCourses.jsx
 import React, { useEffect, useState } from "react";
+<<<<<<< HEAD
 import { useNavigate } from "react-router-dom";
 import Layout from "../../components/Layout";
 import { CardSkeleton, EmptyState, Modal } from "../../components/ui";
@@ -8,6 +9,15 @@ import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
 
 const EMPTY_FORM = { id: "", title: "", description: "", price: "", maxStudents: 30, additionalTeachers: "" };
+=======
+import Layout from "../../components/Layout";
+import { CardSkeleton, EmptyState, Modal } from "../../components/ui";
+import { getAllCourses, createCourse } from "../../services/api";
+import { useAuth } from "../../context/AuthContext";
+import toast from "react-hot-toast";
+
+const EMPTY_FORM = { id: "", title: "", description: "", price: "" };
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 
 export default function TeacherCourses() {
   const { profile } = useAuth();
@@ -16,8 +26,11 @@ export default function TeacherCourses() {
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+<<<<<<< HEAD
   const [showTicketModal, setShowTicketModal] = useState(false);
   const [ticketForm, setTicketForm] = useState({ subject: "", message: "" });
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 
   const fetchCourses = async () => {
     try {
@@ -47,18 +60,22 @@ export default function TeacherCourses() {
 
     setSaving(true);
     try {
+<<<<<<< HEAD
       // client-side cap for safety
       let max = parseInt(form.maxStudents) || 30;
       if (max > 120) max = 120;
 
       const additional = (form.additionalTeachers || "").split(",").map(s => s.trim()).filter(Boolean);
 
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
       const payload = {
         id: form.id || `course_${Date.now()}`,
         title: form.title.trim(),
         description: form.description.trim(),
         price: parseFloat(form.price),
         teacherId: profile?.id,
+<<<<<<< HEAD
         teacherIds: Array.from(new Set([...(additional || []), profile?.id].filter(Boolean))),
         maxStudents: max,
         createdAt: Date.now(),
@@ -69,16 +86,26 @@ export default function TeacherCourses() {
       const successMessage = res.data?.success || 
                             (typeof res.data === "string" ? res.data : "Course created! 🎉");
       toast.success(successMessage);
+=======
+        createdAt: Date.now(),
+      };
+      const res = await createCourse(payload);
+      toast.success(typeof res.data === "string" ? res.data : "Course created! 🎉");
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
       setShowModal(false);
       setForm(EMPTY_FORM);
       await fetchCourses();
     } catch (err) {
+<<<<<<< HEAD
       // Better error handling
       const errorMsg = err.response?.data?.error || 
                        err.message || 
                        "Failed to create course";
       console.error("Course creation error:", err);
       toast.error(errorMsg);
+=======
+      toast.error(err.message || "Failed to create course");
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     } finally {
       setSaving(false);
     }
@@ -89,6 +116,7 @@ export default function TeacherCourses() {
       title="My Courses"
       subtitle={`${courses.length} course${courses.length !== 1 ? "s" : ""} created`}
       actions={
+<<<<<<< HEAD
         <>
           <button onClick={() => setShowModal(true)} className="btn-primary">
             + New Course
@@ -97,6 +125,11 @@ export default function TeacherCourses() {
             Raise Ticket
           </button>
         </>
+=======
+        <button onClick={() => setShowModal(true)} className="btn-primary">
+          + New Course
+        </button>
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
       }
     >
       {loading ? (
@@ -143,6 +176,7 @@ export default function TeacherCourses() {
           </div>
 
           <div>
+<<<<<<< HEAD
             <label className="block text-sm font-medium text-slate-300 mb-2">Max Students</label>
             <input
               type="number"
@@ -169,6 +203,8 @@ export default function TeacherCourses() {
           </div>
 
           <div>
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
             <label className="block text-sm font-medium text-slate-300 mb-2">
               Description
             </label>
@@ -226,6 +262,7 @@ export default function TeacherCourses() {
           </div>
         </form>
       </Modal>
+<<<<<<< HEAD
       {/* Raise Support Ticket Modal for teachers */}
       <Modal isOpen={showTicketModal} onClose={() => setShowTicketModal(false)} title="Raise Support Ticket">
         <form onSubmit={async (e) => {
@@ -254,12 +291,17 @@ export default function TeacherCourses() {
           </div>
         </form>
       </Modal>
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     </Layout>
   );
 }
 
 function TeacherCourseCard({ course }) {
+<<<<<<< HEAD
   const navigate = useNavigate();
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
   const gradients = [
     "from-brand-500/20 to-cyan-500/10",
     "from-violet-500/20 to-purple-500/10",
@@ -286,12 +328,15 @@ function TeacherCourseCard({ course }) {
             Active
           </span>
         </div>
+<<<<<<< HEAD
         <button 
           onClick={() => navigate(`/course-content/${course.id}`)}
           className="w-full mt-4 py-2 bg-surface-hover hover:bg-brand-500/20 border border-surface-border hover:border-brand-500/50 text-white text-xs font-semibold rounded-lg transition-all"
         >
           Manage Content
         </button>
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
       </div>
     </div>
   );

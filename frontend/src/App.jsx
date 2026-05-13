@@ -1,10 +1,15 @@
 // src/App.jsx
 import React from "react";
+<<<<<<< HEAD
+=======
+import ForgotPassword from "./pages/ForgotPassword";
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+<<<<<<< HEAD
 // Auth & Public Pages
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -21,6 +26,21 @@ import CourseLearning from "./pages/student/CourseLearning";  // Course Learning
 import ProgressDashboard from "./pages/student/ProgressDashboard"; // Progress Dashboard
 
 // Teacher Pages
+=======
+// Auth pages
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Home from "./pages/Home";
+import JoinTeacher from "./pages/JoinTeacher";
+
+// Student pages
+import StudentDashboard from "./pages/student/StudentDashboard";
+import BrowseCourses from "./pages/student/BrowseCourses";
+import MyCourses from "./pages/student/MyCourses";
+import StudentClasses from "./pages/student/StudentClasses";
+
+// Teacher pages
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 import TeacherDashboard from "./pages/teacher/TeacherDashboard";
 import TeacherCourses from "./pages/teacher/TeacherCourses";
 import TeacherClasses from "./pages/teacher/TeacherClasses";
@@ -28,6 +48,7 @@ import Availability from "./pages/teacher/Availability";
 import TeacherStudents from "./pages/teacher/TeacherStudents";
 import Earnings from "./pages/teacher/Earnings";
 
+<<<<<<< HEAD
 // Admin Pages
 import AdminDashboard from "./pages/AdminDashboard";
 import TeacherRequests from "./pages/TeacherRequests";
@@ -41,6 +62,11 @@ import AdminSupport from "./pages/admin/AdminSupport";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminContentManager from "./pages/admin/AdminContentManager"; // Content Manager
 import StudentAssignments from "./pages/student/StudentAssignments";
+=======
+// Admin pages
+import AdminDashboard from "./pages/AdminDashboard";
+import TeacherRequests from "./pages/TeacherRequests";
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 
 export default function App() {
   return (
@@ -58,10 +84,20 @@ export default function App() {
               fontSize: "14px",
               borderRadius: "12px",
             },
+<<<<<<< HEAD
+=======
+            success: {
+              iconTheme: { primary: "#10b981", secondary: "#161b27" },
+            },
+            error: {
+              iconTheme: { primary: "#ef4444", secondary: "#161b27" },
+            },
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
           }}
         />
 
         <Routes>
+<<<<<<< HEAD
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -70,6 +106,18 @@ export default function App() {
           <Route path="/join-teacher" element={<JoinTeacher />} />
 
           {/* Student Routes */}
+=======
+          {/* Public routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/join-teacher" element={<JoinTeacher />} />
+
+          {/* Landing Page */}
+          <Route path="/" element={<Home />} />
+
+          {/* Student routes */}
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
           <Route
             path="/student/dashboard"
             element={
@@ -102,6 +150,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+<<<<<<< HEAD
           <Route
             path="/course-learning/:courseId"
             element={
@@ -121,6 +170,10 @@ export default function App() {
           />
           <Route path="/student/assignments" element={<StudentAssignments />} />
           {/* Teacher Routes */}
+=======
+
+          {/* Teacher routes */}
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
           <Route
             path="/teacher/dashboard"
             element={
@@ -170,7 +223,11 @@ export default function App() {
             }
           />
 
+<<<<<<< HEAD
           {/* Admin Routes */}
+=======
+          {/* Admin routes */}
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
           <Route
             path="/admin/dashboard"
             element={
@@ -187,6 +244,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+<<<<<<< HEAD
           <Route
             path="/admin/create-teacher"
             element={
@@ -261,9 +319,17 @@ export default function App() {
           />
 
           {/* Fallback */}
+=======
+
+          {/* 404 fallback */}
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
   );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb

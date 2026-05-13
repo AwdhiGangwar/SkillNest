@@ -4,6 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+<<<<<<< HEAD
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -11,6 +12,8 @@
         <relativePath/> <!-- lookup from repository -->
     </parent>
 
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     <groupId>com.skillnest</groupId>
     <artifactId>skillnest-enrollment-service</artifactId>          <!-- CHANGE THIS for each service -->
     <version>0.0.1-SNAPSHOT</version>
@@ -22,6 +25,16 @@
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
+<<<<<<< HEAD
+=======
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.3.5</version>
+        <relativePath/> <!-- lookup from repository -->
+    </parent>
+
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     <dependencies>
         <!-- REST + Web -->
         <dependency>
@@ -49,6 +62,7 @@
             <optional>true</optional>
         </dependency>
 
+<<<<<<< HEAD
         <!-- Apache HttpClient 5 (compatible with Spring 6 HttpComponents support) -->
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
@@ -61,23 +75,31 @@
             <version>5.2.1</version>
         </dependency>
 
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+<<<<<<< HEAD
         
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     </dependencies>
 
     <build>
         <plugins>
+<<<<<<< HEAD
             <!-- Explicit jar plugin version to prevent IDE/maven plugin issues -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.4.2</version>
             </plugin>
+=======
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

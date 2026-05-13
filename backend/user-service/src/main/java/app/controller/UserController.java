@@ -1,5 +1,6 @@
 package app.controller;
 
+<<<<<<< HEAD
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -17,6 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 import app.model.User;
 import app.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+=======
+import app.model.User;
+import app.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 
 @RestController
 @RequestMapping("/api")
@@ -31,6 +39,7 @@ public class UserController {
     }
 
     @PostMapping("/users")
+<<<<<<< HEAD
     public String createUser(@RequestBody User user, HttpServletRequest request) throws Exception {
 
         // Ensure caller is authenticated and use verified UID from token
@@ -46,6 +55,12 @@ public class UserController {
         // Allow both students and teachers to register
         if (user.getRole() == null || user.getRole().isEmpty()) {
             user.setRole("student"); // Default to student if no role specified
+=======
+    public String createUser(@RequestBody User user) throws Exception {
+
+        if ("TEACHER".equals(user.getRole())) {
+            throw new RuntimeException("Teachers cannot self register");
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
         }
 
         return userService.createUser(user);
@@ -53,14 +68,19 @@ public class UserController {
     @GetMapping("/me")
     public User getCurrentUser(HttpServletRequest request) throws Exception {
 
+<<<<<<< HEAD
     	String uid = (String) request.getAttribute("uid");
     	String email = (String) request.getAttribute("email");
     	String name = (String) request.getAttribute("name");
+=======
+        String uid = request.getHeader("uid");
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 
         if (uid == null) {
             throw new RuntimeException("Unauthorized: UID missing");
         }
 
+<<<<<<< HEAD
         return userService.getOrCreateUser(uid, email, name);
     }
     @GetMapping("/users")
@@ -132,5 +152,8 @@ public class UserController {
             return ResponseEntity.internalServerError()
                     .body("Failed to change password: " + e.getMessage());
         }
+=======
+        return userService.getOrCreateUser(uid);
+>>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     }
 }
