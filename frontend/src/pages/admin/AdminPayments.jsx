@@ -82,15 +82,15 @@ export default function AdminPayments() {
                 <tr>
                   <th className="px-6 py-4">Date</th>
                   <th className="px-6 py-4">Description</th>
-                  <th className="px-6 py-4">Amount</th>
+                  <th className="px-6 py-4 text-surface-text">Amount</th>
                   <th className="px-6 py-4">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-surface-border">
                 {transactions.map((txn) => (
-                  <tr key={txn.id} className="hover:bg-surface-hover/30 transition-colors">
+                  <tr key={txn.id} className="hover:bg-surface-hover/30 transition-all transform hover:scale-[1.005]">
                     <td className="px-6 py-5 text-slate-400 text-sm">{txn.date}</td>
-                    <td className="px-6 py-5 text-white">{txn.description}</td>
+                    <td className="px-6 py-5 text-surface-text">{txn.description}</td>
                     <td className="px-6 py-5 font-semibold text-emerald-400">${txn.amount}</td>
                     <td className="px-6 py-5">
                       <Badge variant={txn.status === "completed" ? "success" : "warn"}>

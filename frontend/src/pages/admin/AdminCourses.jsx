@@ -340,7 +340,7 @@ export default function AdminCourses() {
               <button
                 key="all"
                 onClick={() => setSelectedCategory(null)}
-                className={`p-4 rounded-lg transition-all hover:shadow-md text-left ${selectedCategory === null ? 'ring-2 ring-emerald-400 bg-surface-hover/30' : 'bg-surface/20'}`}
+                className={`p-4 rounded-lg transition-all transform hover:scale-[1.01] hover:shadow-md text-left ${selectedCategory === null ? 'ring-2 ring-emerald-400 bg-surface-hover/30' : 'bg-surface/20'}`}
               >
                 <p className="text-xs text-slate-400 uppercase">All</p>
                 <h4 className="text-lg font-semibold mt-1">{courses.length} course{courses.length !== 1 ? 's' : ''}</h4>
@@ -349,7 +349,7 @@ export default function AdminCourses() {
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`p-4 rounded-lg transition-all hover:shadow-md text-left ${selectedCategory === cat ? 'ring-2 ring-emerald-400 bg-surface-hover/30' : 'bg-surface/20'}`}
+                  className={`p-4 rounded-lg transition-all transform hover:scale-[1.01] hover:shadow-md text-left ${selectedCategory === cat ? 'ring-2 ring-emerald-400 bg-surface-hover/30' : 'bg-surface/20'}`}
                 >
                   <p className="text-xs text-slate-400 uppercase">{cat}</p>
                   <h4 className="text-lg font-semibold mt-1">{categories[cat]} course{categories[cat] !== 1 ? 's' : ''}</h4>
@@ -360,7 +360,7 @@ export default function AdminCourses() {
             <table className="w-full text-left">
               <thead className="bg-surface-hover/50 text-xs uppercase text-slate-400 font-semibold">
                 <tr>
-                  <th className="px-6 py-4">Course Title</th>
+                  <th className="px-6 py-4 text-surface-text">Course Title</th>
                   <th className="px-6 py-4">Category</th>
                   <th className="px-6 py-4">Price</th>
                   <th className="px-6 py-4">Teachers</th>
@@ -372,7 +372,7 @@ export default function AdminCourses() {
               </thead>
               <tbody className="divide-y divide-surface-border">
                 {(courses.filter(c => !selectedCategory || (c.category || 'general') === selectedCategory)).map((course) => (
-                  <tr key={course.id} className="hover:bg-surface-hover/30 transition-colors group">
+                  <tr key={course.id} className="hover:bg-surface-hover/30 transition-all transform hover:scale-[1.005] group text-surface-text">
                     <td className="px-6 py-5 font-medium text-white">{course.title}</td>
                     <td className="px-6 py-5">
                       <Badge variant="info">{course.category || "General"}</Badge>

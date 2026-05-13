@@ -97,10 +97,10 @@ export default function StudentDashboard() {
             <div 
               key={course.id} 
               onClick={() => navigate(`/course-learning/${course.id}`)}
-              className="p-4 border-b border-surface-border last:border-0 hover:bg-surface-hover cursor-pointer transition-all rounded-lg group mb-2"
+              className="p-4 border-b border-surface-border last:border-0 hover:bg-surface-hover cursor-pointer transition-all transform hover:scale-[1.005] rounded-lg group mb-2"
             >
               <div className="flex justify-between items-center">
-                <h3 className="text-white group-hover:text-brand-400 transition-colors font-semibold">{course.title}</h3>
+                <h3 className="text-surface-text group-hover:text-brand-400 transition-colors font-semibold">{course.title}</h3>
                 <span className="text-xs text-brand-400 font-medium group-hover:underline">Resume Learning →</span>
               </div>
               <p className="text-slate-400 text-sm line-clamp-1 mt-1">

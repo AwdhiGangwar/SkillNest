@@ -105,10 +105,10 @@ export default function AdminUsers() {
             {users.map((user) => (
               <tr
                 key={user.id}
-                className="border-b border-surface-border hover:bg-white/5 transition-colors"
+                className="border-b border-surface-border hover:bg-white/5 transition-all transform hover:scale-[1.005]"
               >
                 <td className="py-4 px-6 text-slate-200">{user.name}</td>
-                <td className="py-4 px-6 text-slate-300 text-sm">{user.email}</td>
+                <td className="py-4 px-6 text-slate-400 text-sm">{user.email}</td>
                 <td className="py-4 px-6">
                   <Badge
                     variant={user.role === "teacher" ? "primary" : "secondary"}

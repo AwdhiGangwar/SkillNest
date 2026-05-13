@@ -55,14 +55,14 @@ const BrowseCourses = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-8 text-gray-100">Available Courses</h1>
+      <h1 className="text-3xl font-bold mb-8 text-surface-text">Available Courses</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {courses.map((course) => (
           <div
             key={course.id}
             onClick={() => handleOpenDetailModal(course)}
-            className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-105 flex flex-col"
+            className="bg-surface-card border border-surface-border rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-[1.02] flex flex-col"
           >
             {course.imageUrl && (
               <img
@@ -78,10 +78,10 @@ const BrowseCourses = () => {
                   {course.level || 'Beginner'}
                 </span>
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-black">{course.title}</h3>
+              <h3 className="text-xl font-semibold mb-2 text-surface-text">{course.title}</h3>
               
               {course.teacherName && (
-                <p className="text-sm text-purple-600 text-black font-medium mb-2">
+                <p className="text-sm text-purple-600 font-medium mb-2">
                   👨‍🏫 {course.teacherName}
                 </p>
               )}
@@ -111,18 +111,18 @@ const BrowseCourses = () => {
               <div className="grid grid-cols-3 gap-2 text-xs text-blue-600 mb-4 py-3 border-y">
                 {course.totalClasses && (
                   <div className="text-center">
-                    <span className="block font-semibold text-gray-900">{course.totalClasses}</span>
+                    <span className="block font-semibold text-surface-text">{course.totalClasses}</span>
                     <span className="text-xs">Classes</span>
                   </div>
                 )}
                 {course.duration && (
                   <div className="text-center">
-                    <span className="block font-semibold text-gray-900">{course.duration}h</span>
+                    <span className="block font-semibold text-surface-text">{course.duration}h</span>
                     <span className="text-xs">Duration</span>
                   </div>
                 )}
                 <div className="text-center">
-                  <span className="block font-semibold text-green-600">₹{course.price}</span>
+                  <span className="block font-semibold text-emerald-500 font-bold text-sm">₹{course.price}</span>
                   <span className="text-xs">Price</span>
                 </div>
               </div>
@@ -146,7 +146,7 @@ const BrowseCourses = () => {
       </div>
 
       {courses.length === 0 && (
-        <p className="text-center text-gray-500 mt-10">
+        <p className="text-center text-slate-500 mt-10">
           No courses available at the moment.
         </p>
       )}
@@ -155,7 +155,7 @@ const BrowseCourses = () => {
       {showRequestModal && requestCourse && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/50" onClick={() => setShowRequestModal(false)} />
-          <div className="bg-white rounded-xl p-6 z-10 w-full max-w-md">
+          <div className="bg-surface-card rounded-xl p-6 z-10 w-full max-w-md">
             <h3 className="text-lg font-semibold mb-3">Request Enrollment: {requestCourse.title}</h3>
             <p className="text-sm text-gray-600 mb-4">You can add an optional message for the admin.</p>
             <textarea value={requestMessage} onChange={(e) => setRequestMessage(e.target.value)} className="w-full input-field mb-4" rows={4} />
@@ -183,7 +183,7 @@ const BrowseCourses = () => {
       {showDetailModal && selectedCourse && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/50" onClick={() => setShowDetailModal(false)} />
-          <div className="bg-white rounded-2xl z-10 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-surface-card rounded-2xl z-10 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             {selectedCourse.imageUrl && (
               <img
                 src={selectedCourse.imageUrl}
@@ -200,9 +200,9 @@ const BrowseCourses = () => {
                       {selectedCourse.level || 'Beginner'} • {selectedCourse.category || 'General'}
                     </span>
                   </div>
-                  <h2 className="text-3xl font-bold text-gray-900 mb-2">{selectedCourse.title}</h2>
+                  <h2 className="text-3xl font-bold text-surface-text mb-2">{selectedCourse.title}</h2>
                   {selectedCourse.teacherName && (
-                    <p className="text-lg text-black font-semibold">
+                    <p className="text-lg text-surface-text font-semibold">
                       👨‍🏫 Instructor: {selectedCourse.teacherName}
                     </p>
                   )}

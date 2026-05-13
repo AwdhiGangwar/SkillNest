@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
-
+ 
 const firebaseConfig = {
   apiKey: "AIzaSyCSIH6mQvMkTLV_1D0luQTY1ymIX3p-8ik",
   authDomain: "skillnest-db.firebaseapp.com",

@@ -93,7 +93,7 @@ export default function AdminSupport() {
             <table className="w-full text-left">
               <thead className="bg-surface-hover/50 text-xs uppercase text-slate-400 font-semibold">
                 <tr>
-                  <th className="px-6 py-4">Subject</th>
+                  <th className="px-6 py-4 text-surface-text">Subject</th>
                   <th className="px-6 py-4">From</th>
                   <th className="px-6 py-4">Date</th>
                   <th className="px-6 py-4">Status</th>
@@ -102,8 +102,8 @@ export default function AdminSupport() {
               </thead>
               <tbody className="divide-y divide-surface-border">
                 {tickets.filter(t => showResolvedOnly ? t.status === 'resolved' : true).map((ticket) => (
-                  <tr key={ticket.id} className="hover:bg-surface-hover/30 transition-colors">
-                    <td className="px-6 py-5 font-medium text-white">{ticket.subject}</td>
+                  <tr key={ticket.id} className="hover:bg-surface-hover/30 transition-all transform hover:scale-[1.005]">
+                    <td className="px-6 py-5 font-medium text-surface-text">{ticket.subject}</td>
                     <td className="px-6 py-5 text-slate-400">
                       {ticket.raiser?.name ? (
                         <div>
@@ -156,7 +156,7 @@ export default function AdminSupport() {
       {selectedTicket ? (
         <div className="space-y-4">
           <div>
-            <h3 className="text-lg font-semibold">{selectedTicket.subject}</h3>
+            <h3 className="text-lg font-semibold text-surface-text">{selectedTicket.subject}</h3>
             <p className="text-sm text-slate-400">{selectedTicket.createdAt ? new Date(selectedTicket.createdAt).toLocaleString() : 'N/A'}</p>
           </div>
           <div>
@@ -165,7 +165,7 @@ export default function AdminSupport() {
           <div>
             <h4 className="text-sm font-medium">From</h4>
             {selectedTicket.raiser ? (
-              <div>
+              <div className="text-surface-text">
                 <div className="font-medium">{selectedTicket.raiser.name}</div>
                 <div className="text-xs text-slate-400">{selectedTicket.raiser.email}</div>
               </div>

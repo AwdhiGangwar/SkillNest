@@ -106,7 +106,7 @@ export default function AdminSettings() {
             </div>
 
             {/* Maintenance Mode */}
-            <div className="flex items-center gap-3 p-4 rounded-lg bg-surface-hover border border-surface-border">
+            <div className="flex items-center gap-3 p-4 rounded-lg bg-surface-hover border border-surface-border transition-all transform hover:scale-[1.005]">
               <input
                 type="checkbox"
                 name="maintenanceMode"
@@ -132,7 +132,7 @@ export default function AdminSettings() {
 
           {/* Change Password */}
           <div className="mt-8">
-            <h3 className="text-lg font-display font-bold text-white mb-3">Change Admin Password</h3>
+            <h3 className="text-lg font-display font-bold text-surface-text mb-3">Change Admin Password</h3>
             <form onSubmit={handleChangePassword} className="space-y-4 max-w-md">
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">Current Password</label>
@@ -176,19 +176,19 @@ export default function AdminSettings() {
 
           {/* Info Section */}
           <div className="mt-8 pt-8 border-t border-surface-border">
-            <h3 className="text-lg font-display font-bold text-white mb-4">System Information</h3>
+            <h3 className="text-lg font-display font-bold text-surface-text mb-4">System Information</h3>
             <div className="grid grid-cols-2 gap-6 text-sm">
               <div>
                 <p className="text-slate-400 mb-1">Platform Version</p>
-                <p className="text-white font-semibold">1.0.0</p>
+                <p className="text-surface-text font-semibold">1.0.0</p>
               </div>
               <div>
                 <p className="text-slate-400 mb-1">Last Updated</p>
-                <p className="text-white font-semibold">April 9, 2026</p>
+                <p className="text-surface-text font-semibold">April 9, 2026</p>
               </div>
               <div>
                 <p className="text-slate-400 mb-1">Active Users</p>
-                <p className="text-white font-semibold">1,234</p>
+                <p className="text-surface-text font-semibold">1,234</p>
               </div>
               <div>
                 <p className="text-slate-400 mb-1">Uptime</p>

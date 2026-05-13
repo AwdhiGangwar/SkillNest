@@ -272,10 +272,10 @@ export default function AdminEnrollments() {
 
         {/* Course Capacity Overview */}
         <div className="glass-card p-6 rounded-xl border border-surface-border">
-          <h3 className="text-lg font-display font-bold text-white mb-6">Course Capacity Overview</h3>
+          <h3 className="text-lg font-display font-bold text-surface-text mb-6">Course Capacity Overview</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {courseStats.map((course) => (
-              <div key={course.id} className="p-4 rounded-lg bg-surface-hover border border-surface-border">
+              <div key={course.id} className="p-4 rounded-lg bg-surface-hover border border-surface-border transition-all transform hover:scale-[1.005]">
                 <div className="flex items-center justify-between mb-2">
                   <p className="font-semibold text-white text-sm">{course.name}</p>
                   <Badge variant={course.occupancy > 80 ? "warn" : "success"}>{course.occupancy}%</Badge>
@@ -304,7 +304,7 @@ export default function AdminEnrollments() {
         </div>
         {/* Enrollments by Category */}
         <div className="glass-card p-6 rounded-xl border border-surface-border">
-          <h3 className="text-lg font-display font-bold text-white mb-4">Enrollments by Category</h3>
+          <h3 className="text-lg font-display font-bold text-surface-text mb-4">Enrollments by Category</h3>
           {courses.length === 0 ? (
             <p className="text-slate-400">No courses found</p>
           ) : (
@@ -361,7 +361,7 @@ export default function AdminEnrollments() {
         {/* Enrollments Table */}
         {/* Enrollment Requests */}
         <div ref={requestsRef} className="glass-card overflow-hidden border border-surface-border p-6 mb-6">
-          <h3 className="text-lg font-display font-bold text-white mb-4">Enrollment Requests</h3>
+          <h3 className="text-lg font-display font-bold text-surface-text mb-4">Enrollment Requests</h3>
           {requests.length === 0 ? (
             <p className="text-slate-400">No pending requests</p>
           ) : (
@@ -440,7 +440,7 @@ export default function AdminEnrollments() {
               </thead>
               <tbody className="divide-y divide-surface-border">
                 {enrollments.map((enrollment) => (
-                  <tr key={enrollment.id} className="hover:bg-surface-hover/30 transition-colors group">
+                  <tr key={enrollment.id} className="hover:bg-surface-hover/30 transition-all transform hover:scale-[1.005] group text-surface-text">
                     <td className="px-6 py-5 font-medium text-white">{enrollment.studentName}</td>
                     <td className="px-6 py-5 text-slate-400 text-sm">{enrollment.email}</td>
                     <td className="px-6 py-5 text-slate-300">{enrollment.courseName}</td>

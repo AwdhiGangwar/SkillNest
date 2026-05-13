@@ -48,8 +48,8 @@ export default function StudentEnrollments() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {enrollments.map((course) => (
-            <div key={course.id} className="glass-card p-6 rounded-xl border border-surface-border hover:border-brand-400 transition-all">
-              <div className="flex items-start justify-between mb-4">
+            <div key={course.id} className="glass-card p-6 rounded-xl border border-surface-border hover:border-brand-400 transition-all transform hover:scale-[1.01]">
+              <div className="flex items-start justify-between mb-4 text-surface-text">
                 <h3 className="text-lg font-display font-bold text-white flex-1">{course.title}</h3>
                 <Badge variant="success">Enrolled</Badge>
               </div>

@@ -16,8 +16,14 @@ export default function AdminDashboard() {
         const res = await getAdminDashboard();
         setDashboardData(res.data);
       } catch (err) {
-        toast.error("Failed to load dashboard metrics");
+        // ✅ Error pe bhi dashboard dikhao — empty data ke saath
         console.error("Admin Dashboard fetch error:", err);
+        setDashboardData({
+          totalUsers: 0,
+          totalCourses: 0,
+          totalRevenue: 0,
+          openSupportTickets: 0
+        });
       } finally {
         setLoading(false);
       }

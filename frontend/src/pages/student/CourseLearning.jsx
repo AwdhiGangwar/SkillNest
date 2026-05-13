@@ -97,15 +97,15 @@ const CourseLearning = () => {
         {/* Main Content */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Header */}
-          <div className="bg-white shadow-sm border-b">
+          <div className="bg-surface-card shadow-sm border-b border-surface-border">
             <div className="p-6">
-              <h1 className="text-3xl font-bold text-gray-800">{course?.title}</h1>
-              <p className="text-gray-600 mt-2">{course?.description}</p>
+              <h1 className="text-3xl font-bold text-surface-text">{course?.title}</h1>
+              <p className="text-slate-400 mt-2">{course?.description}</p>
               
               {/* Progress Bar */}
               <div className="mt-6">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-semibold text-gray-700">Overall Progress</span>
+                  <span className="text-sm font-semibold text-slate-400">Overall Progress</span>
                   <span className="text-sm font-bold text-blue-600">{progress.toFixed(1)}%</span>
                 </div>
                 <ProgressBar progress={progress} />
@@ -122,7 +122,7 @@ const CourseLearning = () => {
               />
             ) : (
               <div className="flex items-center justify-center h-full">
-                <div className="text-center">
+                <div className="text-center text-slate-500">
                   <p className="text-gray-500 text-lg">Select a lesson to start learning</p>
                 </div>
               </div>

@@ -7,7 +7,7 @@ const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8080";
 // Axios instance
 const api = axios.create({
   baseURL: API_BASE,
-  timeout: 10000,
+  timeout: 15000,
 });
 
 // ─────────────────────────────────────────────
@@ -15,7 +15,6 @@ const api = axios.create({
 // ─────────────────────────────────────────────
 api.interceptors.request.use(
   async (config) => {
-    // Support bypassing interceptor for isolation/debugging
     if (config._skipInterceptor) return config;
 
     let user = auth.currentUser;
@@ -41,7 +40,7 @@ api.interceptors.request.use(
 );
 
 // ─────────────────────────────────────────────
-// ⚠️ Global Error Handling (FIXED)
+// ⚠️ Global Error Handling
 // ─────────────────────────────────────────────
 api.interceptors.response.use(
   (response) => response,
@@ -49,7 +48,6 @@ api.interceptors.response.use(
     const status = error.response?.status;
     const responseData = error.response?.data;
 
-    // 🔍 Enhanced logging for debugging
     console.error(`[API Error] Status: ${status}`, {
       path: error.config?.url,
       method: error.config?.method,
@@ -57,7 +55,6 @@ api.interceptors.response.use(
       message: error.message
     });
 
-    // 🚨 Network Error
     if (error.code === "ERR_NETWORK") {
       const networkError = new Error("Server not reachable. Please check if backend is running (http://localhost:8080).");
       networkError.status = status;
@@ -125,11 +122,9 @@ export const approveEnrollmentRequest = (id) =>
 export const rejectEnrollmentRequest = (id, reason) =>
   api.post(`/api/enrollment-requests/${id}/reject`, reason || "");
 
-// Get enriched enrollment requests with student and course details
 export const getEnrollmentRequestsEnriched = () =>
   api.get("/api/enrollment-requests/enriched/all");
 
-// Enrollment and Admin stats
 export const getEnrollmentStats = () => api.get('/api/enrollments/stats');
 
 // ─────────────────────────────────────────────
@@ -139,6 +134,9 @@ export const getTeacherClasses = () => api.get("/api/classes/teacher");
 export const getStudentClasses = () => api.get("/api/classes/student");
 export const createClass = (data) => api.post("/api/classes", data);
 export const getClassesByCourseId = (courseId) => api.get(`/api/classes/course/${courseId}`);
+export const getClassesByCourse = (courseId) => api.get(`/api/classes/course/${courseId}`);
+export const deleteClass = (classId) => api.delete(`/api/classes/${classId}`);
+export const updateClass = (classId, data) => api.put(`/api/classes/${classId}`, data);
 
 export const rescheduleClass = (id, data) =>
   api.put(`/api/classes/${id}/reschedule`, data);
@@ -164,8 +162,7 @@ export const deleteAvailabilitySlot = (id) =>
 // 💰 EARNINGS APIs
 // ─────────────────────────────────────────────
 export const getTeacherEarnings = () => api.get("/api/earnings");
-export const getMonthlyEarnings = () =>
-  api.get("/api/earnings/monthly");
+export const getMonthlyEarnings = () => api.get("/api/earnings/monthly");
 
 // ─────────────────────────────────────────────
 // 🧪 HEALTH CHECK
@@ -179,22 +176,19 @@ export const applyAsTeacher = (data) =>
   api.post("/api/teacher-requests", data);
 
 // ─────────────────────────────────────────────
-// 🛠️ ADMIN APIs   TEACHER REQUEST
+// 🛠️ ADMIN APIs
 // ─────────────────────────────────────────────
 export const getTeacherRequests = () =>
   api.get("/api/teacher-requests");
-
 
 export const approveTeacherRequest = (id, approvalData) =>
   api.post(`/api/teacher-requests/${id}/approve`, approvalData);
 
 export const rejectTeacherRequest = (id) =>
-  api.put(`/api/teacher-requests/${id}/reject`); 
+  api.put(`/api/teacher-requests/${id}/reject`);
 
-// Request users from the user-service route. The gateway routes `/api/users/**` to user-service.
 export const getAllUsers = () => api.get("/api/users");
 
-// =============== NEW: CATEGORIZED USERS APIs ===============
 export const getCategorizedUsers = () => api.get("/api/admin/users/categorized");
 export const getAllStudents = () => api.get("/api/admin/users/students");
 export const getAllTeachers = () => api.get("/api/admin/users/teachers");
@@ -203,26 +197,24 @@ export const getStudentsByStatus = (status) => api.get(`/api/admin/users/student
 export const getTeachersByStatus = (status) => api.get(`/api/admin/users/teachers/${status}`);
 
 export const blockUser = (id) => api.put(`/api/admin/user/${id}/block`);
-
 export const unblockUser = (id) => api.put(`/api/admin/user/${id}/unblock`);
 
 export const getAdminDashboard = async () => {
-  try {
-    return await api.get("/api/admin/dashboard");
+   try {
+    return await api.get("/api/admin/dashboard", {
+      timeout: 30000 // ✅ 30 seconds
+    });
   } catch (err) {
-    // If the aggregator fails, attempt to fetch enrollment stats as a fallback for partial UI load
     if (err.status === 500) {
-      console.warn("[api.js] Admin Dashboard aggregator failed, might be a downstream service issue.");
+      console.warn("[api.js] Admin Dashboard aggregator failed.");
     }
     throw err;
   }
 };
 
-// Refactored to use more descriptive parameter name to avoid scope confusion
 export const createTeacher = (teacherData) =>
   api.post("/api/admin/create-teacher", teacherData);
 
-// Debug function to bypass interceptors if needed
 export const createTeacherRaw = (teacherData) =>
   api.post("/admin/create-teacher", teacherData, { _skipInterceptor: true });
 
@@ -257,7 +249,6 @@ export const getSupportTickets = async () => {
 export const createSupportTicket = async (data) => {
   try {
     const payload = { ...data };
-    // attach user email when available so admin can see raiser even if auth middleware isn't present
     try {
       const user = auth.currentUser;
       if (user && user.email) payload.userEmail = user.email;
@@ -271,7 +262,8 @@ export const createSupportTicket = async (data) => {
   }
 };
 
-export const syncSupportTicket = (ticket) => api.post('/api/admin/support/tickets/sync', ticket);
+export const syncSupportTicket = (ticket) =>
+  api.post('/api/admin/support/tickets/sync', ticket);
 
 export const updateSupportTicket = async (id, updates) => {
   try {
@@ -288,9 +280,7 @@ export const deleteSupportTicket = async (id) => {
   try {
     return await api.delete(`/api/admin/support/tickets/${id}`);
   } catch (err) {
-    // Try non-admin route when admin route is not available or permission is denied
     if (err.status === 404 || err.status === 403) {
-      console.warn('[deleteSupportTicket] falling back to non-admin endpoint', { id, status: err.status });
       return api.delete(`/api/support/tickets/${id}`);
     }
     throw err;
@@ -306,110 +296,83 @@ export const changePassword = (data) =>
   api.post("/api/users/change-password", data);
 
 // ─────────────────────────────────────────────
-// 📖 MODULE APIs (Course Content Management)
+// 📖 MODULE APIs
 // ─────────────────────────────────────────────
-export const createModule = (data) =>
-  api.post("/api/modules", data);
-
-export const getModule = (moduleId) =>
-  api.get(`/api/modules/${moduleId}`);
-
-export const getModulesByCourse = (courseId) =>
-  api.get(`/api/modules/course/${courseId}`);
-
-export const updateModule = (moduleId, data) =>
-  api.put(`/api/modules/${moduleId}`, data);
-
-export const deleteModule = (moduleId) =>
-  api.delete(`/api/modules/${moduleId}`);
-
+export const createModule = (data) => api.post("/api/modules", data);
+export const getModule = (moduleId) => api.get(`/api/modules/${moduleId}`);
+export const getModulesByCourse = (courseId) => api.get(`/api/modules/course/${courseId}`);
+export const updateModule = (moduleId, data) => api.put(`/api/modules/${moduleId}`, data);
+export const deleteModule = (moduleId) => api.delete(`/api/modules/${moduleId}`);
 export const reorderModules = (courseId, moduleIds) =>
   api.post(`/api/courses/${courseId}/modules/reorder`, { moduleIds });
 
 // ─────────────────────────────────────────────
-// 🎬 LESSON APIs (Course Content Management)
+// 🎬 LESSON APIs
 // ─────────────────────────────────────────────
-export const createLesson = (data) =>
-  api.post("/api/lessons", data);
-
-export const getLesson = (lessonId) =>
-  api.get(`/api/lessons/${lessonId}`);
-
-export const getLessonsByModule = (moduleId) =>
-  api.get(`/api/lessons/module/${moduleId}`);
-
-export const updateLesson = (lessonId, data) =>
-  api.put(`/api/lessons/${lessonId}`, data);
-
-export const deleteLesson = (lessonId) =>
-  api.delete(`/api/lessons/${lessonId}`);
-
-// Reordering uses the parent ID to update the sequence of child IDs
+export const createLesson = (data) => api.post("/api/lessons", data);
+export const getLesson = (lessonId) => api.get(`/api/lessons/${lessonId}`);
+export const getLessonsByModule = (moduleId) => api.get(`/api/lessons/module/${moduleId}`);
+export const updateLesson = (lessonId, data) => api.put(`/api/lessons/${lessonId}`, data);
+export const deleteLesson = (lessonId) => api.delete(`/api/lessons/${lessonId}`);
 export const reorderLessons = (moduleId, lessonIds) =>
   api.post(`/api/modules/${moduleId}/lessons/reorder`, { lessonIds });
 
 // ─────────────────────────────────────────────
-// 📊 PROGRESS APIs (Course Content Management)
+// 📊 PROGRESS APIs
 // ─────────────────────────────────────────────
-export const createProgress = (data) =>
-  api.post("/api/progress", data);
-
-export const getProgress = (progressId) =>
-  api.get(`/api/progress/${progressId}`);
-
+export const createProgress = (data) => api.post("/api/progress", data);
+export const getProgress = (progressId) => api.get(`/api/progress/${progressId}`);
 export const getProgressByLesson = (studentId, lessonId) =>
   api.get(`/api/progress/lesson/${studentId}/${lessonId}`);
-
 export const getCourseProgress = (studentId, courseId, totalLessons) =>
   api.get(`/api/progress/course/${studentId}/${courseId}`, { params: { totalLessons } });
-
 export const markLessonComplete = (studentId, courseId, lessonId) =>
   api.post(`/api/progress/${studentId}/${courseId}/${lessonId}/mark-complete`);
-
 export const updateProgress = (progressId, data) =>
   api.put(`/api/progress/${progressId}`, data);
 
 // ─────────────────────────────────────────────
-// ❓ QUIZ APIs (Course Content Management)
+// ❓ QUIZ APIs
 // ─────────────────────────────────────────────
-export const createQuiz = (data) =>
-  api.post("/api/quizzes", data);
-
-export const getQuiz = (quizId) =>
-  api.get(`/api/quizzes/${quizId}`);
-
-export const getQuizzesByLesson = (lessonId) =>
-  api.get(`/api/quizzes/lesson/${lessonId}`);
-
-export const updateQuiz = (quizId, data) =>
-  api.put(`/api/quizzes/${quizId}`, data);
-
-export const deleteQuiz = (quizId) =>
-  api.delete(`/api/quizzes/${quizId}`);
+export const createQuiz = (data) => api.post("/api/quizzes", data);
+export const getQuiz = (quizId) => api.get(`/api/quizzes/${quizId}`);
+export const getQuizzesByLesson = (lessonId) => api.get(`/api/quizzes/lesson/${lessonId}`);
+export const updateQuiz = (quizId, data) => api.put(`/api/quizzes/${quizId}`, data);
+export const deleteQuiz = (quizId) => api.delete(`/api/quizzes/${quizId}`);
 
 // ─────────────────────────────────────────────
-// 📝 ASSIGNMENT APIs (Course Content Management)
+// 📝 ASSIGNMENT APIs
 // ─────────────────────────────────────────────
-export const createAssignment = (data) =>
-  api.post("/api/assignments", data);
-
-export const getAssignment = (assignmentId) =>
-  api.get(`/api/assignments/${assignmentId}`);
-
-export const getAssignmentsByLesson = (lessonId) =>
-  api.get(`/api/assignments/lesson/${lessonId}`);
-
-export const updateAssignment = (assignmentId, data) =>
-  api.put(`/api/assignments/${assignmentId}`, data);
-
-export const deleteAssignment = (assignmentId) =>
-  api.delete(`/api/assignments/${assignmentId}`);
+export const createAssignment = (data) => api.post("/api/assignments", data);
+export const getAssignment = (assignmentId) => api.get(`/api/assignments/${assignmentId}`);
+export const getAssignmentsByLesson = (lessonId) => api.get(`/api/assignments/lesson/${lessonId}`);
+export const getAssignmentsByCourse = (courseId) => api.get(`/api/assignments/course/${courseId}`); // ✅ Add kiya
+export const updateAssignment = (assignmentId, data) => api.put(`/api/assignments/${assignmentId}`, data);
+export const deleteAssignment = (assignmentId) => api.delete(`/api/assignments/${assignmentId}`);
 
 // ─────────────────────────────────────────────
-// 📅 LIVE CLASS CRUD
+// 📤 SUBMISSION APIs
 // ─────────────────────────────────────────────
-export const getClassesByCourse = (courseId) => api.get(`/api/classes/course/${courseId}`);
-export const deleteClass = (classId) => api.delete(`/api/classes/${classId}`);
-export const updateClass = (classId, data) => api.put(`/api/classes/${classId}`, data);
+export const createSubmission = (data) => api.post("/api/submissions", data); // ✅ Add kiya
+export const getSubmissionsByAssignment = (assignmentId) =>
+  api.get(`/api/submissions/assignment/${assignmentId}`);
+export const getMySubmissions = () => api.get("/api/submissions/my");
+
+// ─────────────────────────────────────────────
+// 📤 FILE UPLOAD - Cloudinary
+// ─────────────────────────────────────────────
+export const uploadFile = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", "skillnest_assignments");
+
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/drzjvnmfk/raw/upload`, // ✅ Fixed URL
+    { method: "POST", body: formData }
+  );
+
+  const data = await res.json();
+  return data.secure_url;
+};
 
 export default api;

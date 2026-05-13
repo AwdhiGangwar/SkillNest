@@ -40,6 +40,7 @@ import AdminPayments from "./pages/admin/AdminPayments";
 import AdminSupport from "./pages/admin/AdminSupport";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminContentManager from "./pages/admin/AdminContentManager"; // Content Manager
+import StudentAssignments from "./pages/student/StudentAssignments";
 
 export default function App() {
   return (
@@ -115,9 +116,10 @@ export default function App() {
               <ProtectedRoute role="student">
                 <ProgressDashboard />
               </ProtectedRoute>
+
             }
           />
-
+          <Route path="/student/assignments" element={<StudentAssignments />} />
           {/* Teacher Routes */}
           <Route
             path="/teacher/dashboard"

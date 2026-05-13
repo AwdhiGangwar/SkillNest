@@ -57,12 +57,12 @@ export default function AdminAnalytics() {
           </div>
 
           <div className="glass-card p-6 rounded-xl border border-surface-border">
-            <h2 className="text-xl font-display font-bold text-white mb-4">Revenue Trend</h2>
+            <h2 className="text-xl font-display font-bold text-surface-text mb-4">Revenue Trend</h2>
             <div className="h-64 flex items-end justify-around gap-2">
               {[45, 60, 32, 78, 92, 55, 20].map((val, idx) => (
                 <div
                   key={idx}
-                  className="flex-1 bg-brand-500/30 rounded-t-lg hover:bg-brand-500/50 transition-all"
+                  className="flex-1 bg-brand-500/30 rounded-t-lg hover:bg-brand-500/50 transition-all transform hover:scale-y-105 origin-bottom"
                   style={{height: `${val}%`}}
                   title={`${val}%`}
                 />
