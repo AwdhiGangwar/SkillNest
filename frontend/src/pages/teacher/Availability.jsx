@@ -231,11 +231,7 @@ function SlotRow({ slot, onDelete }) {
   };
 
   return (
-<<<<<<< HEAD
     <div className="flex items-center justify-between p-3 rounded-xl bg-surface-hover hover:bg-surface-border/50 transition-all transform hover:scale-[1.005] group">
-=======
-    <div className="flex items-center justify-between p-3 rounded-xl bg-surface-hover hover:bg-surface-border/50 transition-colors group">
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
       <div className="flex items-center gap-3">
         <div className="w-2 h-2 rounded-full bg-emerald-400" />
         <span className="text-sm font-medium text-white font-mono">

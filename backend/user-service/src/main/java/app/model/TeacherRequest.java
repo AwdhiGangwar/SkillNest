@@ -1,21 +1,25 @@
 package app.model;
 
+import com.google.cloud.firestore.annotation.DocumentId;
+
 public class TeacherRequest {
 
+    @DocumentId
     private String id;
     private String name;
     private String email;
-<<<<<<< HEAD
     private String phone;
-=======
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     private String skills;
     private String experience;
     private String bio;
     private String status; // PENDING, APPROVED, REJECTED
     private long createdAt;
 
-    // getters & setters
+    public TeacherRequest() {
+        this.createdAt = System.currentTimeMillis();
+    }
+
+    // ==================== GETTERS & SETTERS ====================
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
@@ -25,12 +29,9 @@ public class TeacherRequest {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-<<<<<<< HEAD
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
 
-=======
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     public String getSkills() { return skills; }
     public void setSkills(String skills) { this.skills = skills; }
 

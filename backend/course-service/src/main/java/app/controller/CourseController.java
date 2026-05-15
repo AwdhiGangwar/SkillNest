@@ -3,7 +3,6 @@ package app.controller;
 import app.model.Course;
 import app.service.CourseService;
 import jakarta.servlet.http.HttpServletRequest;
-<<<<<<< HEAD
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,16 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-=======
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 
 @RestController
 @RequestMapping("/api")
@@ -29,18 +21,14 @@ public class CourseController {
     @Autowired
     private CourseService courseService;
 
-<<<<<<< HEAD
     private static final Logger logger = LoggerFactory.getLogger(CourseController.class);
 
-=======
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     @GetMapping("/health")
     public String health() {
         return "Course Service running 🚀";
     }
 
     @PostMapping("/courses")
-<<<<<<< HEAD
     public ResponseEntity<?> createCourse(@RequestBody Course course,
                                           HttpServletRequest request) {
         try {
@@ -200,34 +188,5 @@ public class CourseController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Failed to fetch course: " + e.getMessage()));
         }
-=======
-    public String createCourse(@RequestBody Course course,
-                               HttpServletRequest request) throws Exception {
-
-        String uid = request.getHeader("uid");
-
-        if (uid == null) {
-            uid = "teacher123"; // temp fallback
-        }
-
-        String token = request.getHeader("Authorization");
-
-        if (!courseService.isTeacher(uid, token)) {
-            return "Only teachers can create courses ❌";
-        }
-
-        course.setTeacherId(uid);
-
-        return courseService.createCourse(course);
-    }
-
-    @GetMapping("/courses")
-    public List<Course> getCourses() throws Exception {
-        return courseService.getAllCourses();
-    }
-    @GetMapping("/courses/{id}")
-    public Course getCourseById(@PathVariable String id) throws Exception {
-        return courseService.getCourseById(id);
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     }
 }

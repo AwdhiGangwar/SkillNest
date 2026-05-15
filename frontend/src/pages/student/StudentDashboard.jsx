@@ -1,51 +1,4 @@
 // src/pages/student/StudentDashboard.jsx
-<<<<<<< HEAD
-
-import React, { useEffect, useState } from "react";
-import Layout from "../../components/Layout";
-import { StatCard, CardSkeleton, EmptyState, Modal } from "../../components/ui";
-import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
-
-// ✅ IMPORTANT: use API functions instead of axios
-import { getMyCourses } from "../../services/api";
-import { createSupportTicket } from "../../services/api";
-
-export default function StudentDashboard() {
-  const { profile } = useAuth();
-  const navigate = useNavigate();
-
-  const [courses, setCourses] = useState([]);
-  const [classes, setClasses] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showTicketModal, setShowTicketModal] = useState(false);
-  const [ticketForm, setTicketForm] = useState({ subject: "", message: "" });
-
-  useEffect(() => {
-    loadDashboardData();
-  }, []);
-
-  const loadDashboardData = async () => {
-    try {
-      setLoading(true);
-
-      // ✅ FIXED API CALL
-      const coursesRes = await getMyCourses();
-
-      setCourses(coursesRes.data || []);
-    } catch (error) {
-      console.error(error);
-      toast.error(error.message || "Failed to load dashboard data");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const completedClasses = classes.filter((c) => c.status === "completed");
-  const upcomingClasses = classes
-    .filter((c) => c.status === "scheduled")
-=======
 import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
 import { StatCard, CardSkeleton, EmptyState, Badge } from "../../components/ui";
@@ -68,7 +21,8 @@ export default function StudentDashboard() {
           getMyCourses(),
           getStudentClasses(),
         ]);
-        if (courseRes.status === "fulfilled") setCourses(courseRes.value.data || []);
+        if (courseRes.status === "fulfilled")
+          setCourses(courseRes.value.data || []);
         if (classRes.status === "fulfilled") setClasses(classRes.value.data || []);
       } catch (e) {
         toast.error("Failed to load dashboard data");
@@ -83,18 +37,17 @@ export default function StudentDashboard() {
   const upcomingClasses = classes
     .filter((c) => c.status === "scheduled")
     .sort((a, b) => a.startTime - b.startTime)
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     .slice(0, 3);
 
   const hour = new Date().getHours();
   const greeting =
-    hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+    hour < 12
+      ? "Good morning"
+      : hour < 17
+      ? "Good afternoon"
+      : "Good evening";
 
   return (
-<<<<<<< HEAD
-    <>
-=======
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     <Layout
       title={`${greeting}, ${profile?.name?.split(" ")[0] || "there"} 👋`}
       subtitle="Here's an overview of your learning journey"
@@ -107,24 +60,12 @@ export default function StudentDashboard() {
         </button>
       }
     >
-<<<<<<< HEAD
-      <div className="mb-4">
-        <button onClick={() => setShowTicketModal(true)} className="btn-ghost">Raise Support Ticket</button>
-      </div>
-=======
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
-      {/* Stats */}
+      {/* Statistics */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {loading ? (
           Array(4).fill(0).map((_, i) => <CardSkeleton key={i} />)
         ) : (
           <>
-<<<<<<< HEAD
-            <StatCard label="Enrolled Courses" value={courses.length} icon="📚" />
-            <StatCard label="Completed Classes" value={completedClasses.length} icon="✅" />
-            <StatCard label="Upcoming Classes" value={upcomingClasses.length} icon="📅" />
-            <StatCard label="Total Classes" value={classes.length} icon="⏱️" />
-=======
             <StatCard
               label="Enrolled Courses"
               value={courses.length}
@@ -146,86 +87,24 @@ export default function StudentDashboard() {
             <StatCard
               label="Total Classes"
               value={classes.length}
-              icon="◷"
+              icon="⏱️"
               color="violet"
             />
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
           </>
         )}
       </div>
 
-<<<<<<< HEAD
-      {/* My Courses */}
-      <div className="glass-card p-6">
-        <h2 className="text-lg text-white mb-4">My Courses</h2>
-
-        {loading ? (
-          <CardSkeleton />
-        ) : courses.length === 0 ? (
-          <EmptyState
-            title="No courses yet"
-            description="Start learning by enrolling in a course"
-          />
-        ) : (
-          courses.map((course) => (
-            <div 
-              key={course.id} 
-              onClick={() => navigate(`/course-learning/${course.id}`)}
-              className="p-4 border-b border-surface-border last:border-0 hover:bg-surface-hover cursor-pointer transition-all transform hover:scale-[1.005] rounded-lg group mb-2"
-            >
-              <div className="flex justify-between items-center">
-                <h3 className="text-surface-text group-hover:text-brand-400 transition-colors font-semibold">{course.title}</h3>
-                <span className="text-xs text-brand-400 font-medium group-hover:underline">Resume Learning →</span>
-              </div>
-              <p className="text-slate-400 text-sm line-clamp-1 mt-1">
-                {course.description}
-              </p>
-            </div>
-          ))
-        )}
-      </div>
-    </Layout>
-    <Modal isOpen={showTicketModal} onClose={() => setShowTicketModal(false)} title="Raise Support Ticket">
-      <form onSubmit={async (e) => {
-        e.preventDefault();
-        if (!ticketForm.subject || !ticketForm.message) return toast.error("Fill subject and message");
-        try {
-          await createSupportTicket(ticketForm);
-          toast.success("Ticket submitted");
-          setTicketForm({ subject: "", message: "" });
-          setShowTicketModal(false);
-        } catch (err) {
-          toast.error("Failed to submit ticket");
-        }
-      }} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-slate-300 mb-2">Subject</label>
-          <input value={ticketForm.subject} onChange={(e) => setTicketForm(s => ({...s, subject: e.target.value}))} className="input-field w-full" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-slate-300 mb-2">Message</label>
-          <textarea value={ticketForm.message} onChange={(e) => setTicketForm(s => ({...s, message: e.target.value}))} rows={5} className="input-field w-full resize-none" />
-        </div>
-        <div className="flex gap-3">
-          <button type="button" onClick={() => setShowTicketModal(false)} className="btn-ghost flex-1">Cancel</button>
-          <button type="submit" className="btn-primary flex-1">Submit Ticket</button>
-        </div>
-      </form>
-    </Modal>
-    </>
-  );
-}
-=======
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Upcoming Classes */}
-        <div className="glass-card p-6">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="font-display font-semibold text-white text-lg">
-              Upcoming Classes
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        {/* Upcoming Classes - Larger Section */}
+        <div className="lg:col-span-2 glass-card p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="font-display font-semibold text-lg text-white flex items-center gap-2">
+              📅 Upcoming Classes
             </h2>
             <button
               onClick={() => navigate("/student/classes")}
-              className="text-xs text-brand-400 hover:text-brand-300 transition-colors"
+              className="text-xs text-brand-400 hover:text-brand-300 transition-colors font-medium"
             >
               View all →
             </button>
@@ -233,124 +112,185 @@ export default function StudentDashboard() {
 
           {loading ? (
             <div className="space-y-3">
-              {Array(3).fill(0).map((_, i) => <CardSkeleton key={i} />)}
+              {Array(3).fill(0).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-16 bg-surface-hover rounded-lg animate-pulse"
+                />
+              ))}
             </div>
           ) : upcomingClasses.length === 0 ? (
             <EmptyState
               icon="📅"
               title="No upcoming classes"
-              description="Enroll in a course and book your first class"
-              action={
-                <button
-                  onClick={() => navigate("/student/courses")}
-                  className="btn-primary text-sm"
-                >
-                  Browse Courses
-                </button>
-              }
+              description="Book your first class from an enrolled course"
             />
           ) : (
             <div className="space-y-3">
               {upcomingClasses.map((cls) => (
-                <ClassCard key={cls.id} cls={cls} />
+                <div
+                  key={cls.id}
+                  className="p-4 bg-surface-hover rounded-xl hover:border-brand-500/30 border border-transparent transition-all duration-200 group cursor-pointer"
+                  onClick={() => navigate(`/student/classes`)}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-white font-semibold group-hover:text-brand-300 transition-colors">
+                        {cls.title || "Class"}
+                      </h3>
+                      <p className="text-xs text-slate-400 mt-1">
+                        {cls.startTime
+                          ? new Date(cls.startTime).toLocaleString()
+                          : "Time TBD"}
+                      </p>
+                    </div>
+                    <Badge variant="primary">
+                      {cls.status?.charAt(0).toUpperCase() + cls.status?.slice(1)}
+                    </Badge>
+                  </div>
+                </div>
               ))}
             </div>
           )}
         </div>
 
-        {/* My Courses */}
+        {/* Progress Section */}
         <div className="glass-card p-6">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="font-display font-semibold text-white text-lg">
-              My Courses
-            </h2>
-            <button
-              onClick={() => navigate("/student/my-courses")}
-              className="text-xs text-brand-400 hover:text-brand-300 transition-colors"
-            >
-              View all →
-            </button>
-          </div>
+          <h2 className="font-display font-semibold text-lg text-white mb-6 flex items-center gap-2">
+            📊 Progress
+          </h2>
+          <div className="space-y-5">
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm text-slate-300">Completion Rate</span>
+                <span className="text-sm font-semibold text-brand-400">
+                  {courses.length > 0
+                    ? Math.round((completedClasses.length / classes.length) * 100) ||
+                      0
+                    : 0}
+                  %
+                </span>
+              </div>
+              <div className="w-full bg-surface-hover rounded-full h-2">
+                <div
+                  className="bg-gradient-to-r from-brand-500 to-brand-600 h-2 rounded-full transition-all duration-500"
+                  style={{
+                    width: `${
+                      courses.length > 0
+                        ? Math.round(
+                            (completedClasses.length / classes.length) * 100
+                          ) || 0
+                        : 0
+                    }%`,
+                  }}
+                />
+              </div>
+            </div>
 
-          {loading ? (
-            <div className="space-y-3">
-              {Array(3).fill(0).map((_, i) => <CardSkeleton key={i} />)}
+            <div className="pt-4 border-t border-surface-border">
+              <p className="text-xs text-slate-400 mb-3">Quick Stats</p>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-slate-400">Classes Attended</span>
+                  <span className="text-white font-semibold">
+                    {completedClasses.length}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-slate-400">Pending Classes</span>
+                  <span className="text-amber-400 font-semibold">
+                    {upcomingClasses.length}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-slate-400">Total Learning</span>
+                  <span className="text-brand-400 font-semibold">
+                    {classes.length} sessions
+                  </span>
+                </div>
+              </div>
             </div>
-          ) : courses.length === 0 ? (
-            <EmptyState
-              icon="◈"
-              title="No courses enrolled"
-              description="Find a course that interests you and start learning"
-            />
-          ) : (
-            <div className="space-y-3">
-              {courses.slice(0, 4).map((course) => (
-                <CourseRow key={course.id} course={course} />
-              ))}
-            </div>
-          )}
+          </div>
         </div>
+      </div>
+
+      {/* My Courses Section */}
+      <div className="glass-card p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="font-display font-semibold text-lg text-white flex items-center gap-2">
+            📚 My Courses
+          </h2>
+          <button
+            onClick={() => navigate("/student/my-courses")}
+            className="text-xs text-brand-400 hover:text-brand-300 transition-colors font-medium"
+          >
+            View all →
+          </button>
+        </div>
+
+        {loading ? (
+          <div className="space-y-3">
+            {Array(3).fill(0).map((_, i) => (
+              <div
+                key={i}
+                className="h-20 bg-surface-hover rounded-lg animate-pulse"
+              />
+            ))}
+          </div>
+        ) : courses.length === 0 ? (
+          <EmptyState
+            icon="📚"
+            title="No courses yet"
+            description="Start your learning journey by enrolling in a course"
+            action={
+              <button
+                onClick={() => navigate("/student/courses")}
+                className="btn-primary text-sm"
+              >
+                Browse Courses
+              </button>
+            }
+          />
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {courses.slice(0, 6).map((course) => (
+              <div
+                key={course.id}
+                className="p-4 bg-surface-hover rounded-xl hover:border-brand-500/30 border border-transparent transition-all duration-200 group cursor-pointer"
+                onClick={() =>
+                  navigate(`/course-learning/${course.id}`)
+                }
+              >
+                <div className="flex justify-between items-start mb-3">
+                  <h3 className="text-white font-semibold text-sm group-hover:text-brand-300 transition-colors line-clamp-2">
+                    {course.title}
+                  </h3>
+                  <span className="text-xs bg-brand-500/20 text-brand-300 px-2 py-1 rounded-lg whitespace-nowrap ml-2">
+                    {course.level || "Beginner"}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 line-clamp-1 mb-3">
+                  {course.description}
+                </p>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 w-20 h-1.5 bg-surface-border rounded-full">
+                      <div
+                        className="h-full bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full"
+                        style={{ width: "60%" }}
+                      />
+                    </div>
+                    <span className="text-xs text-slate-400">60%</span>
+                  </div>
+                  <span className="text-xs text-brand-400 group-hover:underline">
+                    →
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </Layout>
   );
 }
-
-function ClassCard({ cls }) {
-  const startDate = cls.startTime
-    ? new Date(cls.startTime).toLocaleDateString("en-US", {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-      })
-    : "TBD";
-  const startTime = cls.startTime
-    ? new Date(cls.startTime).toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    : "";
-
-  return (
-    <div className="flex items-center gap-4 p-4 rounded-xl bg-surface-hover border border-surface-border hover:border-brand-500/30 transition-all duration-200">
-      <div className="w-10 h-10 rounded-xl bg-brand-500/15 flex items-center justify-center text-brand-400 font-bold text-sm">
-        {startDate.split(" ")[2] || "?"}
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="text-sm font-semibold text-white truncate">
-          {cls.title || "Class Session"}
-        </div>
-        <div className="text-xs text-slate-400">
-          {startDate} · {startTime}
-        </div>
-      </div>
-      {cls.meetingLink && (
-        <a
-          href={cls.meetingLink}
-          target="_blank"
-          rel="noreferrer"
-          className="text-xs bg-brand-500/15 text-brand-400 hover:bg-brand-500/25 px-3 py-1.5 rounded-lg transition-colors font-medium"
-        >
-          Join
-        </a>
-      )}
-    </div>
-  );
-}
-
-function CourseRow({ course }) {
-  return (
-    <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-surface-hover transition-colors">
-      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500/20 to-violet-500/20 flex items-center justify-center text-sm">
-        📖
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium text-white truncate">{course.title}</div>
-        <div className="text-xs text-slate-400">{course.description?.slice(0, 40)}...</div>
-      </div>
-      <div className="text-xs font-semibold text-brand-400">
-        ${course.price}
-      </div>
-    </div>
-  );
-}
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb

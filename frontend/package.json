@@ -13,18 +13,13 @@
     "react-hot-toast": "^2.4.1",
     "date-fns": "^3.3.1"
   },
- "scripts": {
-  "start": "react-scripts start",
-  "dev": "react-scripts start", 
-  "build": "react-scripts build",
-  "test": "react-scripts test",
-  "eject": "react-scripts eject"
-<<<<<<< HEAD
-},
-=======
-}
-,
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
+  "scripts": {
+    "start": "react-scripts start",
+    "dev": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
   "browserslist": {
     "production": [">0.2%", "not dead", "not op_mini all"],
     "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]

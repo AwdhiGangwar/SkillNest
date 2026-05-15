@@ -1,6 +1,5 @@
 package app.service;
 
-<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,19 +15,11 @@ import com.google.firebase.cloud.FirestoreClient;
 
 import app.model.User;
 import app.dto.UserDTO;
-=======
-import app.model.User;
-
-import com.google.cloud.firestore.Firestore;
-import com.google.firebase.cloud.FirestoreClient;
-import org.springframework.stereotype.Service;
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 
 @Service
 public class UserService {
 
     private static final String COLLECTION_NAME = "users";
-<<<<<<< HEAD
     @Autowired
     private EmailService emailService;
  // ==================== GET ALL USERS ====================
@@ -50,9 +41,6 @@ public class UserService {
     }
     
     // ==================== CREATE NORMAL USER ====================
-=======
-
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     public String createUser(User user) throws Exception {
         Firestore db = FirestoreClient.getFirestore();
 
@@ -64,10 +52,8 @@ public class UserService {
         return "User created successfully";
     }
 
-<<<<<<< HEAD
     // ==================== GET USER BY ID ====================
-=======
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
+
     public User getUserById(String id) throws Exception {
         Firestore db = FirestoreClient.getFirestore();
 
@@ -78,7 +64,7 @@ public class UserService {
                 .toObject(User.class);
     }
 
-<<<<<<< HEAD
+
     // ==================== GET OR CREATE USER ====================
    // ✅ FIXED: getOrCreateUser method
 public User getOrCreateUser(String uid, String email, String name) throws Exception {
@@ -254,19 +240,11 @@ public User getOrCreateUser(String uid, String email, String name) throws Except
         Firestore db = FirestoreClient.getFirestore();
 
         User existingUser = db.collection("users")
-=======
-    public User getOrCreateUser(String uid) throws Exception {
-
-        Firestore db = FirestoreClient.getFirestore();
-
-        User user = db.collection(COLLECTION_NAME)
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
                 .document(uid)
                 .get()
                 .get()
                 .toObject(User.class);
 
-<<<<<<< HEAD
         if (existingUser == null) {
             throw new IllegalArgumentException("User not found");
         }
@@ -325,30 +303,5 @@ public User getOrCreateUser(String uid, String email, String name) throws Except
         }
         
         return userDTOs;
-=======
-        if (user != null) {
-            return user;
-        }
-
-        // create new user
-        User newUser = new User();
-        newUser.setId(uid);
-        newUser.setName("New User");
-        newUser.setEmail("default@email.com");
-
-        // role logic
-        if (uid.contains("teacher")) {
-            newUser.setRole(User.ROLE_TEACHER);
-        } else {
-            newUser.setRole(User.ROLE_STUDENT);
-        }
-
-        db.collection(COLLECTION_NAME)
-                .document(uid)
-                .set(newUser)
-                .get();
-
-        return newUser;
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     }
 }

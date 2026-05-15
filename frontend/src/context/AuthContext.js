@@ -1,9 +1,7 @@
 // src/context/AuthContext.js
-<<<<<<< HEAD
+
 import React, { createContext, useContext, useEffect, useState, useMemo } from "react";
-=======
-import React, { createContext, useContext, useEffect, useState } from "react";
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
+
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -26,7 +24,7 @@ export const AuthProvider = ({ children }) => {
 
       if (firebaseUser) {
         try {
-          const res = await getMe();   // ✅ FIXED
+          const res = await getMe();
           setProfile(res.data);
         } catch (e) {
           console.error("Failed to fetch profile:", e);
@@ -61,7 +59,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     const cred = await signInWithEmailAndPassword(auth, email, password);
 
-    const res = await getMe();  // ✅ FIXED
+    const res = await getMe();
     setProfile(res.data);
 
     return cred.user;
@@ -82,20 +80,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-<<<<<<< HEAD
   const value = useMemo(
     () => ({ user, profile, loading, register, login, logout, refreshProfile }),
-    [user, profile, loading, register, login, logout, refreshProfile]
+    [user, profile, loading]
   );
 
   return (
     <AuthContext.Provider value={value}>
-=======
-  return (
-    <AuthContext.Provider
-      value={{ user, profile, loading, register, login, logout, refreshProfile }}
-    >
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
       {children}
     </AuthContext.Provider>
   );

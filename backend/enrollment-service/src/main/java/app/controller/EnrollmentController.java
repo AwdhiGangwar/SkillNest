@@ -1,5 +1,5 @@
 package app.controller;
-<<<<<<< HEAD
+
 import app.model.Course;
 import app.model.Enrollment;
 import app.model.User;
@@ -10,7 +10,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import app.model.EnrollmentRequest;
@@ -166,30 +170,53 @@ public class EnrollmentController {
             List<EnrollmentRequest> list = db.collection("enrollment_requests").get().get().getDocuments()
                     .stream().map(d -> d.toObject(EnrollmentRequest.class)).toList();
             
+            if (list.isEmpty()) {
+                return ResponseEntity.ok(new ArrayList<>());
+            }
+
+            // Collect all unique student and course IDs
+            List<String> studentIds = list.stream()
+                                          .map(EnrollmentRequest::getStudentId)
+                                          .distinct()
+                                          .filter(java.util.Objects::nonNull)
+                                          .toList();
+            List<String> courseIds = list.stream()
+                                         .map(EnrollmentRequest::getCourseId)
+                                         .distinct()
+                                         .filter(java.util.Objects::nonNull)
+                                         .toList();
+
+            // Fetch all unique users and courses once
+            Map<String, User> userMap = new HashMap<>();
+            for (String studentId : studentIds) {
+                try {
+                    User user = userService.getUserById(studentId);
+                    if (user != null) userMap.put(studentId, user);
+                } catch (Exception e) {
+                    logger.warn("Failed to fetch user {} for enrichment: {}", studentId, e.getMessage());
+                }
+            }
+
+            Map<String, Course> courseMap = new HashMap<>();
+            for (String courseId : courseIds) {
+                try {
+                    Course course = courseService.getCourseById(courseId);
+                    if (course != null) courseMap.put(courseId, course);
+                } catch (Exception e) {
+                    logger.warn("Failed to fetch course {} for enrichment: {}", courseId, e.getMessage());
+                }
+            }
+
             // Enrich each request with student and course details
             List<EnrollmentRequestDto> enriched = list.stream().map(req -> {
-                String studentName = "Unknown";
-                String studentEmail = "unknown@example.com";
-                String courseName = "Unknown Course";
-                
-                // Fetch student details
-                if (req.getStudentId() != null) {
-                    User user = userService.getUserById(req.getStudentId());
-                    if (user != null) {
-                        studentName = user.getName() != null ? user.getName() : user.getId();
-                        studentEmail = user.getEmail() != null ? user.getEmail() : "unknown@example.com";
-                    }
-                }
-                
-                // Fetch course details
-                if (req.getCourseId() != null) {
-                    Course course = courseService.getCourseById(req.getCourseId());
-                    if (course != null) {
-                        courseName = course.getTitle() != null ? course.getTitle() : "Unknown Course";
-                    }
-                }
-                
-                return new EnrollmentRequestDto(req, studentName, studentEmail, courseName);
+                User user = userMap.get(req.getStudentId());
+                Course course = courseMap.get(req.getCourseId());
+
+                String studentName = (user != null && user.getName() != null) ? user.getName() : "Unknown";
+                String studentEmail = (user != null && user.getEmail() != null) ? user.getEmail() : "unknown@example.com";
+                String courseName = (course != null && course.getTitle() != null && !course.getTitle().isEmpty()) ? course.getTitle() : "Unknown Course";
+
+                return new EnrollmentRequestDto(req, studentName, studentEmail, courseName); // Pass original req
             }).collect(Collectors.toList());
             
             return ResponseEntity.ok(enriched);
@@ -255,62 +282,8 @@ public class EnrollmentController {
 
             return ResponseEntity.ok(req);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Failed to reject request: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to reject request");
         }
-=======
-
-import app.model.Enrollment;
-import app.model.Course;
-import app.service.EnrollmentService;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-@RestController
-@RequestMapping("/api")
-public class EnrollmentController {
-
-    @Autowired
-    private EnrollmentService enrollmentService;
-
-    // ✅ Health check
-    @GetMapping("/health")
-    public String health() {
-        return "Enrollment Service running 🚀";
-    }
-
-    // ✅ Enroll in course (with role check)
-    @PostMapping("/enrollments")
-    public String enroll(@RequestBody Enrollment enrollment,
-                         HttpServletRequest request) throws Exception {
-
-        String uid = (String) request.getAttribute("uid");
-
-        if (uid == null) {
-            uid = "student123"; // temp fallback
-        }
-
-        String token = request.getHeader("Authorization");
-
-        enrollment.setStudentId(uid);
-
-        return enrollmentService.enroll(enrollment, token);
-    }
-
-    // ✅ Student dashboard (My Courses)
-    @GetMapping("/my-courses")
-    public List<Course> getMyCourses(HttpServletRequest request) throws Exception {
-
-        String uid = (String) request.getAttribute("uid");
-
-        if (uid == null) {
-            uid = "student123";
-        }
-
-        return enrollmentService.getMyCourses(uid);
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
     }
 }

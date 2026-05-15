@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
-import { getMyCourses, createSupportTicket } from '../../services/api'; // ✅ use api.js
-import { Modal } from '../../components/ui';
+import React, { useState, useEffect } from 'react';
+import Layout from '../../components/Layout';
+import { getMyCourses, createSupportTicket } from '../../services/api';
+import { Modal, CardSkeleton, EmptyState } from '../../components/ui';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
-const MyCoursesPage = () => {
+export default function MyCoursesPage() {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,6 +13,7 @@ const MyCoursesPage = () => {
   const [ticketForm, setTicketForm] = useState({ subject: "", message: "" });
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [showCourseDetail, setShowCourseDetail] = useState(false);
+  const [submittingTicket, setSubmittingTicket] = useState(false);
 
   useEffect(() => {
     fetchMyCourses();
@@ -19,238 +21,344 @@ const MyCoursesPage = () => {
 
   const fetchMyCourses = async () => {
     try {
-      const res = await getMyCourses(); // 🔥 token auto attach
-      setCourses(res.data);
+      const res = await getMyCourses();
+      setCourses(res.data || []);
     } catch (err) {
       console.error(err);
-      alert("Failed to load your courses");
+      toast.error("Failed to load your courses");
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) return <div className="text-center py-10">Loading your courses...</div>;
+  const handleSubmitTicket = async (e) => {
+    e.preventDefault();
+    if (!ticketForm.subject.trim() || !ticketForm.message.trim()) {
+      return toast.error("Please fill in all fields");
+    }
+    setSubmittingTicket(true);
+    try {
+      await createSupportTicket({
+        ...ticketForm,
+        courseId: selectedCourse?.id,
+      });
+      toast.success("Support ticket submitted successfully!");
+      setTicketForm({ subject: "", message: "" });
+      setShowTicketModal(false);
+    } catch (err) {
+      toast.error(err.message || "Failed to submit ticket");
+    } finally {
+      setSubmittingTicket(false);
+    }
+  };
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-8 text-surface-text">My Enrolled Courses</h1>
-
-      {courses.length === 0 ? (
-        <div className="text-center py-20">
-          <p className="text-gray-500 text-lg">You haven't enrolled in any course yet.</p>
-          <a href="/student/courses" className="text-blue-600 hover:underline mt-4 inline-block">
-            Browse Courses →
-          </a>
+    <Layout
+      title="My Enrolled Courses"
+      subtitle={`${courses.length} course${courses.length !== 1 ? "s" : ""} in progress`}
+    >
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array(6).fill(0).map((_, i) => <CardSkeleton key={i} />)}
         </div>
+      ) : courses.length === 0 ? (
+        <EmptyState
+          icon="📚"
+          title="No courses enrolled yet"
+          description="Start exploring and enroll in a course to begin your learning journey"
+        >
+          <button
+            onClick={() => navigate("/student/courses")}
+            className="btn-primary mt-6"
+          >
+            Browse Courses →
+          </button>
+        </EmptyState>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {courses.map((course) => (
-            <div
+            <EnrolledCourseCard
               key={course.id}
-              className="bg-surface-card border border-surface-border rounded-2xl shadow-md hover:shadow-lg transition-all overflow-hidden"
-            >
-              {course.imageUrl && (
-                <img
-                  src={course.imageUrl}
-                  alt={course.title}
-                  className="w-full h-40 object-cover"
-                />
-              )}
-              
-              <div className="p-6">
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-xl font-semibold text-surface-text">{course.title}</h3>
-                  <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-semibold">
-                    ✓ Enrolled
-                  </span>
-                </div>
-
-                {course.teacherName && (
-                  <p className="text-sm text-purple-600 font-medium mb-3">
-                    👨‍🏫 {course.teacherName}
-                  </p>
-                )}
-
-                <p className="text-slate-400 text-sm line-clamp-2 mb-4">
-                  {course.description}
-                </p>
-
-                <div className="grid grid-cols-4 gap-2 mb-4 p-3 bg-surface-hover rounded-lg text-xs">
-                  {course.totalClasses && (
-                    <div className="text-center">
-                      <span className="block font-bold text-surface-text">{course.totalClasses}</span>
-                      <span className="text-slate-400">Classes</span>
-                    </div>
-                  )}
-                  {course.duration && (
-                    <div className="text-center">
-                      <span className="block font-bold text-surface-text">{course.duration}h</span>
-                      <span className="text-slate-400">Duration</span>
-                    </div>
-                  )}
-                  <div className="text-center">
-                    <span className="block font-bold text-green-600">₹{course.price}</span>
-                    <span className="text-slate-400">Price</span>
-                  </div>
-                  <div className="text-center">
-                    <span className="block font-bold text-blue-600">{course.level || '—'}</span>
-                    <span className="text-slate-400">Level</span>
-                  </div>
-                </div>
-
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => navigate(`/course-learning/${course.id}`)}
-                    className="flex-1 bg-brand-500 text-white px-4 py-2 rounded-lg font-semibold transition hover:bg-brand-600"
-                  >
-                    Start Learning
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelectedCourse(course);
-                      setShowCourseDetail(true);
-                    }}
-                    className="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-700 px-4 py-2 rounded-lg font-semibold transition"
-                  >
-                    View Details
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelectedCourse(course);
-                      setShowTicketModal(true);
-                    }}
-                    className="flex-1 bg-amber-100 hover:bg-amber-200 text-amber-700 px-4 py-2 rounded-lg font-semibold transition"
-                  >
-                    Raise Ticket
-                  </button>
-                </div>
-              </div>
-            </div>
+              course={course}
+              onStartLearning={() => navigate(`/course-learning/${course.id}`)}
+              onViewDetails={() => {
+                setSelectedCourse(course);
+                setShowCourseDetail(true);
+              }}
+              onRaiseTicket={() => {
+                setSelectedCourse(course);
+                setShowTicketModal(true);
+              }}
+            />
           ))}
         </div>
       )}
 
       {/* Course Detail Modal */}
-      {showCourseDetail && selectedCourse && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setShowCourseDetail(false)} />
-          <div className="bg-surface-card rounded-2xl z-10 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            {selectedCourse.imageUrl && (
-              <img
-                src={selectedCourse.imageUrl}
-                alt={selectedCourse.title}
-                className="w-full h-56 object-cover"
-              />
-            )}
-            
-            <div className="p-8">
-              <div className="flex justify-between items-start mb-4">
-                <div className="flex-1">
-                  <span className="inline-block bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1 rounded mb-3">
-                    ✓ Enrolled
-                  </span>
-                  <h2 className="text-3xl font-bold text-surface-text">{selectedCourse.title}</h2>
-                </div>
-                <button
-                  onClick={() => setShowCourseDetail(false)}
-                  className="text-gray-500 hover:text-gray-700 text-2xl"
-                >
-                  ✕
-                </button>
-              </div>
-
-              {selectedCourse.teacherName && (
-                <p className="text-lg text-purple-600 font-semibold mb-4">
-                  👨‍🏫 Instructor: {selectedCourse.teacherName}
-                </p>
-              )}
-
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-surface-text mb-2">Course Description</h3>
-                <p className="text-slate-400 leading-relaxed whitespace-pre-wrap">
-                  {selectedCourse.description}
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 pb-8 border-b">
-                <div>
-                  <p className="text-slate-400 text-sm mb-1">Price</p>
-                  <p className="text-2xl font-bold text-green-600">₹{selectedCourse.price}</p>
-                </div>
-                {selectedCourse.duration && (
-                  <div>
-                    <p className="text-slate-400 text-sm mb-1">Duration</p>
-                    <p className="text-2xl font-bold text-blue-600">{selectedCourse.duration}h</p>
-                  </div>
-                )}
-                {selectedCourse.totalClasses && (
-                  <div>
-                    <p className="text-slate-400 text-sm mb-1">Classes</p>
-                    <p className="text-2xl font-bold text-purple-600">{selectedCourse.totalClasses}</p>
-                  </div>
-                )}
-                <div>
-                  <p className="text-slate-400 text-sm mb-1">Level</p>
-                  <p className="text-2xl font-bold text-amber-600">{selectedCourse.level || 'Beginner'}</p>
-                </div>
-              </div>
-
-              {selectedCourse.modules && (
-                <div className="mb-8">
-                  <h3 className="text-lg font-semibold text-surface-text mb-3">📚 Course Modules</h3>
-                  <div className="space-y-2">
-                    {(typeof selectedCourse.modules === 'string' ? selectedCourse.modules.split(',') : selectedCourse.modules)
-                      .map((module, idx) => (
-                        <div key={idx} className="flex items-start gap-3 p-3 bg-brand-500/10 rounded-lg">
-                          <span className="text-blue-600 font-bold mt-0.5">✓</span>
-                          <span className="text-slate-400">{module.trim()}</span>
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              )}
-
-              <button
-                onClick={() => setShowCourseDetail(false)}
-                className="w-full bg-surface-hover hover:bg-surface-border text-surface-text px-6 py-3 rounded-xl font-semibold transition"
-              >
-                Close
-              </button>
+      <Modal
+        isOpen={showCourseDetail}
+        onClose={() => setShowCourseDetail(false)}
+        title={selectedCourse?.title || "Course Details"}
+      >
+        {selectedCourse && (
+          <div className="space-y-6">
+            {/* Header */}
+            <div className="w-full h-32 rounded-xl bg-gradient-to-br from-emerald-500/20 via-teal-500/10 to-surface-border flex items-center justify-center text-5xl">
+              ✓
             </div>
+
+            {/* Course Title & Instructor */}
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 text-xs font-semibold rounded-lg">
+                  Enrolled
+                </span>
+              </div>
+              <h3 className="text-2xl font-display font-bold text-white mb-2">
+                {selectedCourse.title}
+              </h3>
+              {selectedCourse.teacherName && (
+                <p className="text-slate-400 text-sm">
+                  👨‍🏫 Instructor: <span className="text-white font-semibold">{selectedCourse.teacherName}</span>
+                </p>
+              )}
+            </div>
+
+            {/* Description */}
+            <div>
+              <p className="text-slate-400 text-sm leading-relaxed">
+                {selectedCourse.description || "No description provided."}
+              </p>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-2 gap-4 p-4 rounded-xl bg-surface-hover/50 border border-surface-border">
+              <div>
+                <div className="text-xs text-slate-400 mb-1 font-semibold">Price</div>
+                <div className="text-xl font-bold text-emerald-400">₹{selectedCourse.price}</div>
+              </div>
+              {selectedCourse.duration && (
+                <div>
+                  <div className="text-xs text-slate-400 mb-1 font-semibold">Duration</div>
+                  <div className="text-xl font-bold text-cyan-400">{selectedCourse.duration}h</div>
+                </div>
+              )}
+              {selectedCourse.totalClasses && (
+                <div>
+                  <div className="text-xs text-slate-400 mb-1 font-semibold">Classes</div>
+                  <div className="text-xl font-bold text-violet-400">{selectedCourse.totalClasses}</div>
+                </div>
+              )}
+              {selectedCourse.level && (
+                <div>
+                  <div className="text-xs text-slate-400 mb-1 font-semibold">Level</div>
+                  <div className="text-xl font-bold text-amber-400">{selectedCourse.level}</div>
+                </div>
+              )}
+            </div>
+
+            {/* Modules */}
+            {selectedCourse.modules && (
+              <div>
+                <h4 className="text-sm font-semibold text-white mb-3">📖 Course Modules</h4>
+                <div className="space-y-2">
+                  {(typeof selectedCourse.modules === 'string'
+                    ? selectedCourse.modules.split(',')
+                    : selectedCourse.modules
+                  ).map((module, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center gap-3 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 hover:border-emerald-500/40 transition-colors"
+                    >
+                      <span className="text-emerald-400 font-bold">✓</span>
+                      <span className="text-slate-300 text-sm">{module.trim()}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Action Button */}
+            <button
+              onClick={() => {
+                setShowCourseDetail(false);
+                navigate(`/course-learning/${selectedCourse.id}`);
+              }}
+              className="btn-primary w-full py-3"
+            >
+              Continue Learning →
+            </button>
           </div>
-        </div>
-      )}
+        )}
+      </Modal>
 
       {/* Support Ticket Modal */}
-      <Modal isOpen={showTicketModal} onClose={() => setShowTicketModal(false)} title={`Raise Support Ticket - ${selectedCourse?.title}`}>
-        <form onSubmit={async (e) => {
-          e.preventDefault();
-          if (!ticketForm.subject || !ticketForm.message) return toast.error("Fill subject and message");
-          try {
-            await createSupportTicket(ticketForm);
-            toast.success("Ticket submitted");
-            setTicketForm({ subject: "", message: "" });
-            setShowTicketModal(false);
-          } catch (err) {
-            toast.error("Failed to submit ticket");
-          }
-        }} className="space-y-4">
+      <Modal
+        isOpen={showTicketModal}
+        onClose={() => {
+          setShowTicketModal(false);
+          setTicketForm({ subject: "", message: "" });
+        }}
+        title={`Support Ticket: ${selectedCourse?.title || "Course"}`}
+      >
+        <form onSubmit={handleSubmitTicket} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Subject</label>
-            <input value={ticketForm.subject} onChange={(e) => setTicketForm(s => ({...s, subject: e.target.value}))} className="input-field w-full" />
+            <label className="block text-sm font-semibold text-slate-300 mb-2">
+              Subject
+            </label>
+            <input
+              type="text"
+              value={ticketForm.subject}
+              onChange={(e) => setTicketForm(s => ({ ...s, subject: e.target.value }))}
+              placeholder="e.g., Technical issue with Module 2"
+              className="input-field w-full"
+            />
           </div>
+
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Message</label>
-            <textarea value={ticketForm.message} onChange={(e) => setTicketForm(s => ({...s, message: e.target.value}))} rows={5} className="input-field w-full resize-none" />
+            <label className="block text-sm font-semibold text-slate-300 mb-2">
+              Message
+            </label>
+            <textarea
+              value={ticketForm.message}
+              onChange={(e) => setTicketForm(s => ({ ...s, message: e.target.value }))}
+              placeholder="Describe your issue in detail..."
+              rows={5}
+              className="input-field w-full resize-none"
+            />
           </div>
-          <div className="flex gap-3">
-            <button type="button" onClick={() => setShowTicketModal(false)} className="btn-ghost flex-1">Cancel</button>
-            <button type="submit" className="btn-primary flex-1">Submit Ticket</button>
+
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={() => {
+                setShowTicketModal(false);
+                setTicketForm({ subject: "", message: "" });
+              }}
+              className="flex-1 btn-ghost"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={submittingTicket}
+              className="flex-1 btn-primary flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              {submittingTicket ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                "Submit Ticket"
+              )}
+            </button>
           </div>
         </form>
       </Modal>
+    </Layout>
+  );
+}
+
+// Enrolled Course Card Component
+function EnrolledCourseCard({ course, onStartLearning, onViewDetails, onRaiseTicket }) {
+  const progressPercent = Math.floor(Math.random() * 100); // Placeholder - should come from API
+
+  const colors = [
+    "from-emerald-500/20 to-teal-500/10",
+    "from-cyan-500/20 to-blue-500/10",
+    "from-violet-500/20 to-purple-500/10",
+    "from-pink-500/20 to-rose-500/10",
+  ];
+  const colorIdx = course.title?.charCodeAt(0) % colors.length || 0;
+  const bgColor = colors[colorIdx];
+
+  return (
+    <div className="glass-card overflow-hidden group hover:border-brand-500/30 animate-fade-in transition-all duration-300 flex flex-col h-full">
+      {/* Course Header */}
+      <div className={`h-28 bg-gradient-to-br ${bgColor} flex items-center justify-center text-4xl relative overflow-hidden`}>
+        <div className="absolute inset-0 bg-mesh-gradient opacity-10" />
+        <span className="relative">📚</span>
+      </div>
+
+      {/* Course Content */}
+      <div className="p-5 flex flex-col flex-1">
+        {/* Title & Status */}
+        <div className="mb-3">
+          <div className="flex items-start justify-between gap-2 mb-2">
+            <h3 className="font-display font-semibold text-white text-base line-clamp-2 group-hover:text-brand-300 transition-colors flex-1">
+              {course.title}
+            </h3>
+            <span className="px-2 py-1 bg-emerald-500/20 text-emerald-300 text-[10px] font-bold rounded whitespace-nowrap">
+              Enrolled
+            </span>
+          </div>
+          {course.teacherName && (
+            <p className="text-slate-400 text-xs">👨‍🏫 {course.teacherName}</p>
+          )}
+        </div>
+
+        {/* Description */}
+        <p className="text-slate-400 text-xs leading-relaxed mb-4 line-clamp-2 flex-1">
+          {course.description || "No description"}
+        </p>
+
+        {/* Progress Bar */}
+        <div className="mb-4 pb-4 border-b border-surface-border/50">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-semibold text-slate-300">Progress</span>
+            <span className="text-xs text-brand-400 font-bold">{progressPercent}%</span>
+          </div>
+          <div className="w-full h-2 bg-surface-hover rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-brand-500 to-brand-400 rounded-full transition-all duration-300"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-2 mb-4 text-xs text-center">
+          {course.totalClasses && (
+            <div>
+              <div className="font-bold text-brand-400">{course.totalClasses}</div>
+              <div className="text-slate-400">Classes</div>
+            </div>
+          )}
+          {course.duration && (
+            <div>
+              <div className="font-bold text-cyan-400">{course.duration}h</div>
+              <div className="text-slate-400">Duration</div>
+            </div>
+          )}
+          <div>
+            <div className="font-bold text-emerald-400">₹{course.price}</div>
+            <div className="text-slate-400">Price</div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex gap-2">
+          <button
+            onClick={onStartLearning}
+            className="flex-1 bg-brand-500/20 hover:bg-brand-500 text-brand-300 hover:text-white px-3 py-2 rounded-lg font-semibold text-xs transition-all duration-200"
+          >
+            Learn
+          </button>
+          <button
+            onClick={onViewDetails}
+            className="flex-1 bg-cyan-500/20 hover:bg-cyan-500 text-cyan-300 hover:text-white px-3 py-2 rounded-lg font-semibold text-xs transition-all duration-200"
+          >
+            Details
+          </button>
+          <button
+            onClick={onRaiseTicket}
+            className="flex-1 bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-white px-3 py-2 rounded-lg font-semibold text-xs transition-all duration-200"
+          >
+            Support
+          </button>
+        </div>
+      </div>
     </div>
   );
-};
-
-export default MyCoursesPage;
+}

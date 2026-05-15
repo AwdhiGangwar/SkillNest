@@ -1,9 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-<<<<<<< HEAD
   darkMode: "class",
-=======
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
@@ -25,14 +22,6 @@ module.exports = {
           800: "#075985",
           900: "#0c4a6e",
         },
-<<<<<<< HEAD
-        surface: {
-          DEFAULT: "var(--bg)",
-          card: "var(--card)",
-          border: "var(--border)",
-          hover: "var(--hover)",
-          text: "var(--text)",
-=======
         accent: {
           DEFAULT: "#f97316",
           light: "#fed7aa",
@@ -43,7 +32,7 @@ module.exports = {
           card: "#161b27",
           border: "#1e2738",
           hover: "#1a2030",
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
+          text: "#e2e8f0",
         },
       },
       backgroundImage: {

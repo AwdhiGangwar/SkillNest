@@ -1,83 +1,19 @@
-<<<<<<< HEAD
-/* Base styles and global variables */
-=======
 @import url('https://api.fontshare.com/v2/css?f[]=clash-display@600,700,500&display=swap');
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-<<<<<<< HEAD
 /* Define CSS variables for themes */
 :root {
-  /* Light Theme */
-  --bg: #f8f9fa; /* Very light, slightly warm gray */
-  --text: #343a40; /* Dark, soft gray text */
-  --card: #ffffff; /* Pure white for cards in light mode */
-  --border: #e9ecef; /* Light gray border */
-  --hover: #f1f3f5; /* Slightly darker hover for light mode */
-  --brand: #0ea5e9; /* Tailwind brand-500 blue */
+  /* Dark Theme (Default) */
+  --bg: #0f1117;
+  --text: #e2e8f0;
+  --card: #161b27;
+  --border: #1e2738;
+  --hover: #1a2030;
+  --brand: #0ea5e9;
 }
 
-.dark {
-  /* Dark Theme */
-  --bg: #0f1117; /* Very dark blue-gray background */
-  --text: #e2e8f0; /* Light, soft gray text */
-  --card: #161b27; /* Darker card background */
-  --border: #1e2738; /* Darker border */
-  --hover: #1a2030; /* Slightly lighter hover for dark mode */
-  --brand: #0ea5e9; /* Tailwind brand-500 blue */
-}
-
-/* Optional: Add a smooth transition for theme changes */
-html {
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* Custom utility classes */
-.glass-card {
-  background-color: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease; /* Use all for scale and shadow */
-  transform: translateZ(0); /* Enable hardware acceleration for transform */
-}
-
-.dark .glass-card {
-  background-color: var(--card);
-  border-color: var(--border);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
-.glass-card:hover {
-  transform: scale(1.01);
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-}
-
-.input-field {
-  @apply bg-surface-card border border-surface-border text-surface-text rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all;
-}
-
-.btn-primary {
-  @apply bg-brand-500 text-white font-medium py-2 px-4 rounded-lg hover:bg-brand-600 transition-all transform hover:scale-[1.02] hover:brightness-110;
-}
-
-.btn-ghost {
-  @apply text-slate-400 hover:text-surface-text hover:bg-surface-hover px-3 py-2 rounded-lg transition-all transform hover:scale-[1.02];
-}
-
-.nav-item {
-  @apply flex items-center gap-3 px-3 py-2 rounded-xl text-slate-400 hover:bg-surface-hover hover:text-surface-text transition-all transform hover:scale-[1.01];
-}
-
-.nav-item.active {
-  @apply bg-brand-500/10 text-brand-400 font-medium;
-}
-
-.badge-role {
-  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
-}
-=======
 @layer base {
   * {
     box-sizing: border-box;
@@ -97,6 +33,7 @@ html {
       radial-gradient(at 40% 20%, hsla(210,100%,56%,0.06) 0px, transparent 50%),
       radial-gradient(at 80% 0%, hsla(189,100%,56%,0.04) 0px, transparent 50%);
     min-height: 100vh;
+    transition: background-color 0.3s ease;
   }
 
   h1, h2, h3, h4 {
@@ -110,16 +47,26 @@ html {
   .glass-card {
     @apply bg-surface-card border border-surface-border rounded-2xl;
     backdrop-filter: blur(12px);
+    transition: all 0.3s ease;
+  }
+
+  .glass-card:hover {
+    @apply border-surface-border/50;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   }
 
   .btn-primary {
-    @apply bg-brand-500 hover:bg-brand-600 text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 active:scale-95;
+    @apply bg-brand-500 hover:bg-brand-600 text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed;
     font-family: 'DM Sans', sans-serif;
   }
 
   .btn-ghost {
-    @apply bg-surface-hover hover:bg-surface-border text-slate-300 font-medium px-4 py-2 rounded-xl transition-all duration-200;
+    @apply bg-surface-hover hover:bg-surface-border text-slate-300 hover:text-white font-medium px-4 py-2 rounded-xl transition-all duration-200;
     font-family: 'DM Sans', sans-serif;
+  }
+
+  .btn-secondary {
+    @apply bg-surface-border hover:bg-surface-hover text-slate-300 font-medium px-4 py-2 rounded-xl transition-all duration-200;
   }
 
   .input-field {
@@ -148,6 +95,11 @@ html {
     background-size: 200% 100%;
     animation: shimmer 2s infinite;
   }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
 }
 
 /* Custom scrollbar */
@@ -169,4 +121,19 @@ html {
 .react-hot-toast > div {
   font-family: 'DM Sans', sans-serif !important;
 }
->>>>>>> ca9e6a8546d45fdcb2d8dbf6b42011e2c1e874cb
+
+/* Animation keyframes */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.5s ease-out;
+}
