@@ -1,6 +1,6 @@
 // src/components/ProtectedRoute.jsx
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 /**
@@ -14,6 +14,7 @@ import { useAuth } from "../context/AuthContext";
  */
 function ProtectedRoute({ children, role = null }) {
   const { user, profile, loading } = useAuth();
+  const location = useLocation();
 
   // Show loading state while checking Firebase auth OR fetching the profile
   if (loading || (user && !profile)) {
@@ -31,7 +32,7 @@ function ProtectedRoute({ children, role = null }) {
 
   // Redirect if no user is logged into Firebase
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
 
   // Normalize roles to avoid case-sensitivity issues (e.g., ADMIN vs admin)
@@ -44,7 +45,7 @@ function ProtectedRoute({ children, role = null }) {
     if (userRole === "admin") return <Navigate to="/admin/dashboard" replace />;
     if (userRole === "teacher") return <Navigate to="/teacher/dashboard" replace />;
     if (userRole === "student") return <Navigate to="/student/dashboard" replace />;
-    return <Navigate to="/login" state={{ from: globalThis.location.pathname }} replace />;
+    return <Navigate to="/login" replace />;
   }
 
   // User is authenticated and has required role (or no role specified)

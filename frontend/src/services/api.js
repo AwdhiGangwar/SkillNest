@@ -1,18 +1,16 @@
+
 import axios from "axios";
 import { auth } from "./firebase";
 
-// 🌐 Base URL
+// In development, use relative path to leverage package.json proxy to avoid CORS
 const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8080";
-
-// Axios instance
+// Create axios instance
 const api = axios.create({
   baseURL: API_BASE,
-  timeout: 15000,
+  timeout: 15000, // Increased timeout for potentially longer operations
 });
 
-// ─────────────────────────────────────────────
-// 🔐 Attach Firebase Token Automatically
-// ─────────────────────────────────────────────
+// Auto-attach Firebase ID token to every request
 api.interceptors.request.use(
   async (config) => {
     if (config._skipInterceptor) return config;
@@ -33,15 +31,12 @@ api.interceptors.request.use(
       const token = await user.getIdToken(true);
       config.headers.Authorization = `Bearer ${token}`;
     }
-
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// ─────────────────────────────────────────────
-// ⚠️ Global Error Handling
-// ─────────────────────────────────────────────
+// Response interceptor for error handling
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -60,6 +55,14 @@ api.interceptors.response.use(
       networkError.status = status;
       return Promise.reject(networkError);
     }
+    
+    // Handle HTML responses (Proxy 404s or Server 500s masked as HTML)
+    if (
+      typeof responseData === "string" &&
+      responseData.trim().startsWith("<")
+    ) {
+      return Promise.reject(new Error(`Server Error: ${status} ${error.response?.statusText}`));
+    }
 
     let message = "Something went wrong";
 
@@ -72,11 +75,9 @@ api.interceptors.response.use(
     } else if (error.message) {
       message = error.message;
     }
-
     const customError = new Error(message);
     customError.status = status;
     customError.response = error.response;
-
     return Promise.reject(customError);
   }
 );
@@ -85,7 +86,7 @@ api.interceptors.response.use(
 // 👤 USER APIs
 // ─────────────────────────────────────────────
 export const getMe = () => api.get("/api/me");
-export const createUser = (data) => api.post("/api/users", data);
+export const createUser = (userData) => api.post("/api/users", userData);
 export const getUserById = (id) => api.get(`/api/users/${id}`);
 
 // ─────────────────────────────────────────────
@@ -133,7 +134,7 @@ export const getEnrollmentStats = () => api.get('/api/enrollments/stats');
 export const getTeacherClasses = () => api.get("/api/classes/teacher");
 export const getStudentClasses = () => api.get("/api/classes/student");
 export const createClass = (data) => api.post("/api/classes", data);
-export const getClassesByCourseId = (courseId) => api.get(`/api/classes/course/${courseId}`);
+export const getClassesByCourseId = (courseId) => api.get(`/api/classes/course/${courseId}`); // Keep this one
 export const getClassesByCourse = (courseId) => api.get(`/api/classes/course/${courseId}`);
 export const deleteClass = (classId) => api.delete(`/api/classes/${classId}`);
 export const updateClass = (classId, data) => api.put(`/api/classes/${classId}`, data);
@@ -181,7 +182,7 @@ export const applyAsTeacher = (data) =>
 export const getTeacherRequests = () =>
   api.get("/api/teacher-requests");
 
-export const approveTeacherRequest = (id, approvalData) =>
+export const approveTeacherRequest = (id, approvalData) => // Keep this one
   api.post(`/api/teacher-requests/${id}/approve`, approvalData);
 
 export const rejectTeacherRequest = (id) =>

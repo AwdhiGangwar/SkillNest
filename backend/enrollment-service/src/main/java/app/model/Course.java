@@ -4,13 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.Instant;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Course {
 
     private String id;
     private String teacherId;
-    private String teacherName;    // Added: cached teacher name
+    private String teacherName;
     private String title;
     private String description;
     private double price;
@@ -18,10 +17,10 @@ public class Course {
     private String status = "active";
     private String imageUrl;
     private String category;
-    private int duration;           // in hours
-    private String level;           // beginner, intermediate, advanced
-    private int totalClasses;       // Added: total number of classes
-    private String modules;         // Added: comma-separated or JSON list of modules
+    private int duration;
+    private String level;
+    private int totalClasses;
+    private String modules;
     private long createdAt;
     private long updatedAt;
 

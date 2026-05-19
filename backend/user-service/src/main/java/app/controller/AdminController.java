@@ -1,17 +1,17 @@
 package app.controller;
 
-import java.util.List;
-import java.util.Map;
-
+import app.dto.UserDTO;
+import app.model.TeacherRequest;
+import app.model.User;
+import app.service.AdminService;
+import app.service.TeacherRequestService;
+import app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import app.model.TeacherRequest;
-import app.model.User;
-import app.dto.UserDTO;
-import app.service.AdminService;
-import app.service.UserService;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/admin")
@@ -22,8 +22,9 @@ public class AdminController {
 
     @Autowired
     private UserService userService;
+
     @Autowired
-    private app.service.TeacherRequestService teacherRequestService;
+    private TeacherRequestService teacherRequestService;
 
     // 🔹 Get all teacher requests
     @GetMapping("/teacher-requests")
@@ -45,51 +46,31 @@ public class AdminController {
         return "Rejected";
     }
 
-    // 🔥 NEW FEATURE: CREATE TEACHER ACCOUNT
+    // 🔥 CREATE TEACHER ACCOUNT
     @PostMapping("/create-teacher")
     public ResponseEntity<?> createTeacher(@RequestBody User user) {
         try {
-            // ✅ Validate user input
             if (user == null) {
-                return ResponseEntity.badRequest()
-                        .body("User data is required");
+                return ResponseEntity.badRequest().body("User data is required");
             }
-            
             if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
-                return ResponseEntity.badRequest()
-                        .body("Email is required to create a teacher account");
+                return ResponseEntity.badRequest().body("Email is required");
             }
-            
             if (user.getName() == null || user.getName().trim().isEmpty()) {
-                return ResponseEntity.badRequest()
-                        .body("Teacher name is required");
+                return ResponseEntity.badRequest().body("Teacher name is required");
             }
 
-            // Force role to teacher
             user.setRole("teacher");
-
-            // Create teacher with authentication and email invitation
             User createdTeacher = userService.createTeacherWithAuth(user);
 
-            // ✅ Return the created teacher with success message
-            return ResponseEntity.ok()
-                    .body("Teacher account created successfully! Invitation link sent to " + createdTeacher.getEmail());
+            return ResponseEntity.ok("Teacher account created successfully! Invitation link sent to " + createdTeacher.getEmail());
 
-        } catch (IllegalArgumentException e) {
-            // Input validation errors from service
-            return ResponseEntity.badRequest().body(e.getMessage());
-            
         } catch (Exception e) {
-            System.err.println("Error creating teacher: " + e.getMessage());
-            e.printStackTrace();
-            
-            // Return meaningful error message
-            String errorMsg = e.getMessage() != null ? e.getMessage() : "Failed to create teacher account";
-            return ResponseEntity.internalServerError().body(errorMsg);
+            return ResponseEntity.internalServerError().body(e.getMessage() != null ? e.getMessage() : "Failed to create teacher");
         }
     }
 
-    // 🔥 NEW: APPROVE TEACHER REQUEST WITH PASSWORD (from teacher-requests page)
+    // 🔥 APPROVE TEACHER REQUEST WITH PASSWORD
     @PostMapping("/approve-teacher/{requestId}")
     public ResponseEntity<?> approveTeacherWithPassword(@PathVariable String requestId,
                                                         @RequestBody Map<String, String> approvalData) {
@@ -101,19 +82,16 @@ public class AdminController {
             if (password == null || password.isEmpty()) {
                 return ResponseEntity.badRequest().body("Password is required");
             }
-
             if (password.length() < 8) {
                 return ResponseEntity.badRequest().body("Password must be at least 8 characters");
             }
 
-            // Create teacher with Firebase auth using email and password
-            // Also merge teacher-request details into the created user profile
             User teacher = new User();
             teacher.setName(name);
             teacher.setEmail(email);
             teacher.setRole("teacher");
 
-            // Try to fetch the teacher request and copy additional profile fields
+            // Copy extra details from teacher request if available
             try {
                 TeacherRequest req = teacherRequestService.getRequestById(requestId);
                 if (req != null) {
@@ -122,65 +100,54 @@ public class AdminController {
                     if (req.getBio() != null) teacher.setBio(req.getBio());
                 }
             } catch (Exception e) {
-                System.err.println("Warning: Could not fetch teacher request details: " + e.getMessage());
+                System.err.println("Warning: Could not fetch teacher request: " + e.getMessage());
             }
 
             User createdTeacher = userService.createTeacherWithPassword(teacher, password);
 
-            // Mark teacher request as approved
+            // Mark request as approved
             try {
                 adminService.approveRequest(requestId);
             } catch (Exception e) {
-                System.err.println("Warning: Could not mark teacher request as approved: " + e.getMessage());
+                System.err.println("Warning: Could not update request status: " + e.getMessage());
             }
 
             return ResponseEntity.ok("Teacher account created and approved successfully!");
 
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            System.err.println("Error approving teacher with password: " + e.getMessage());
-            e.printStackTrace();
-            String errorMsg = e.getMessage() != null ? e.getMessage() : "Failed to approve teacher";
-            return ResponseEntity.internalServerError().body(errorMsg);
+            return ResponseEntity.internalServerError().body(e.getMessage() != null ? e.getMessage() : "Failed to approve teacher");
         }
     }
 
-    // 🔥 NEW: GET ALL USERS FOR ADMIN CATEGORIZATION
+    // 🔥 GET ALL USERS FOR ADMIN
     @GetMapping("/users")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         try {
             List<UserDTO> users = userService.getAllUsersAsDTO();
             return ResponseEntity.ok(users);
         } catch (Exception e) {
-            System.err.println("Error fetching all users: " + e.getMessage());
-            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    // 🔥 NEW: BLOCK USER
+    // 🔥 BLOCK USER
     @PutMapping("/user/{id}/block")
     public ResponseEntity<String> blockUser(@PathVariable String id) {
         try {
             userService.blockUser(id);
             return ResponseEntity.ok("User blocked successfully");
         } catch (Exception e) {
-            System.err.println("Error blocking user: " + e.getMessage());
-            e.printStackTrace();
             return ResponseEntity.internalServerError().body("Failed to block user");
         }
     }
 
-    // 🔥 NEW: UNBLOCK USER
+    // 🔥 UNBLOCK USER
     @PutMapping("/user/{id}/unblock")
     public ResponseEntity<String> unblockUser(@PathVariable String id) {
         try {
             userService.unblockUser(id);
             return ResponseEntity.ok("User unblocked successfully");
         } catch (Exception e) {
-            System.err.println("Error unblocking user: " + e.getMessage());
-            e.printStackTrace();
             return ResponseEntity.internalServerError().body("Failed to unblock user");
         }
     }

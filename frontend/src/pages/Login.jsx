@@ -1,6 +1,6 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
-import { Link, useNavigate ,useLocation} from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 
@@ -10,6 +10,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const { login, profile } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,40 +27,33 @@ export default function Login() {
     }
   };
 
-  
+  React.useEffect(() => {
+    if (profile) {
+      const redirectTo = location.state?.from;
+      const role = profile.role?.toLowerCase();
 
-const location = useLocation();
+      if (redirectTo) {
+        navigate(redirectTo, { replace: true });
+        return;
+      }
 
-React.useEffect(() => {
-  if (profile) {
-    // 🔥 Get original path user tried to access
-    const redirectTo = location.state?.from;
-
-    const role = profile.role?.toLowerCase();
-
-    if (redirectTo) {
-      navigate(redirectTo, { replace: true });
-      return;
+      if (role === "admin") navigate("/admin/dashboard", { replace: true });
+      else if (role === "teacher") navigate("/teacher/dashboard", { replace: true });
+      else navigate("/student/dashboard", { replace: true });
     }
-
-    // fallback if no previous route
-    if (role === "admin") navigate("/admin/dashboard", { replace: true });
-    else if (role === "teacher") navigate("/teacher/dashboard", { replace: true });
-    else navigate("/student/dashboard", { replace: true });
-  }
-}, [profile, navigate, location]);
+  }, [profile, navigate, location]);
   return (
     <div className="min-h-screen bg-surface flex items-center justify-center p-4">
-      {/* Background effects */}
+      {/* Animated Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-brand-500/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-violet-500/5 rounded-full blur-3xl" />
+        <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-brand-500/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-violet-500/5 rounded-full blur-3xl animate-pulse" />
       </div>
 
       <div className="w-full max-w-md relative z-10 animate-slide-up">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex w-14 h-14 rounded-2xl bg-brand-500 items-center justify-center text-white font-bold text-xl mb-4">
+          <div className="inline-flex w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 items-center justify-center text-white font-bold text-xl mb-4 shadow-lg shadow-brand-500/20">
             SN
           </div>
           <h1 className="text-3xl font-display font-bold text-white">
@@ -70,9 +64,10 @@ React.useEffect(() => {
           </p>
         </div>
 
-        {/* Form */}
-        <div className="glass-card p-8">
+        {/* Login Form Card */}
+        <div className="glass-card p-8 rounded-2xl">
           <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Email Field */}
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
                 Email address
@@ -87,6 +82,7 @@ React.useEffect(() => {
               />
             </div>
 
+            {/* Password Field */}
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
                 Password
@@ -100,12 +96,19 @@ React.useEffect(() => {
                 autoComplete="current-password"
               />
             </div>
-<p
-  onClick={() => navigate("/forgot-password")}
-  className="text-sm text-brand-400 cursor-pointer mt-2 hover:underline"
->
-  Forgot Password?
-</p>
+
+            {/* Forgot Password Link */}
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => navigate("/forgot-password")}
+                className="text-sm text-brand-400 hover:text-brand-300 transition-colors font-medium"
+              >
+                Forgot password?
+              </button>
+            </div>
+
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
@@ -122,12 +125,13 @@ React.useEffect(() => {
             </button>
           </form>
 
+          {/* Signup Link */}
           <div className="mt-6 pt-6 border-t border-surface-border text-center">
             <p className="text-slate-400 text-sm">
               Don't have an account?{" "}
               <Link
                 to="/register"
-                className="text-brand-400 hover:text-brand-300 font-medium transition-colors"
+                className="text-brand-400 hover:text-brand-300 font-semibold transition-colors"
               >
                 Create one
               </Link>
@@ -135,11 +139,20 @@ React.useEffect(() => {
           </div>
         </div>
 
-        {/* Demo credentials hint */}
-        <div className="mt-4 glass-card p-4">
-          <p className="text-xs text-slate-500 text-center">
-            🔒 Secured with Firebase Authentication
-          </p>
+        {/* Security Note */}
+        <div className="mt-4 flex items-center justify-center gap-2 text-xs text-slate-500">
+          <svg
+            className="w-4 h-4"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+              clipRule="evenodd"
+            />
+          </svg>
+          Secured with Firebase Authentication
         </div>
       </div>
     </div>

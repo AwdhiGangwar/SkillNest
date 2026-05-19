@@ -14,11 +14,12 @@ import JoinTeacher from "./pages/JoinTeacher";
 
 // Student Pages
 import StudentDashboard from "./pages/student/StudentDashboard";
-import BrowseCourses from "./pages/student/BrowseCourses";     // Browse Courses Page
-import MyCourses from "./pages/student/MyCoursesPage";        // My Enrolled Courses
+import BrowseCourses from "./pages/student/BrowseCourses";
+import MyCourses from "./pages/student/MyCoursesPage";
 import StudentClasses from "./pages/student/StudentClasses";
-import CourseLearning from "./pages/student/CourseLearning";  // Course Learning Module
-import ProgressDashboard from "./pages/student/ProgressDashboard"; // Progress Dashboard
+import CourseLearning from "./pages/student/CourseLearning";
+import ProgressDashboard from "./pages/student/ProgressDashboard";
+import StudentAssignments from "./pages/student/StudentAssignments";
 
 // Teacher Pages
 import TeacherDashboard from "./pages/teacher/TeacherDashboard";
@@ -39,8 +40,7 @@ import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminPayments from "./pages/admin/AdminPayments";
 import AdminSupport from "./pages/admin/AdminSupport";
 import AdminSettings from "./pages/admin/AdminSettings";
-import AdminContentManager from "./pages/admin/AdminContentManager"; // Content Manager
-import StudentAssignments from "./pages/student/StudentAssignments";
+import AdminContentManager from "./pages/admin/AdminContentManager";
 
 export default function App() {
   return (
@@ -57,6 +57,12 @@ export default function App() {
               fontFamily: "'DM Sans', sans-serif",
               fontSize: "14px",
               borderRadius: "12px",
+            },
+            success: {
+              iconTheme: { primary: "#10b981", secondary: "#161b27" },
+            },
+            error: {
+              iconTheme: { primary: "#ef4444", secondary: "#161b27" },
             },
           }}
         />
@@ -116,10 +122,10 @@ export default function App() {
               <ProtectedRoute role="student">
                 <ProgressDashboard />
               </ProtectedRoute>
-
             }
           />
           <Route path="/student/assignments" element={<StudentAssignments />} />
+
           {/* Teacher Routes */}
           <Route
             path="/teacher/dashboard"

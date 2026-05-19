@@ -8,7 +8,9 @@ public class User {
     public static final String STATUS_ACTIVE = "active";
     public static final String STATUS_BLOCKED = "blocked";
 
+    // ✅ @DocumentId aur @Exclude hata do
     private String id;
+
     private String name;
     private String email;
     private String role;
@@ -32,8 +34,6 @@ public class User {
         this.createdAt = System.currentTimeMillis();
         this.status = STATUS_ACTIVE;
     }
-
-    // getters & setters
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }

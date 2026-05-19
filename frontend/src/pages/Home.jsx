@@ -5,17 +5,21 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-surface text-white flex flex-col items-center justify-center p-4 relative overflow-hidden">
       {/* Background decoration */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4   rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4   rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative z-10 text-center space-y-8 max-w-2xl animate-slide-up">
         <div className="space-y-4">
-          <div className="inline-flex w-20 h-20 rounded-3xl bg-brand-500 items-center justify-center text-white font-bold text-3xl shadow-lg shadow-brand-500/25 mb-4">
-            SN
+          <div className="inline-flex  rounded-3xl  items-center justify-center text-white font-bold text-3xl  mb-4">
+
+            <img 
+              src="/Logo.png"
+              alt="SkillNest Logo"
+              className="w-62 h-62 object-contain drop-shadow-lg brightness-110"
+            />
+
           </div>
-          <h1 className="text-6xl font-display font-bold tracking-tight">
-            SkillNest
-          </h1>
+          
           <p className="text-xl text-slate-400 max-w-lg mx-auto leading-relaxed">
             Empowering the next generation of learners and educators. Join our community today.
           </p>

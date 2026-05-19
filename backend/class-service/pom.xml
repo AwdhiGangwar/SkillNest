@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.skillnest</groupId>
-    <artifactId>skillnest-class-service</artifactId>          <!-- CHANGE THIS for each service -->
+    <artifactId>skillnest-class-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>skillnest-class-service</name>                      <!-- CHANGE THIS too -->
+    <name>skillnest-class-service</name>
 
     <properties>
         <java.version>17</java.version>

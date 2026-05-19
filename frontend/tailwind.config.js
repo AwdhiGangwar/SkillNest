@@ -22,12 +22,17 @@ module.exports = {
           800: "#075985",
           900: "#0c4a6e",
         },
+        accent: {
+          DEFAULT: "#f97316",
+          light: "#fed7aa",
+          dark: "#c2410c",
+        },
         surface: {
-          DEFAULT: "var(--bg)",
-          card: "var(--card)",
-          border: "var(--border)",
-          hover: "var(--hover)",
-          text: "var(--text)",
+          DEFAULT: "#0f1117",
+          card: "#161b27",
+          border: "#1e2738",
+          hover: "#1a2030",
+          text: "#e2e8f0",
         },
       },
       backgroundImage: {

@@ -53,6 +53,7 @@ public class UserService {
     }
 
     // ==================== GET USER BY ID ====================
+
     public User getUserById(String id) throws Exception {
         Firestore db = FirestoreClient.getFirestore();
 
@@ -62,6 +63,7 @@ public class UserService {
                 .get()
                 .toObject(User.class);
     }
+
 
     // ==================== GET OR CREATE USER ====================
    // ✅ FIXED: getOrCreateUser method

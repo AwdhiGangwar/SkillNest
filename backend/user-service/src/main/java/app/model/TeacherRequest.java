@@ -1,7 +1,10 @@
 package app.model;
 
+import com.google.cloud.firestore.annotation.DocumentId;
+
 public class TeacherRequest {
 
+    @DocumentId
     private String id;
     private String name;
     private String email;
@@ -12,7 +15,11 @@ public class TeacherRequest {
     private String status; // PENDING, APPROVED, REJECTED
     private long createdAt;
 
-    // getters & setters
+    public TeacherRequest() {
+        this.createdAt = System.currentTimeMillis();
+    }
+
+    // ==================== GETTERS & SETTERS ====================
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
