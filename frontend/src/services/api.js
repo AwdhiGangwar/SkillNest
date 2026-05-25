@@ -126,6 +126,10 @@ export const rejectEnrollmentRequest = (id, reason) =>
 export const getEnrollmentRequestsEnriched = () =>
   api.get("/api/enrollment-requests/enriched/all");
 
+// api.js mein add karo
+export const adminEnrollStudent = (studentId, courseId) =>
+  api.post(`/api/enrollment-requests/${studentId}/admin-enroll`, { studentId, courseId });
+
 export const getEnrollmentStats = () => api.get('/api/enrollments/stats');
 
 // ─────────────────────────────────────────────

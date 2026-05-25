@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import Layout from "../../components/Layout";
 import { CardSkeleton, EmptyState, Badge, Modal } from "../../components/ui";
 import toast from "react-hot-toast";
-import { getEnrollmentRequests, approveEnrollmentRequest, rejectEnrollmentRequest, getAllCourses, getAllUsers, getEnrollmentsByCourse, getEnrollmentStats } from "../../services/api";
+import { getEnrollmentRequests, approveEnrollmentRequest, rejectEnrollmentRequest, getAllCourses, getAllUsers, getEnrollmentsByCourse, getEnrollmentStats,createEnrollmentRequest  } from "../../services/api";
 
 export default function AdminEnrollments() {
   const [enrollments, setEnrollments] = useState([]);
@@ -173,44 +173,23 @@ export default function AdminEnrollments() {
     }
 
     try {
-      const student = students.find((s) => s.id === form.studentId);
-      const course = courses.find((c) => c.id === form.courseId);
-
-      const newEnrollment = {
-        id: enrollments.length + 1,
-        studentName: student.name,
-        email: student.email,
-        courseName: course.name,
-        courseId: course.id,
-        enrolledDate: new Date().toISOString().split("T")[0],
-        status: "active",
-      };
-
-      console.log("[AdminEnrollments] Creating enrollment:", newEnrollment);
-      setEnrollments([...enrollments, newEnrollment]);
-      toast.success("Student enrolled successfully!");
-      setShowModal(false);
-      setForm({ studentId: "", courseId: "" });
-    } catch (err) {
-      console.error("[AdminEnrollments] Enrollment error:", {
-        status: err.status,
-        message: err.message,
-        error: err
-      });
-      
-      let errorMessage = "Failed to create enrollment";
-      
-      if (err.status === 403) {
-        errorMessage = "❌ Access Denied: Only students can enroll in courses.";
-      } else if (err.status === 401) {
-        errorMessage = "❌ Unauthorized: Please log in again.";
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-      
-      toast.error(errorMessage);
-    }
-  };
+       const reqRes = await createEnrollmentRequest({
+      studentId: form.studentId,
+      courseId: form.courseId,
+      message: "Admin enrolled"
+    });
+  await approveEnrollmentRequest(reqRes.data.id);
+    
+    toast.success("Student enrolled successfully! ✅");
+    setShowModal(false);
+    setForm({ studentId: "", courseId: "" });
+    
+    // ✅ Refresh data
+    window.location.reload();
+  } catch (err) {
+    toast.error(err.message || "Failed to enroll student");
+  }
+};
 
   const avgCoursesPerStudent = enrollments.length > 0 ? (enrollments.length / uniqueStudents).toFixed(1) : 0;
   const requestsRef = useRef(null);
