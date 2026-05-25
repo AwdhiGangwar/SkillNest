@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../../context/AuthContext";
 import { useParams } from "react-router-dom";
-import { getModulesByCourse, getLessonsByModule, getCourseProgress, markLessonComplete, getCourseById } from "../../services/api";
+import { getModulesByCourse, getCourseProgress, markLessonComplete, getCourseById } from "../../services/api";
 import Layout from "../../components/Layout";
 import ModuleSidebar from "../../components/ModuleSidebar";
 import LessonViewer from "../../components/LessonViewer";
@@ -8,6 +9,7 @@ import ProgressBar from "../../components/ProgressBar";
 import toast from "react-hot-toast";
 
 const CourseLearning = () => {
+  const { user } = useAuth(); // ✅ useAuth se lo
   const { courseId } = useParams();
   const [course, setCourse] = useState(null);
   const [modules, setModules] = useState([]);
@@ -15,13 +17,10 @@ const CourseLearning = () => {
   const [selectedLesson, setSelectedLesson] = useState(null);
   const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    setUserId(user?.uid);
     loadCourseData();
-  }, [courseId]);
+  }, [courseId, user]); // ✅ user dependency add karo
 
   const loadCourseData = async () => {
     try {
@@ -36,8 +35,7 @@ const CourseLearning = () => {
         setSelectedModule(modulesRes.data[0]);
       }
 
-      // Load progress
-      const user = JSON.parse(localStorage.getItem("user"));
+      // ✅ useAuth ka user use karo
       if (user) {
         const progressRes = await getCourseProgress(
           user.uid,
@@ -54,19 +52,17 @@ const CourseLearning = () => {
   };
 
   const calculateTotalLessons = (modulesList) => {
-    // This will be calculated on backend
-    return modulesList.length * 5; // approximate
+    return modulesList.length * 5;
   };
 
   const handleLessonComplete = async () => {
     try {
-      if (!selectedLesson || !userId) return;
+      if (!selectedLesson || !user) return; // ✅ user directly
 
-      await markLessonComplete(userId, courseId, selectedLesson.id);
+      await markLessonComplete(user.uid, courseId, selectedLesson.id); // ✅
       toast.success("Lesson marked as completed! 🎉");
-      
-      // Reload progress
-      const progressRes = await getCourseProgress(userId, courseId, 100);
+
+      const progressRes = await getCourseProgress(user.uid, courseId, 100); // ✅
       setProgress(progressRes.data?.progressPercentage || 0);
     } catch (error) {
       toast.error("Failed to mark lesson complete: " + error.message);
@@ -75,7 +71,7 @@ const CourseLearning = () => {
 
   if (loading) {
     return (
-      <Layout>
+      <Layout title="Course Content">
         <div className="flex justify-center items-center h-96">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
         </div>
@@ -84,8 +80,8 @@ const CourseLearning = () => {
   }
 
   return (
-    <Layout>
-      <div className="flex h-screen bg-gray-100 ">
+    <Layout title={course?.title || "Course Content"}>
+      <div className="flex h-screen bg-gray-100">
         {/* Sidebar */}
         <ModuleSidebar
           modules={modules}
@@ -101,7 +97,7 @@ const CourseLearning = () => {
             <div className="p-6">
               <h1 className="text-3xl font-bold text-surface-text">{course?.title}</h1>
               <p className="text-slate-400 mt-2">{course?.description}</p>
-              
+
               {/* Progress Bar */}
               <div className="mt-6">
                 <div className="flex justify-between items-center mb-2">

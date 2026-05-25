@@ -190,20 +190,7 @@ export default function BrowseCourses() {
 
             {/* Action Buttons */}
             <div className="flex gap-3 pt-4">
-              <button
-                onClick={() => handleEnroll(selected)}
-                disabled={enrolling === selected.id}
-                className="flex-1 btn-primary py-3 flex items-center justify-center gap-2 disabled:opacity-50"
-              >
-                {enrolling === selected.id ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Enrolling...
-                  </>
-                ) : (
-                  "Enroll Now →"
-                )}
-              </button>
+              
               <button
                 onClick={() => {
                   setSelected(null);

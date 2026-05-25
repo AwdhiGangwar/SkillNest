@@ -230,7 +230,7 @@ function TeacherCourseCard({ course }) {
           {course.description || "No description provided."}
         </p>
         <div className="flex items-center justify-between mb-4">
-          <span className="text-lg font-bold text-brand-400">${course.price}</span>
+          <span className="text-lg font-bold text-brand-400">{course.price}</span>
           <span className="text-xs bg-emerald-500/15 text-emerald-400 px-2.5 py-1 rounded-lg font-medium">
             Active
           </span>

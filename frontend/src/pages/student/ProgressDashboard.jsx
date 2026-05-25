@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../../context/AuthContext"; // ✅ Add karo
 import { getCourseProgress, getMyCourses } from "../../services/api";
 import Layout from "../../components/Layout";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const ProgressDashboard = () => {
+  const { user } = useAuth(); // ✅ useAuth se lo
   const [courses, setCourses] = useState([]);
   const [courseProgress, setCourseProgress] = useState({});
   const [loading, setLoading] = useState(true);
@@ -12,30 +14,29 @@ const ProgressDashboard = () => {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [user]); // ✅ user dependency
 
   const loadData = async () => {
     try {
       setLoading(true);
-      const user = JSON.parse(localStorage.getItem("user"));
-      
-      // Get enrolled courses
+
       const coursesRes = await getMyCourses();
       const enrolledCourses = coursesRes.data || [];
       setCourses(enrolledCourses);
 
-      // Get progress for each course
-      const progressMap = {};
-      for (const course of enrolledCourses) {
-        try {
-          const progressRes = await getCourseProgress(user.uid, course.id, 50); // approximate total
-          progressMap[course.id] = progressRes.data;
-        } catch (error) {
-          console.error("Error loading progress for course:", error);
-          progressMap[course.id] = { progressPercentage: 0, completedLessons: 0 };
+      // ✅ user.uid directly use karo
+      if (user) {
+        const progressMap = {};
+        for (const course of enrolledCourses) {
+          try {
+            const progressRes = await getCourseProgress(user.uid, course.id, 50);
+            progressMap[course.id] = progressRes.data;
+          } catch (error) {
+            progressMap[course.id] = { progressPercentage: 0, completedLessons: 0 };
+          }
         }
+        setCourseProgress(progressMap);
       }
-      setCourseProgress(progressMap);
     } catch (error) {
       toast.error("Failed to load progress data: " + error.message);
     } finally {
@@ -53,7 +54,7 @@ const ProgressDashboard = () => {
 
   if (loading) {
     return (
-      <Layout>
+      <Layout title="My Progress">
         <div className="flex justify-center items-center h-96">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
         </div>
@@ -69,16 +70,14 @@ const ProgressDashboard = () => {
   ).length;
 
   return (
-    <Layout>
+    <Layout title="My Progress"> {/* ✅ title add kiya */}
       <div className="min-h-screen bg-surface p-8">
         <div className="max-w-6xl mx-auto">
-          {/* Header */}
           <div className="mb-12">
             <h1 className="text-4xl font-bold text-surface-text mb-2">📊 My Learning Progress</h1>
             <p className="text-slate-400">Track your course completion and achievements</p>
           </div>
 
-          {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
             <div className="bg-surface-card border border-surface-border rounded-lg shadow-lg p-6">
               <div className="flex items-center justify-between">
@@ -117,11 +116,11 @@ const ProgressDashboard = () => {
                   <p className="text-4xl font-bold text-purple-600">
                     {courses.length > 0
                       ? Math.round(
-                          Object.values(courseProgress).reduce((sum, p) => sum + (p?.progressPercentage || 0), 0) /
-                            courses.length
+                          Object.values(courseProgress).reduce(
+                            (sum, p) => sum + (p?.progressPercentage || 0), 0
+                          ) / courses.length
                         )
-                      : 0}
-                    %
+                      : 0}%
                   </p>
                 </div>
                 <span className="text-4xl">📈</span>
@@ -129,7 +128,6 @@ const ProgressDashboard = () => {
             </div>
           </div>
 
-          {/* Courses Progress */}
           <div className="space-y-6">
             {courses.length > 0 ? (
               courses.map((course) => {
@@ -162,7 +160,6 @@ const ProgressDashboard = () => {
                       </div>
                     </div>
 
-                    {/* Progress Bar */}
                     <div className="mb-4">
                       <div className="w-full bg-surface-border rounded-full h-3 overflow-hidden">
                         <div
@@ -172,7 +169,6 @@ const ProgressDashboard = () => {
                       </div>
                     </div>
 
-                    {/* Course Info */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                       <div className="bg-surface-hover p-3 rounded">
                         <p className="text-slate-400">Category</p>
@@ -184,7 +180,7 @@ const ProgressDashboard = () => {
                       </div>
                       <div className="bg-surface-hover p-3 rounded">
                         <p className="text-slate-400">Price</p>
-                        <p className="font-semibold text-surface-text">${course.price}</p>
+                        <p className="font-semibold text-surface-text">₹{course.price}</p>
                       </div>
                       <div className="bg-surface-hover p-3 rounded">
                         <p className="text-slate-400">Next Lesson</p>
@@ -194,7 +190,6 @@ const ProgressDashboard = () => {
                       </div>
                     </div>
 
-                    {/* CTA Button */}
                     <div className="mt-4 flex gap-3">
                       <button
                         onClick={(e) => {
@@ -218,7 +213,7 @@ const ProgressDashboard = () => {
               <div className="bg-surface-card rounded-lg shadow-lg p-12 text-center border border-surface-border">
                 <p className="text-slate-500 text-lg mb-4">No courses enrolled yet</p>
                 <button
-                  onClick={() => navigate("/student/browse-courses")}
+                  onClick={() => navigate("/student/courses")}
                   className="bg-brand-500 hover:bg-brand-600 text-white px-6 py-2 rounded-lg"
                 >
                   Browse Courses

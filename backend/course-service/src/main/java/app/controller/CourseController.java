@@ -30,17 +30,21 @@ public class CourseController {
 
     @PostMapping("/courses")
     public ResponseEntity<?> createCourse(@RequestBody Course course,
-                                          HttpServletRequest request) {
+            HttpServletRequest request) {
         try {
             String uid = (String) request.getAttribute("uid");
+            String role = (String) request.getAttribute("role");
+            String token = request.getHeader("Authorization");
             logger.info("Course creation request from UID: {}", uid);
 
             if (uid == null) {
                 uid = "teacher123"; // temp fallback
                 logger.warn("UID is null, using fallback: {}", uid);
             }
-
-            String token = request.getHeader("Authorization");
+            // ✅ Admin bypass
+            boolean isAuthorized = "admin".equalsIgnoreCase(role) ||
+                    "teacher".equalsIgnoreCase(role) ||
+                    courseService.isTeacher(uid, token);
 
             if (!courseService.isTeacher(uid, token)) {
                 logger.warn("User {} is not authorized to create courses (requires teacher or admin)", uid);
@@ -72,7 +76,7 @@ public class CourseController {
             }
 
             String result = courseService.createCourse(course);
-            
+
             return ResponseEntity.ok(Map.of("success", result, "courseId", course.getId()));
         } catch (IllegalArgumentException e) {
             logger.error("Invalid course data: {}", e.getMessage());
@@ -87,18 +91,22 @@ public class CourseController {
 
     @PutMapping("/courses/{id}")
     public ResponseEntity<?> updateCourse(@PathVariable String id,
-                                          @RequestBody Course course,
-                                          HttpServletRequest request) {
+            @RequestBody Course course,
+            HttpServletRequest request) {
         try {
             String uid = (String) request.getAttribute("uid");
+            String role = (String) request.getAttribute("role");
+            String token = request.getHeader("Authorization");
             logger.info("Course update request for ID: {} from UID: {}", id, uid);
 
             if (uid == null) {
                 uid = "teacher123";
                 logger.warn("UID is null, using fallback: {}", uid);
             }
-
-            String token = request.getHeader("Authorization");
+            // ✅ Admin bypass
+            boolean isAuthorized = "admin".equalsIgnoreCase(role) ||
+                    "teacher".equalsIgnoreCase(role) ||
+                    courseService.isTeacher(uid, token);
 
             if (!courseService.isTeacher(uid, token)) {
                 logger.warn("User {} is not authorized to update courses (requires teacher or admin)", uid);
@@ -134,9 +142,11 @@ public class CourseController {
 
     @DeleteMapping("/courses/{id}")
     public ResponseEntity<?> deleteCourse(@PathVariable String id,
-                                          HttpServletRequest request) {
+            HttpServletRequest request) {
         try {
             String uid = (String) request.getAttribute("uid");
+            String role = (String) request.getAttribute("role"); // ✅ Add karo
+            String token = request.getHeader("Authorization");
             logger.info("Course deletion request for ID: {} from UID: {}", id, uid);
 
             if (uid == null) {
@@ -144,7 +154,10 @@ public class CourseController {
                 logger.warn("UID is null, using fallback: {}", uid);
             }
 
-            String token = request.getHeader("Authorization");
+            // ✅ Admin bypass
+            boolean isAuthorized = "admin".equalsIgnoreCase(role) ||
+                    "teacher".equalsIgnoreCase(role) ||
+                    courseService.isTeacher(uid, token);
 
             if (!courseService.isTeacher(uid, token)) {
                 logger.warn("User {} is not authorized to delete courses (requires teacher or admin)", uid);

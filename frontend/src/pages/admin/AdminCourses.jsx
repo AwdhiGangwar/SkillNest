@@ -79,7 +79,7 @@ export default function AdminCourses() {
 
   // ✅ Define teacherList to fix the ReferenceError
   const teacherList = React.useMemo(() => {
-    return (users || []).filter(u => 
+    return (users || []).filter(u =>
       u.role?.toLowerCase() === 'teacher' || u.role?.toLowerCase() === 'admin'
     );
   }, [users]);
@@ -171,6 +171,9 @@ export default function AdminCourses() {
   const closeDetails = () => { setDetailsCourse(null); setCourseStudents([]); setDetailsTeachers([]); };
 
   const handleOpenModal = (course = null) => {
+    setShowModal(false);
+     console.log("handleOpenModal called!", course); // ✅ Add karo
+  console.log("showModal before:", showModal); // ✅ Add karo
     if (course) {
       setEditingId(course.id);
       setForm({
@@ -202,7 +205,10 @@ export default function AdminCourses() {
         modules: "",
       });
     }
+    setTimeout(() => {
     setShowModal(true);
+  }, 50);
+    console.log("setShowModal(true) called!");
   };
 
   const handleSubmit = async (e) => {
@@ -237,9 +243,9 @@ export default function AdminCourses() {
         message: err.message,
         error: err
       });
-      
+
       let errorMessage = "Failed to save course";
-      
+
       if (err.status === 403) {
         errorMessage = "❌ Access Denied: You don't have teacher permissions. Please ensure your account is set as a teacher.";
       } else if (err.status === 401) {
@@ -247,7 +253,7 @@ export default function AdminCourses() {
       } else if (err.message) {
         errorMessage = err.message;
       }
-      
+
       toast.error(errorMessage);
     }
   };
@@ -287,7 +293,13 @@ export default function AdminCourses() {
       subtitle={`${courses.length} course${courses.length !== 1 ? "s" : ""} on platform`}
       actions={
         <>
-          <button onClick={() => handleOpenModal()} className="btn-primary">
+          <button
+            onClick={() => {
+              console.log("Button clicked!"); // ✅ Add karo
+              handleOpenModal();
+            }}
+            className="btn-primary"
+          >
             + Add Course
           </button>
         </>
@@ -393,7 +405,7 @@ export default function AdminCourses() {
                       </span>
                     </td>
                     <td className="px-6 py-5">
-                      <button 
+                      <button
                         onClick={() => handleTogglePublish(course.id, course.isPublished)}
                         className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${course.isPublished ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-500/20 text-slate-400'}`}
                       >
@@ -401,7 +413,7 @@ export default function AdminCourses() {
                       </button>
                     </td>
                     <td className="px-6 py-5 text-slate-300">{course.maxStudents || course.totalSeats}</td>
-                      <td className="px-6 py-5 text-right flex items-center justify-end gap-2">
+                    <td className="px-6 py-5 text-right flex items-center justify-end gap-2">
                       <button
                         onClick={() => handleOpenModal(course)}
                         className="px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 text-xs font-semibold hover:bg-blue-500 hover:text-white transition-all"
@@ -427,7 +439,7 @@ export default function AdminCourses() {
                       >
                         Details
                       </button>
-                      
+
                     </td>
                   </tr>
                 ))}
