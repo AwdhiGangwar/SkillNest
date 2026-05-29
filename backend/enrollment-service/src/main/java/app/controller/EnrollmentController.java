@@ -126,6 +126,33 @@ public class EnrollmentController {
     }
 
     // ==================== Enrollment Requests ====================
+    // ✅ Admin direct enrollment endpoint
+@PostMapping("/enrollment-requests/admin-enroll")
+public ResponseEntity<?> adminEnroll(@RequestBody EnrollmentRequest req, 
+                                      HttpServletRequest request) {
+    try {
+        String adminUid = (String) request.getAttribute("uid");
+        String role = (String) request.getAttribute("role");
+        
+        if (adminUid == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        if (!"admin".equalsIgnoreCase(role)) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Admin only");
+
+        // ✅ studentId request body se lo - admin ka nahi
+        if (req.getStudentId() == null || req.getCourseId() == null) {
+            return ResponseEntity.badRequest().body("studentId and courseId required");
+        }
+
+        // ✅ Direct enrollment - request create kiye bina
+        Enrollment enrollment = enrollmentService.enrollAsAdmin(req.getStudentId(), req.getCourseId());
+        return ResponseEntity.ok(enrollment);
+        
+    } catch (RuntimeException re) {
+        return ResponseEntity.badRequest().body(re.getMessage());
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Failed to enroll: " + e.getMessage());
+    }
+}
     @PostMapping("/enrollment-requests")
     public ResponseEntity<?> createEnrollmentRequest(@RequestBody EnrollmentRequest req, HttpServletRequest request) {
         try {

@@ -126,11 +126,11 @@ export const rejectEnrollmentRequest = (id, reason) =>
 export const getEnrollmentRequestsEnriched = () =>
   api.get("/api/enrollment-requests/enriched/all");
 
-// api.js mein add karo
-export const adminEnrollStudent = (studentId, courseId) =>
-  api.post(`/api/enrollment-requests/${studentId}/admin-enroll`, { studentId, courseId });
+
 
 export const getEnrollmentStats = () => api.get('/api/enrollments/stats');
+export const adminEnrollStudent = (studentId, courseId) =>
+  api.post("/api/enrollment-requests/admin-enroll", { studentId, courseId });
 
 // ─────────────────────────────────────────────
 // 📅 CLASS APIs
@@ -231,11 +231,49 @@ export const getAnalytics = () => api.get("/api/analytics");
 // ─────────────────────────────────────────────
 // 💳 PAYMENTS APIs
 // ─────────────────────────────────────────────
-export const getPayments = () => api.get("/api/payments");
+// Payment initiation and processing
+export const initiatePayment = (courseId, amount, description) =>
+  api.post("/api/payments/initiate", { courseId, amount, description });
+
 export const processPayment = (amount, courseId) =>
   api.post("/api/payments/process", { amount, courseId });
+
+export const confirmPayment = (paymentId) =>
+  api.post(`/api/payments/confirm?paymentId=${paymentId}`);
+
+// Payment history and info
+export const getPayments = () => api.get("/api/payments");
+
 export const getPaymentSummary = () => api.get("/api/payments/summary");
-export const getTeacherPayouts = () => api.get("/api/payments/teacher-payouts");
+
+export const getAllPayments = () => api.get("/api/payments/admin/all");
+
+// Refunds
+export const refundPayment = (paymentId, amount, reason) =>
+  api.post("/api/payments/refund", { paymentId, amount, reason }, {
+    params: { paymentId }
+  });
+
+// Payment methods
+export const getPaymentMethods = () => api.get("/api/payments/methods");
+
+export const saveCreditCard = (cardToken, isDefault) =>
+  api.post("/api/payments/methods/save", { cardToken, isDefault });
+
+export const deletePaymentMethod = (methodId) =>
+  api.delete(`/api/payments/methods/${methodId}`);
+
+// Teacher payouts
+export const getTeacherPayouts = () => api.get("/api/payments/payouts");
+
+export const createTeacherPayout = (amount, description) =>
+  api.post("/api/payments/payouts", null, {
+    params: { amount, description }
+  });
+
+// Payment health check
+export const checkPaymentServiceHealth = () => 
+  api.get("/api/payments/health");
 
 // ─────────────────────────────────────────────
 // 🎧 SUPPORT APIs

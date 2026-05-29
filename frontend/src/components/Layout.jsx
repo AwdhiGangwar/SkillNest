@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 import { useAuth } from "../context/AuthContext";
+import ThemeToggle from "./ThemeToggle";
 
 function Layout({ title, subtitle, actions, children }) {
   const navigate = useNavigate();
@@ -51,9 +52,9 @@ function Layout({ title, subtitle, actions, children }) {
   };
 
   return (
-    <div className="min-h-screen bg-surface flex flex-col transition-colors duration-300">
+    <div className="min-h-screen bg-white dark:bg-surface flex flex-col transition-colors duration-300">
       {/* SIDEBAR - Desktop */}
-      <div className="hidden lg:flex flex-col fixed left-0 top-0 h-screen w-60 bg-surface-card border-r border-surface-border p-6 overflow-y-auto transition-colors duration-300 z-40">
+      <div className="hidden lg:flex flex-col fixed left-0 top-0 h-screen w-60 bg-white dark:bg-surface-card border-r border-gray-200 dark:border-surface-border p-6 overflow-y-auto transition-colors duration-300 z-40">
         {/* Logo */}
 <div
   onClick={() => navigate("/")}
@@ -72,10 +73,11 @@ function Layout({ title, subtitle, actions, children }) {
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
-              className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-3 ${isActive(item.path)
-                ? "bg-brand-500/15 text-brand-300"
-                : "text-slate-400 hover:text-white hover:bg-surface-hover"
-                }`}
+              className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-3 ${
+                isActive(item.path)
+                  ? "bg-brand-500/15 text-brand-600 dark:text-brand-300 dark:bg-brand-500/20"
+                  : "text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-surface-hover"
+              }`}
             >
               <span className="text-lg">{item.icon}</span>
               <span className="truncate">{item.label}</span>
@@ -84,22 +86,22 @@ function Layout({ title, subtitle, actions, children }) {
         </nav>
 
         {/* User Profile Section */}
-        <div className="border-t border-surface-border pt-4 mt-4">
-          <div className="glass-card p-4 mb-4 rounded-xl">
-            <div className="text-xs text-slate-400 mb-2">Logged in as</div>
-            <div className="font-semibold text-sm truncate text-white">
+        <div className="border-t border-gray-200 dark:border-surface-border pt-4 mt-4">
+          <div className="bg-gray-50 dark:bg-surface-card/50 p-4 mb-4 rounded-xl">
+            <div className="text-xs text-gray-500 dark:text-slate-400 mb-2">Logged in as</div>
+            <div className="font-semibold text-sm truncate text-gray-900 dark:text-white">
               {profile?.name}
             </div>
-            <div className="text-xs text-slate-500 truncate">{profile?.email}</div>
+            <div className="text-xs text-gray-600 dark:text-slate-500 truncate">{profile?.email}</div>
             {profile?.role && (
-              <div className="mt-3 inline-block bg-brand-500/15 text-brand-300 text-xs font-semibold px-3 py-1 rounded-lg">
+              <div className="mt-3 inline-block bg-brand-500/15 text-brand-600 dark:text-brand-300 text-xs font-semibold px-3 py-1 rounded-lg">
                 {profile.role.toUpperCase()}
               </div>
             )}
           </div>
           <button
             onClick={handleLogout}
-            className="btn-ghost w-full justify-center text-sm"
+            className="w-full px-4 py-2 justify-center text-sm font-medium transition-colors rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-surface-card dark:hover:bg-surface-hover text-gray-900 dark:text-surface-text"
           >
             Logout
           </button>
@@ -109,17 +111,17 @@ function Layout({ title, subtitle, actions, children }) {
       {/* MAIN CONTENT */}
       <div className="flex-1 lg:ml-60 flex flex-col">
         {/* MOBILE HEADER */}
-        <div className="lg:hidden glass-card border-0 rounded-none px-4 py-3 flex items-center justify-between sticky top-0 z-50 backdrop-blur-md">
+        <div className="lg:hidden bg-white dark:bg-surface-card border-b border-gray-200 dark:border-surface-border px-4 py-3 flex items-center justify-between sticky top-0 z-50 backdrop-blur-md transition-colors duration-300">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 hover:bg-surface-hover rounded-lg transition-colors text-slate-300"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-surface-hover rounded-lg transition-colors text-gray-600 dark:text-slate-300"
           >
             <span className="text-xl">☰</span>
           </button>
-          <div className="font-display font-bold text-white">SkillNest</div>
+          <div className="font-display font-bold text-gray-900 dark:text-white">SkillNest</div>
           <button
             onClick={handleLogout}
-            className="p-2 hover:bg-surface-hover rounded-lg transition-colors text-slate-400 hover:text-white"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-surface-hover rounded-lg transition-colors text-gray-600 dark:text-slate-400 dark:hover:text-white"
           >
             ⏻
           </button>
@@ -127,7 +129,7 @@ function Layout({ title, subtitle, actions, children }) {
 
         {/* MOBILE MENU */}
         {mobileMenuOpen && (
-          <div className="lg:hidden glass-card border-0 rounded-none p-4 space-y-2 border-b border-surface-border sticky top-[56px] z-40 bg-surface-card/95 backdrop-blur-md">
+          <div className="lg:hidden bg-white dark:bg-surface-card border-b border-gray-200 dark:border-surface-border p-4 space-y-2 sticky top-[56px] z-40 backdrop-blur-md transition-colors duration-300">
             {currentNavItems.map((item) => (
               <button
                 key={item.path}
@@ -135,10 +137,11 @@ function Layout({ title, subtitle, actions, children }) {
                   navigate(item.path);
                   setMobileMenuOpen(false);
                 }}
-                className={`w-full flex items-center gap-3 text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive(item.path)
-                  ? "bg-brand-500/15 text-brand-300"
-                  : "text-slate-400 hover:text-white hover:bg-surface-hover"
-                  }`}
+                className={`w-full flex items-center gap-3 text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                  isActive(item.path)
+                    ? "bg-brand-500/15 text-brand-500 dark:text-brand-300"
+                    : "text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-surface-hover"
+                }`}
               >
                 <span className="text-lg">{item.icon}</span>
                 <span>{item.label}</span>
@@ -148,27 +151,30 @@ function Layout({ title, subtitle, actions, children }) {
         )}
 
         {/* PAGE HEADER */}
-        <div className="px-4 lg:px-8 py-6 lg:py-8 border-b border-surface-border">
+        <div className="px-4 lg:px-8 py-6 lg:py-8 border-b border-gray-200 dark:border-surface-border bg-white dark:bg-surface transition-colors duration-300">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
-              <h1 className="text-3xl lg:text-4xl font-display font-bold text-white mb-2">
+              <h1 className="text-3xl lg:text-4xl font-display font-bold text-gray-900 dark:text-white mb-2">
                 {title}
               </h1>
               {subtitle && (
-                <p className="text-slate-400 text-sm lg:text-base">{subtitle}</p>
+                <p className="text-gray-600 dark:text-slate-400 text-sm lg:text-base">{subtitle}</p>
               )}
             </div>
-            {actions && <div className="flex items-center gap-3">{actions}</div>}
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
+              {actions && actions}
+            </div>
           </div>
         </div>
 
         {/* PAGE CONTENT */}
-        <div className="flex-1 px-4 lg:px-8 py-6 lg:py-8 overflow-y-auto w-full">
+        <div className="flex-1 px-4 lg:px-8 py-6 lg:py-8 overflow-y-auto w-full bg-white dark:bg-surface transition-colors duration-300">
           <div className="max-w-screen-2xl mx-auto w-full">{children}</div>
         </div>
 
         {/* FOOTER */}
-        <div className="border-t border-surface-border px-4 lg:px-8 py-4 text-center text-xs text-slate-500 hidden lg:block">
+        <div className="border-t border-gray-200 dark:border-surface-border px-4 lg:px-8 py-4 text-center text-xs text-gray-500 dark:text-slate-500 hidden lg:block bg-white dark:bg-surface transition-colors duration-300">
           <p>© 2024 SkillNest. All rights reserved.</p>
         </div>
       </div>
