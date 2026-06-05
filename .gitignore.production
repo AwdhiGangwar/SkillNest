@@ -1,0 +1,144 @@
+# SkillNest .gitignore - Production Ready
+
+# =========================
+# IDE & Editor
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.iml
+*.sublime-project
+*.sublime-workspace
+
+# =========================
+# Build & Dependencies
+# =========================
+target/
+dist/
+build/
+.gradle/
+node_modules/
+.npm
+package-lock.json
+yarn.lock
+*.jar
+*.war
+*.ear
+
+# =========================
+# Environment & Secrets (CRITICAL)
+# =========================
+.env
+.env.local
+.env.*.local
+firebase.json
+*.key
+*.pem
+*.p12
+*.jks
+
+# =========================
+# Credentials & API Keys (NEVER COMMIT)
+# =========================
+**/credentials.json
+**/service-account.json
+**/.env.production.local
+**/secrets/
+**/*-credentials.*
+
+# =========================
+# Logs
+# =========================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# =========================
+# OS Files
+# =========================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# =========================
+# Node/Frontend
+# =========================
+frontend/build/
+frontend/dist/
+frontend/.cache/
+frontend/.next/
+frontend/out/
+frontend/coverage/
+
+# =========================
+# Maven/Java
+# =========================
+.classpath
+.project
+.settings/
+bin/
+.idea/
+*.iml
+
+# =========================
+# Database & Cache
+# =========================
+*.db
+*.sqlite
+*.sqlite3
+.firebase/
+.firebaserc
+
+# =========================
+# Temporary Files
+# =========================
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# =========================
+# Docker (for development)
+# =========================
+.dockerignore
+docker-compose.override.yml
+
+# =========================
+# Git
+# =========================
+.git/
+.gitignore
+
+# =========================
+# Production Builds
+# =========================
+dist/
+build/
+coverage/
+.next/
+
+# =========================
+# Testing
+# =========================
+coverage/
+.nyc_output/
+junit.xml
+test-results/
+
+# =========================
+# IDE Cache
+# =========================
+.cache/
+.eslintcache
