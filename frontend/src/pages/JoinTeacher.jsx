@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
 import { applyAsTeacher } from "../services/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function JoinTeacher() {
   const [form, setForm] = useState({
@@ -13,6 +13,7 @@ export default function JoinTeacher() {
     bio: "",
   });
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleChange = (e) =>
@@ -23,8 +24,7 @@ export default function JoinTeacher() {
     setLoading(true);
     try {
       await applyAsTeacher(form);
-      toast.success("Application submitted successfully!");
-      // Navigate home or to a success page
+      toast.success("Application submitted successfully! 🎉");
       navigate("/");
     } catch (error) {
       toast.error(error.message || "Failed to submit application");
@@ -35,16 +35,22 @@ export default function JoinTeacher() {
 
   return (
     <div className="min-h-screen bg-surface text-white flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute top-0 left-0 w-full h-full bg-mesh-gradient opacity-20 pointer-events-none" />
-      
+      {/* Animated Gradient Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-purple-850/30 to-slate-950 animate-gradient" />
+
       <div className="max-w-2xl w-full relative z-10">
-        <div className="text-center mb-10 animate-slide-up">
-          <h1 className="text-4xl font-display font-bold mb-3">Join as a Teacher</h1>
-          <p className="text-slate-400">Share your expertise and inspire the next generation of learners.</p>
+        {/* Header */}
+        <div className="text-center mb-10">
+          <h1 className="text-4xl font-bold mb-3">
+            Join as a <span className="text-orange-400">Teacher</span>
+          </h1>
+          <p className="text-slate-400 text-lg max-w-md mx-auto">
+            Share your expertise and inspire the next generation of learners
+          </p>
         </div>
 
-        <div className="glass-card p-8 animate-fade-in border border-surface-border bg-surface-card/50 backdrop-blur-xl rounded-2xl">
+        {/* Form Card */}
+        <div className="glass-card p-8 lg:p-10 rounded-3xl border border-surface-border bg-surface-card/70 backdrop-blur-xl">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -55,7 +61,7 @@ export default function JoinTeacher() {
                   onChange={handleChange}
                   required
                   className="input-field w-full"
-                  placeholder="e.g. John Doe"
+                  placeholder="Name"
                 />
               </div>
               <div>
@@ -67,36 +73,37 @@ export default function JoinTeacher() {
                   onChange={handleChange}
                   required
                   className="input-field w-full"
-                  placeholder="john@example.com"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Phone Number</label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={form.phone}
-                  onChange={handleChange}
-                  required
-                  className="input-field w-full"
-                  placeholder="e.g. +1 (555) 123-4567"
+                  placeholder="Email"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Key Skills</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">Phone Number</label>
+              <input
+                type="tel"
+                name="phone"
+                value={form.phone}
+                onChange={handleChange}
+                required
+                className="input-field w-full"
+                placeholder="Phone"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">Key Skills / Subjects</label>
               <input
                 name="skills"
                 value={form.skills}
                 onChange={handleChange}
                 required
                 className="input-field w-full"
-                placeholder="e.g. React, Python, Data Science (comma separated)"
+                placeholder="Skills (e.g. JavaScript, Data Science, etc.)"
               />
             </div>
 
-             <div>
+            <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">Teaching Experience</label>
               <input
                 name="experience"
@@ -104,7 +111,7 @@ export default function JoinTeacher() {
                 onChange={handleChange}
                 required
                 className="input-field w-full"
-                placeholder="e.g. 5 years as Senior Dev, 2 years tutoring"
+                placeholder="e.g. 5+ years as Software Engineer"
               />
             </div>
 
@@ -115,25 +122,35 @@ export default function JoinTeacher() {
                 value={form.bio}
                 onChange={handleChange}
                 required
-                rows={4}
+                rows={5}
                 className="input-field w-full resize-none"
-                placeholder="Tell us a bit about yourself and why you want to teach..."
+                placeholder="Tell us about yourself, your teaching style, and why you want to join SkillNest..."
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full py-3.5 rounded-xl font-semibold text-lg hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+              className="btn-primary w-full py-4 text-lg font-semibold rounded-2xl flex items-center justify-center gap-2 mt-6"
             >
               {loading ? (
-                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <>
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Submitting Application...
+                </>
               ) : (
-                "Submit Application"
+                "Submit Teacher Application"
               )}
             </button>
           </form>
         </div>
+
+        <p className="text-center text-slate-400 mt-6">
+          Want to learn instead?{" "}
+          <Link to="/register" className="text-orange-400 hover:text-orange-300 font-medium">
+            Register as Student
+          </Link>
+        </p>
       </div>
     </div>
   );
