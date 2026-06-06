@@ -169,7 +169,7 @@ export default function Home() {
                   autoplay
                   loop
                   src="/assets/animations/search-animation.json"
-                  style={{ width: "160px", height: "160px" }}
+                  style={{ width: "250px", height: "250px" }}
                 />
               </div>
               <h3 className="text-2xl font-semibold mb-4 text-center">Concept Clarity</h3>
