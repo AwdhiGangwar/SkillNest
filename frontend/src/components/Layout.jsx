@@ -54,9 +54,9 @@ function Layout({ title, subtitle, actions, children }) {
   };
 
   return (
-    <div className="min-h-screen bg-surface text-white flex flex-col transition-colors duration-300">
+    <div className="min-h-screen bg-light-bg text-light-text dark:bg-surface dark:text-white flex flex-col transition-colors duration-300">
       {/* SIDEBAR - Desktop */}
-      <div className="hidden lg:flex flex-col fixed left-0 top-0 h-screen w-60 bg-surface-card border-r border-surface-border p-6 overflow-y-auto transition-colors duration-300 z-40">
+      <div className="hidden lg:flex flex-col fixed left-0 top-0 h-screen w-60 bg-white dark:bg-surface-card border-r border-light-border dark:border-surface-border text-light-text dark:text-white p-6 overflow-y-auto transition-colors duration-300 z-40">
         {/* Logo */}
         <div
           onClick={() => navigate("/")}
@@ -72,8 +72,8 @@ function Layout({ title, subtitle, actions, children }) {
               key={item.path}
               onClick={() => navigate(item.path)}
               className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-medium transition-all flex items-center gap-3 ${isActive(item.path)
-                ? "bg-orange-500/10 text-orange-400 border border-orange-500/30"
-                : "text-slate-400 hover:text-white hover:bg-surface-hover"
+                ? "bg-brand-500/10 text-brand-600 border border-brand-500/30 dark:bg-orange-500/10 dark:text-orange-300"
+                : "text-light-text-secondary hover:text-light-text hover:bg-light-hover dark:text-slate-400 dark:hover:text-white dark:hover:bg-surface-hover"
                 }`}
             >
               <span className="text-xl">{item.icon}</span>
@@ -83,12 +83,12 @@ function Layout({ title, subtitle, actions, children }) {
         </nav>
 
         {/* Profile & Logout */}
-        <div className="border-t border-surface-border pt-6 mt-auto">
-          <div className="bg-surface-hover p-4 rounded-2xl mb-4">
-            <div className="font-medium text-white">{profile?.name}</div>
-            <div className="text-xs text-slate-400 truncate">{profile?.email}</div>
+        <div className="border-t border-light-border dark:border-surface-border pt-6 mt-auto">
+          <div className="bg-light-card dark:bg-surface-hover p-4 rounded-2xl mb-4">
+            <div className="font-medium text-light-text dark:text-white">{profile?.name}</div>
+            <div className="text-xs text-light-text-secondary dark:text-slate-400 truncate">{profile?.email}</div>
             {profile?.role && (
-              <div className="mt-2 inline-block text-xs px-3 py-1 bg-orange-500/10 text-orange-400 rounded-full">
+              <div className="mt-2 inline-block text-xs px-3 py-1 bg-brand-500/10 text-brand-600 rounded-full dark:text-orange-300">
                 {profile.role.toUpperCase()}
               </div>
             )}
@@ -96,7 +96,7 @@ function Layout({ title, subtitle, actions, children }) {
 
           <button
             onClick={handleLogout}
-            className="w-full py-3 text-red-400 hover:bg-red-500/10 rounded-2xl transition-all text-sm font-medium"
+            className="w-full py-3 text-red-600 hover:bg-red-500/10 rounded-2xl transition-all text-sm font-medium dark:text-red-400"
           >
             Logout
           </button>
@@ -106,22 +106,21 @@ function Layout({ title, subtitle, actions, children }) {
       {/* MAIN CONTENT AREA */}
       <div className="flex-1 lg:ml-60 flex flex-col">
         {/* Mobile Header */}
-        <div className="lg:hidden bg-surface-card border-b border-surface-border px-4 py-4 flex items-center justify-between sticky top-0 z-50">
+        <div className="lg:hidden bg-white dark:bg-surface-card border-b border-light-border dark:border-surface-border px-4 py-4 flex items-center justify-between sticky top-0 z-50">
           <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-2xl">
             ☰
           </button>
-          <div className="font-display font-bold text-xl">SkillNest</div>
-          <button onClick={handleLogout} className="text-red-400">⏻</button>
+          <div className="font-display font-bold text-xl text-light-text dark:text-white">SkillNest</div>
+          <button onClick={handleLogout} className="text-red-600 dark:text-red-400">⏻</button>
         </div>
 
-        {/* PAGE HEADER */}
-        <div className="px-6 lg:px-10 py-8 border-b border-surface-border bg-surface">
+        {/* In Layout.jsx - Page Header */}
+        <div className="px-6 lg:px-10 py-8 border-b border-light-border dark:border-surface-border bg-light-bg dark:bg-surface">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <h1 className="text-3xl lg:text-4xl font-bold text-white tracking-tight">
+              <h1 className="text-3xl lg:text-4xl font-bold text-light-text dark:text-white tracking-tight">
                 {title}
               </h1>
-
               {/* Hello Animation */}
               <div className="hidden lg:block w-12 h-12 -mt-1">
                 <Player
@@ -139,13 +138,10 @@ function Layout({ title, subtitle, actions, children }) {
             </div>
           </div>
 
-          {subtitle && (
-            <p className="text-slate-400 mt-3 text-lg">{subtitle}</p>
-          )}
+          {subtitle && <p className="text-light-text-secondary dark:text-slate-400 mt-3 text-lg">{subtitle}</p>}
         </div>
-
         {/* PAGE CONTENT */}
-        <div className="flex-1 p-6 lg:p-10 overflow-y-auto bg-surface">
+        <div className="flex-1 p-6 lg:p-10 overflow-y-auto bg-light-bg dark:bg-surface">
           <div className="max-w-screen-2xl mx-auto w-full">
             {children}
           </div>
@@ -155,7 +151,7 @@ function Layout({ title, subtitle, actions, children }) {
       {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 bg-black/80 z-50 pt-16">
-          <div className="bg-surface-card h-full overflow-y-auto p-6 space-y-2">
+          <div className="bg-white dark:bg-surface-card h-full overflow-y-auto p-6 space-y-2 border-l border-light-border dark:border-surface-border">
             {currentNavItems.map((item) => (
               <button
                 key={item.path}
@@ -164,8 +160,8 @@ function Layout({ title, subtitle, actions, children }) {
                   setMobileMenuOpen(false);
                 }}
                 className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-left ${isActive(item.path)
-                  ? "bg-orange-500/10 text-orange-400"
-                  : "hover:bg-surface-hover"
+                  ? "bg-brand-500/10 text-brand-600 dark:bg-orange-500/10 dark:text-orange-300"
+                  : "text-light-text-secondary hover:text-light-text hover:bg-light-hover dark:text-slate-400 dark:hover:text-white dark:hover:bg-surface-hover"
                   }`}
               >
                 <span className="text-2xl">{item.icon}</span>

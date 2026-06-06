@@ -3,15 +3,24 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Define CSS variables for themes */
 :root {
-  /* Dark Theme (Default) */
   --bg: #0f1117;
   --text: #e2e8f0;
   --card: #161b27;
   --border: #1e2738;
   --hover: #1a2030;
-  --brand: #0ea5e9;
+  --muted: #94a3b8;
+  --shadow: rgba(0, 0, 0, 0.22);
+}
+
+.light {
+  --bg: #fdfaf5;
+  --text: #2c2218;
+  --card: #ffffff;
+  --border: #e8d9c0;
+  --hover: #f4e9d8;
+  --muted: #5c4a3f;
+  --shadow: rgba(44, 34, 24, 0.12);
 }
 
 @layer base {
@@ -21,19 +30,16 @@
 
   html {
     font-family: 'DM Sans', sans-serif;
-    background-color: #0f1117;
-    color: #e2e8f0;
+    background-color: var(--bg);
+    color: var(--text);
     -webkit-font-smoothing: antialiased;
   }
 
   body {
     margin: 0;
-    background: #0f1117;
-    background-image:
-      radial-gradient(at 40% 20%, hsla(210,100%,56%,0.06) 0px, transparent 50%),
-      radial-gradient(at 80% 0%, hsla(189,100%,56%,0.04) 0px, transparent 50%);
+    background: var(--bg);
     min-height: 100vh;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   h1, h2, h3, h4 {
@@ -45,14 +51,14 @@
 
 @layer components {
   .glass-card {
-    @apply bg-surface-card border border-surface-border rounded-2xl;
+    @apply bg-white dark:bg-surface-card border border-light-border dark:border-surface-border rounded-2xl text-light-text dark:text-white;
     backdrop-filter: blur(12px);
     transition: all 0.3s ease;
   }
 
   .glass-card:hover {
-    @apply border-surface-border/50;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    @apply border-light-border/50 dark:border-surface-border/50;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   }
 
   .btn-primary {
@@ -61,16 +67,16 @@
   }
 
   .btn-ghost {
-    @apply bg-surface-hover hover:bg-surface-border text-slate-300 hover:text-white font-medium px-4 py-2 rounded-xl transition-all duration-200;
+    @apply bg-light-hover text-light-text hover:bg-light-border hover:text-light-text dark:bg-surface-hover dark:text-slate-300 dark:hover:bg-surface-border dark:hover:text-white font-medium px-4 py-2 rounded-xl transition-all duration-200;
     font-family: 'DM Sans', sans-serif;
   }
 
   .btn-secondary {
-    @apply bg-surface-border hover:bg-surface-hover text-slate-300 font-medium px-4 py-2 rounded-xl transition-all duration-200;
+    @apply bg-light-border text-light-text hover:bg-light-hover dark:bg-surface-border dark:text-slate-300 dark:hover:bg-surface-hover font-medium px-4 py-2 rounded-xl transition-all duration-200;
   }
 
   .input-field {
-    @apply w-full bg-surface-card border border-surface-border rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500/50 transition-all duration-200;
+    @apply w-full bg-light-card border border-light-border rounded-xl px-4 py-3 text-light-text placeholder-light-text-secondary focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500/50 transition-all duration-200 dark:bg-surface-card dark:border-surface-border dark:text-white dark:placeholder-slate-500;
     font-family: 'DM Sans', sans-serif;
   }
 
@@ -83,11 +89,11 @@
   }
 
   .nav-item {
-    @apply flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-surface-hover transition-all duration-200 font-medium text-sm cursor-pointer;
+    @apply flex items-center gap-3 px-4 py-2.5 rounded-xl text-light-text-secondary hover:text-light-text hover:bg-light-hover dark:text-slate-400 dark:hover:text-white dark:hover:bg-surface-hover transition-all duration-200 font-medium text-sm cursor-pointer;
   }
 
   .nav-item.active {
-    @apply text-white bg-surface-hover;
+    @apply text-brand-600 bg-brand-500/10 border border-brand-500/30 dark:text-orange-300 dark:bg-orange-500/10;
   }
 
   .shimmer {
@@ -107,14 +113,14 @@
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0f1117;
+  background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e2738;
+  background: var(--border);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2d3a52;
+  background: rgba(255, 255, 255, 0.18);
 }
 
 /* Toast overrides */

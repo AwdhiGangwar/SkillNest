@@ -71,48 +71,44 @@ const ProgressDashboard = () => {
 
   return (
     <Layout title="My Progress"> {/* ✅ title add kiya */}
-      <div className="min-h-screen bg-surface p-8">
+      <div className="min-h-screen bg-light-bg dark:bg-surface p-8">
         <div className="max-w-6xl mx-auto">
           <div className="mb-12">
-            <h1 className="text-4xl font-bold text-surface-text mb-2">📊 My Learning Progress</h1>
-            <p className="text-slate-400">Track your course completion and achievements</p>
+            <h1 className="text-4xl font-bold text-light-text dark:text-white mb-2">📊 My Learning Progress</h1>
+            <p className="text-light-text-secondary dark:text-slate-400">Track your course completion and achievements</p>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-            <div className="bg-surface-card border border-surface-border rounded-lg shadow-lg p-6">
+            <div className="bg-white dark:bg-surface-card border-2 border-light-border dark:border-surface-border rounded-lg shadow-lg p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 text-sm mb-1">Total Courses</p>
-                  <p className="text-4xl font-bold text-gray-800">{courses.length}</p>
+                  <p className="text-light-text-secondary text-sm mb-1">Total Courses</p>
+                  <p className="text-4xl font-bold text-light-text dark:text-white">{courses.length}</p>
                 </div>
                 <span className="text-4xl"><NotebookTextIcon /></span>
               </div>
             </div>
-
-            <div className="bg-surface-card border border-surface-border rounded-lg shadow-lg p-6">
+            <div className="bg-white dark:bg-surface-card border-2 border-light-border dark:border-surface-border rounded-lg shadow-lg p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 text-sm mb-1">Completed</p>
+                  <p className="text-light-text-secondary text-sm mb-1">Completed</p>
                   <p className="text-4xl font-bold text-green-600">{completedCourses}</p>
                 </div>
                 <span className="text-4xl"><BadgeCheck /></span>
               </div>
             </div>
-
-            <div className="bg-surface-card border border-surface-border rounded-lg shadow-lg p-6">
+            <div className="bg-white dark:bg-surface-card border-2 border-light-border dark:border-surface-border rounded-lg shadow-lg p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 text-sm mb-1">In Progress</p>
+                  <p className="text-light-text-secondary text-sm mb-1">In Progress</p>
                   <p className="text-4xl font-bold text-blue-600">{inProgressCourses}</p>
                 </div>
                 <span className="text-4xl"><Gauge /></span>
               </div>
             </div>
-
-            <div className="bg-surface-card border border-surface-border rounded-lg shadow-lg p-6">
+            <div className="bg-white dark:bg-surface-card border-2 border-light-border dark:border-surface-border rounded-lg shadow-lg p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 text-sm mb-1">Avg Progress</p>
+                  <p className="text-light-text-secondary text-sm mb-1">Avg Progress</p>
                   <p className="text-4xl font-bold text-purple-600">
                     {courses.length > 0
                       ? Math.round(
@@ -137,14 +133,14 @@ const ProgressDashboard = () => {
                 return (
                   <div
                     key={course.id}
-                    className="bg-surface-card border border-surface-border rounded-lg shadow-lg p-6 hover:shadow-xl transition-all transform hover:scale-[1.01] cursor-pointer"
+                    className="bg-white dark:bg-surface-card border-2 border-light-border dark:border-surface-border rounded-lg shadow-lg p-6 hover:shadow-xl transition-all transform hover:scale-[1.01] cursor-pointer"
                     onClick={() => navigate(`/course-learning/${course.id}`)}
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
-                        <h3 className="text-2xl font-bold text-surface-text">{course.title}</h3>
-                        <p className="text-slate-400 text-sm mt-1">{course.description}</p>
-                        <div className="flex gap-4 mt-3 text-sm text-slate-500">
+                        <h3 className="text-2xl font-bold text-light-text dark:text-white">{course.title}</h3>
+                        <p className="text-light-text-secondary text-sm mt-1">{course.description}</p>
+                        <div className="flex gap-4 mt-3 text-sm text-light-text-secondary dark:text-slate-500">
                           <span><NotebookPen className="inline-block mr-2" /> {course.teacherName}</span>
                           <span><NotebookTextIcon className="inline-block mr-2" /> {progress.completedLessons || 0} lessons completed</span>
                           {course.level && <span><Gauge className="inline-block mr-2" /> {course.level}</span>}
@@ -154,14 +150,14 @@ const ProgressDashboard = () => {
                         <span className={`text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${getProgressColor(percentage)}`}>
                           {percentage.toFixed(1)}%
                         </span>
-                        <p className="text-slate-500 text-sm mt-1">
+                        <p className="text-light-text-secondary dark:text-slate-500 text-sm mt-1">
                           {percentage === 100 ? " Completed" : "In Progress"}
                         </p>
                       </div>
                     </div>
 
                     <div className="mb-4">
-                      <div className="w-full bg-surface-border rounded-full h-3 overflow-hidden">
+                      <div className="w-full bg-light-border dark:bg-surface-border rounded-full h-4 overflow-hidden">
                         <div
                           className={`h-full bg-gradient-to-r ${getProgressColor(percentage)} transition-all duration-500`}
                           style={{ width: `${percentage}%` }}
@@ -170,21 +166,21 @@ const ProgressDashboard = () => {
                     </div>
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                      <div className="bg-surface-hover p-3 rounded">
-                        <p className="text-slate-400">Category</p>
-                        <p className="font-semibold text-surface-text">{course.category}</p>
+                      <div className="bg-light-bg-secondary dark:bg-surface-hover p-3 rounded">
+                        <p className="text-light-text-secondary">Category</p>
+                        <p className="font-semibold text-light-text dark:text-white">{course.category}</p>
                       </div>
-                      <div className="bg-surface-hover p-3 rounded">
-                        <p className="text-slate-400">Duration</p>
-                        <p className="font-semibold text-surface-text">{course.duration} hrs</p>
+                      <div className="bg-light-bg-secondary dark:bg-surface-hover p-3 rounded">
+                        <p className="text-light-text-secondary">Duration</p>
+                        <p className="font-semibold text-light-text dark:text-white">{course.duration} hrs</p>
                       </div>
-                      <div className="bg-surface-hover p-3 rounded">
-                        <p className="text-slate-400">Price</p>
-                        <p className="font-semibold text-surface-text">₹{course.price}</p>
+                      <div className="bg-light-bg-secondary dark:bg-surface-hover p-3 rounded">
+                        <p className="text-light-text-secondary">Price</p>
+                        <p className="font-semibold text-light-text dark:text-white">₹{course.price}</p>
                       </div>
-                      <div className="bg-surface-hover p-3 rounded">
-                        <p className="text-slate-400">Next Lesson</p>
-                        <p className="font-semibold text-surface-text">
+                      <div className="bg-light-bg-secondary dark:bg-surface-hover p-3 rounded">
+                        <p className="text-light-text-secondary">Next Lesson</p>
+                        <p className="font-semibold text-light-text dark:text-white">
                           {percentage === 100 ? "Complete!" : "Continue"}
                         </p>
                       </div>
@@ -210,8 +206,8 @@ const ProgressDashboard = () => {
                 );
               })
             ) : (
-              <div className="bg-surface-card rounded-lg shadow-lg p-12 text-center border border-surface-border">
-                <p className="text-slate-500 text-lg mb-4">No courses enrolled yet</p>
+              <div className="bg-white dark:bg-surface-card rounded-lg shadow-lg p-12 text-center border-2 border-light-border dark:border-surface-border">
+                <p className="text-light-text-secondary dark:text-slate-500 text-lg mb-4">No courses enrolled yet</p>
                 <button
                   onClick={() => navigate("/student/courses")}
                   className="bg-brand-500 hover:bg-brand-600 text-white px-6 py-2 rounded-lg"
