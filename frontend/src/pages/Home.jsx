@@ -26,7 +26,7 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-light-bg/90 dark:bg-slate-900/90 backdrop-blur-lg border-b border-light-border dark:border-surface-border">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
-            <span className="text-2xl font-bold tracking-tight text-light-text dark:text-white">SkillNest</span>
+            <span className="text-3xl md:text-4xl font-bold tracking-tight text-orange-400 dark:text-orange-300">CodeCat</span>
           </Link>
 
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
@@ -157,7 +157,7 @@ export default function Home() {
       {/* FEATURES SECTION */}
       <div id="features" className="py-20 bg-light-bg dark:bg-surface">
         <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-center text-4xl font-bold mb-4">Why SkillNest?</h2>
+          <h2 className="text-center text-4xl font-bold mb-4">Why CodeCat?</h2>
           <p className="text-center text-light-text-secondary dark:text-slate-400 mb-16 max-w-xl mx-auto text-lg">
             We turn fear of studies into confidence and joy
           </p>

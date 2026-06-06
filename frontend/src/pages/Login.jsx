@@ -46,7 +46,7 @@ export default function Login() {
   }, [profile, navigate, location]);
 
   return (
-    <div className="min-h-screen bg-surface flex items-center justify-center p-4 overflow-hidden relative">
+    <div className="min-h-screen bg-light-bg text-light-text dark:bg-surface dark:text-white flex items-center justify-center p-4 overflow-hidden relative">
       {/* Animated Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-brand-500/5 rounded-full blur-3xl animate-pulse" />
@@ -81,12 +81,11 @@ export default function Login() {
         <div className="w-full max-w-md lg:flex-1">
           {/* Header */}
           <div className="text-center mb-10">
-
-            {/* <img src="/Logo.png" alt="SkillNest" className="w-22  lg:mx-0 inline-flex w-22 mb-5 mt-4 h-14 mx-auto" /> */}
-            <h1 className="text-4xl font-display font-bold text-white tracking-tight">
+            <div className="text-4xl font-display font-bold text-orange-400 mb-4">CodeCat</div>
+            <h1 className="text-4xl font-display font-bold text-light-text dark:text-white tracking-tight">
               Welcome back
             </h1>
-            <p className="text-slate-400 mt-1 text-lg">
+            <p className="text-light-text-secondary dark:text-slate-400 mt-1 text-lg">
               Sign in to continue your learning journey
             </p>
           </div>

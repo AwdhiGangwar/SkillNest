@@ -125,7 +125,7 @@ export default function TeacherCourses() {
       >
         <form onSubmit={handleCreate} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-light-text-secondary dark:text-slate-300 mb-2">
               Course Title <span className="text-red-400">*</span>
             </label>
             <input
@@ -139,7 +139,7 @@ export default function TeacherCourses() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Description</label>
+            <label className="block text-sm font-medium text-light-text-secondary dark:text-slate-300 mb-2">Description</label>
             <textarea
               name="description"
               value={form.description}
@@ -151,7 +151,7 @@ export default function TeacherCourses() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-light-text-secondary dark:text-slate-300 mb-2">
               Max Students
             </label>
             <input
@@ -166,11 +166,11 @@ export default function TeacherCourses() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-light-text-secondary dark:text-slate-300 mb-2">
               Price (USD) <span className="text-red-400">*</span>
             </label>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">$</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-light-text-secondary dark:text-slate-400">$</span>
               <input
                 name="price"
                 type="number"
@@ -227,7 +227,7 @@ function TeacherCourseCard({ course }) {
         <h3 className="font-display font-semibold text-white text-base mb-1 line-clamp-1 group-hover:text-brand-300 transition-colors">
           {course.title}
         </h3>
-        <p className="text-slate-400 text-xs leading-relaxed mb-4 line-clamp-2">
+        <p className="text-light-text-secondary dark:text-slate-400 text-xs leading-relaxed mb-4 line-clamp-2">
           {course.description || "No description provided."}
         </p>
         <div className="flex items-center justify-between mb-4">
@@ -239,7 +239,7 @@ function TeacherCourseCard({ course }) {
 
         <button
           onClick={() => navigate(`/course-content/${course.id}`)}
-          className="w-full py-2 bg-surface-hover hover:bg-brand-500/20 border border-surface-border hover:border-brand-500/50 text-white text-xs font-semibold rounded-lg transition-all"
+          className="w-full py-2 bg-light-hover dark:bg-surface-hover hover:bg-brand-500/20 border border-light-border dark:border-surface-border hover:border-brand-500/50 text-light-text dark:text-white text-xs font-semibold rounded-lg transition-all"
         >
           Manage Content
         </button>

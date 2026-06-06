@@ -4,7 +4,7 @@ import { getCourseProgress, getMyCourses } from "../../services/api";
 import Layout from "../../components/Layout";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { NotebookTextIcon, Gauge, BadgeCheck, UserCheck } from "lucide-react"; // ✅ Add karo
+import { NotebookTextIcon, NotebookPen, Gauge, BadgeCheck, UserCheck } from "lucide-react"; // ✅ Add karo
 const ProgressDashboard = () => {
   const { user } = useAuth(); // ✅ useAuth se lo
   const [courses, setCourses] = useState([]);

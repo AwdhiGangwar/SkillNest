@@ -192,7 +192,7 @@ export const approveTeacherRequest = (id, approvalData) => // Keep this one
 export const rejectTeacherRequest = (id) =>
   api.put(`/api/teacher-requests/${id}/reject`);
 
-export const getAllUsers = () => api.get("/api/users");
+export const getAllUsers = () => api.get("/api/admin/users");
 
 export const getCategorizedUsers = () => api.get("/api/admin/users/categorized");
 export const getAllStudents = () => api.get("/api/admin/users/students");

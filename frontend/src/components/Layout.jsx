@@ -62,7 +62,7 @@ function Layout({ title, subtitle, actions, children }) {
           onClick={() => navigate("/")}
           className="flex items-center gap-3 mb-8 cursor-pointer hover:opacity-80 transition-all"
         >
-          <div className="font-display font-bold text-2xl tracking-tight">SkillNest</div>
+          <div className="font-display font-bold text-2xl tracking-tight text-orange-400 dark:text-orange-300">CodeCat</div>
         </div>
 
         {/* Navigation */}
@@ -110,7 +110,7 @@ function Layout({ title, subtitle, actions, children }) {
           <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-2xl">
             ☰
           </button>
-          <div className="font-display font-bold text-xl text-light-text dark:text-white">SkillNest</div>
+          <div className="font-display font-bold text-xl text-orange-400 dark:text-orange-300">CodeCat</div>
           <button onClick={handleLogout} className="text-red-600 dark:text-red-400">⏻</button>
         </div>
 

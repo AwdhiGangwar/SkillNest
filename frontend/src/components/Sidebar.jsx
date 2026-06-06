@@ -61,12 +61,12 @@ export default function Sidebar() {
         <div className="flex items-center gap-3">
           {!collapsed && (
             <div className="font-display font-bold text-2xl text-white tracking-tight">
-              SkillNest
+              CodeCat
             </div>
           )}
           {collapsed && (
             <div className="w-9 h-9 rounded-2xl bg-orange-500 flex items-center justify-center text-white font-bold text-xl">
-              S
+              C
             </div>
           )}
         </div>

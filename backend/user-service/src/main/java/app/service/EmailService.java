@@ -17,14 +17,14 @@ public class EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
 
         message.setTo(to);
-        message.setSubject("Welcome to SkillNest - Set Your Password");
+        message.setSubject("Welcome to CodeCat - Set Your Password");
 
         message.setText(
             "Hi,\n\n" +
             "Your teacher account has been approved!\n\n" +
             "Click below to set your password:\n" +
             resetLink + "\n\n" +
-            "Regards,\nSkillNest Team"
+            "Regards,\nCodeCat Team"
         );
 
         mailSender.send(message);
@@ -36,13 +36,13 @@ public class EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
 
         message.setTo(to);
-        message.setSubject("SkillNest Application Update");
+        message.setSubject("CodeCat Application Update");
 
         message.setText(
             "Hi,\n\n" +
             "We regret to inform you that your teacher application was not approved.\n\n" +
             "You may apply again later.\n\n" +
-            "Regards,\nSkillNest Team"
+            "Regards,\nCodeCat Team"
         );
 
         mailSender.send(message);
@@ -54,16 +54,16 @@ public class EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
 
         message.setTo(to);
-        message.setSubject("Welcome to SkillNest - Your Account is Ready!");
+        message.setSubject("Welcome to CodeCat - Your Account is Ready!");
 
         message.setText(
             "Hi " + teacherName + ",\n\n" +
             "Your teacher account has been approved and created!\n\n" +
-            "You can now login to SkillNest with your email and password.\n" +
-            "Visit: https://skillnest.com or your local instance\n\n" +
+            "You can now login to CodeCat with your email and password.\n" +
+            "Visit: https://codecat.com or your local instance\n\n" +
             "If you have any issues, please contact support.\n\n" +
             "Happy teaching!\n\n" +
-            "Regards,\nSkillNest Team"
+            "Regards,\nCodeCat Team"
         );
 
         mailSender.send(message);

@@ -124,8 +124,8 @@ export default function Availability() {
                     <span className="text-brand-400 font-bold text-xs">{dayName.slice(0, 2)}</span>
                   </div>
                   <div>
-                    <div className="font-display font-semibold text-white">{dayName}</div>
-                    <div className="text-xs text-slate-400">{dateStr}</div>
+                    <div className="font-display font-semibold text-light-text dark:text-white">{dayName}</div>
+                    <div className="text-xs text-light-text-secondary dark:text-slate-400">{dateStr}</div>
                   </div>
                 </div>
 
@@ -150,7 +150,7 @@ export default function Availability() {
       >
         <form onSubmit={handleAdd} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-light-text-secondary dark:text-slate-300 mb-2">
               Date <span className="text-red-400">*</span>
             </label>
             <input
@@ -165,7 +165,7 @@ export default function Availability() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-light-text-secondary dark:text-slate-300 mb-2">
                 Start Time <span className="text-red-400">*</span>
               </label>
               <input
@@ -177,7 +177,7 @@ export default function Availability() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-light-text-secondary dark:text-slate-300 mb-2">
                 End Time <span className="text-red-400">*</span>
               </label>
               <input
@@ -232,10 +232,10 @@ function SlotRow({ slot, onDelete }) {
   };
 
   return (
-    <div className="flex items-center justify-between p-3 rounded-xl bg-surface-hover hover:bg-surface-border/50 transition-all transform hover:scale-[1.005] group">
+    <div className="flex items-center justify-between p-3 rounded-xl bg-light-hover dark:bg-surface-hover hover:bg-light-border/50 dark:hover:bg-surface-border/50 transition-all transform hover:scale-[1.005] group">
       <div className="flex items-center gap-3">
         <div className="w-2 h-2 rounded-full bg-emerald-400" />
-        <span className="text-sm font-medium text-white font-mono">
+        <span className="text-sm font-medium text-light-text dark:text-white font-mono">
           {slot.startTime} – {slot.endTime}
         </span>
         <Badge variant={statusColors[slot.status] || "default"}>
@@ -245,7 +245,7 @@ function SlotRow({ slot, onDelete }) {
       {slot.status === "available" && (
         <button
           onClick={() => onDelete(slot)}
-          className="text-xs text-slate-500 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
+          className="text-xs text-light-text-secondary dark:text-slate-500 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
         >
           Remove
         </button>

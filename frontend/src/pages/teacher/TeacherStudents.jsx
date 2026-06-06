@@ -19,13 +19,13 @@ export default function TeacherStudents() {
         // 1. Fetch all courses taught by this teacher
         const coursesRes = await getAllCourses();
         const all = coursesRes.data || [];
-        const myCourses = all.filter(c => 
-          (c.teacherIds || []).includes(profile?.id) || 
+        const myCourses = all.filter(c =>
+          (c.teacherIds || []).includes(profile?.id) ||
           c.teacherId === profile?.id
         );
 
         // 2. Fetch enrollments for each course
-        const enrollPromises = myCourses.map(c => 
+        const enrollPromises = myCourses.map(c =>
           getEnrollmentsByCourse(c.id)
             .then(r => ({ course: c, enrollments: r.data || [] }))
             .catch(() => ({ course: c, enrollments: [] }))
@@ -58,7 +58,7 @@ export default function TeacherStudents() {
 
         // 4. Enrich with user details
         const studentIds = Array.from(studentIdSet).filter(Boolean);
-        const userPromises = studentIds.map(id => 
+        const userPromises = studentIds.map(id =>
           getUserById(id)
             .then(r => ({ id, user: r.data }))
             .catch(() => ({ id, user: null }))
@@ -66,8 +66,8 @@ export default function TeacherStudents() {
 
         const users = await Promise.all(userPromises);
         const userMap = {};
-        users.forEach(u => { 
-          if (u.user) userMap[u.id] = u.user; 
+        users.forEach(u => {
+          if (u.user) userMap[u.id] = u.user;
         });
 
         const enriched = cls.map(item => ({
@@ -108,8 +108,8 @@ export default function TeacherStudents() {
     studentMap[cls.studentId].totalClasses++;
     if (cls.status === "completed") studentMap[cls.studentId].completedClasses++;
     if (cls.status === "scheduled" && cls.startTime) {
-      if (!studentMap[cls.studentId].nextClass || 
-          cls.startTime < studentMap[cls.studentId].nextClass) {
+      if (!studentMap[cls.studentId].nextClass ||
+        cls.startTime < studentMap[cls.studentId].nextClass) {
         studentMap[cls.studentId].nextClass = cls.startTime;
       }
     }
@@ -131,22 +131,22 @@ export default function TeacherStudents() {
             {val?.charAt(0)?.toUpperCase() || "?"}
           </div>
           <div>
-            <div className="text-sm font-medium text-white">{val}</div>
-            <div className="text-xs text-slate-400">{row.email}</div>
+            <div className="text-sm font-medium text-light-text dark:text-white">{val}</div>
+            <div className="text-xs text-light-text-secondary dark:text-slate-400">{row.email}</div>
           </div>
         </div>
       ),
     },
-    { 
-      key: "course", 
-      label: "Course", 
-      render: (val) => <span className="text-xs text-slate-300">{val}</span> 
+    {
+      key: "course",
+      label: "Course",
+      render: (val) => <span className="text-xs text-light-text-secondary dark:text-slate-300">{val}</span>
     },
     {
       key: "completedClasses",
       label: "Completed",
       render: (val, row) => (
-        <span className="text-sm font-semibold text-white">{val}/{row.totalClasses}</span>
+        <span className="text-sm font-semibold text-light-text dark:text-white">{val}/{row.totalClasses}</span>
       ),
     },
     {
@@ -156,7 +156,7 @@ export default function TeacherStudents() {
         const pct = row.totalClasses > 0 ? Math.round((val / row.totalClasses) * 100) : 0;
         return (
           <div className="flex items-center gap-2">
-            <div className="w-20 h-1.5 bg-surface-border rounded-full overflow-hidden">
+            <div className="w-20 h-1.5 bg-light-border dark:bg-surface-border rounded-full overflow-hidden">
               <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${pct}%` }} />
             </div>
             <span className="text-xs text-emerald-400 font-medium">{pct}%</span>
@@ -169,11 +169,11 @@ export default function TeacherStudents() {
       label: "Next Class",
       render: (val) =>
         val ? (
-          <span className="text-xs text-slate-300">
+          <span className="text-xs text-light-text-secondary dark:text-slate-300">
             {new Date(val).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
           </span>
         ) : (
-          <span className="text-xs text-slate-500">None scheduled</span>
+          <span className="text-xs text-light-text-secondary dark:text-slate-500">None scheduled</span>
         ),
     },
   ];
@@ -185,7 +185,7 @@ export default function TeacherStudents() {
     >
       <div className="mb-6">
         <div className="relative max-w-sm">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">⌕</span>
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-light-text-secondary dark:text-slate-400">⌕</span>
           <input
             type="text"
             value={search}

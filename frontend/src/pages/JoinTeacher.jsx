@@ -34,9 +34,9 @@ export default function JoinTeacher() {
   };
 
   return (
-    <div className="min-h-screen bg-surface text-white flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-light-bg text-light-text dark:bg-surface dark:text-white flex items-center justify-center p-4 relative overflow-hidden">
       {/* Animated Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-purple-850/30 to-slate-950 animate-gradient" />
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-950/10 via-purple-500/10 to-slate-950/10 dark:from-slate-950/70 dark:via-purple-500/30 dark:to-slate-950 animate-gradient" />
 
       <div className="max-w-2xl w-full relative z-10">
         {/* Header */}
@@ -44,13 +44,13 @@ export default function JoinTeacher() {
           <h1 className="text-4xl font-bold mb-3">
             Join as a <span className="text-orange-400">Teacher</span>
           </h1>
-          <p className="text-slate-400 text-lg max-w-md mx-auto">
+          <p className="text-light-text-secondary dark:text-slate-400 text-lg max-w-md mx-auto">
             Share your expertise and inspire the next generation of learners
           </p>
         </div>
 
         {/* Form Card */}
-        <div className="glass-card p-8 lg:p-10 rounded-3xl border border-surface-border bg-surface-card/70 backdrop-blur-xl">
+        <div className="glass-card p-8 lg:p-10 rounded-3xl backdrop-blur-xl">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -124,7 +124,7 @@ export default function JoinTeacher() {
                 required
                 rows={5}
                 className="input-field w-full resize-none"
-                placeholder="Tell us about yourself, your teaching style, and why you want to join SkillNest..."
+                placeholder="Tell us about yourself, your teaching style, and why you want to join CodeCat..."
               />
             </div>
 

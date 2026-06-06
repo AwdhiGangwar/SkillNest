@@ -5,11 +5,11 @@ import { changePassword } from "../../services/api";
 
 export default function AdminSettings() {
   const [settings, setSettings] = useState({
-    platformName: "SkillNest",
+    platformName: "CodeCat",
     maintenanceMode: false,
     maxCoursePrice: 500,
     platformFee: 15,
-    supportEmail: "support@skillnest.com",
+    supportEmail: "support@codecat.com",
   });
 
   const handleChange = (e) => {

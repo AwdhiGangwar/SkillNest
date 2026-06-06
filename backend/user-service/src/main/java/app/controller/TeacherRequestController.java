@@ -35,12 +35,19 @@ public class TeacherRequestController {
                                   @RequestBody(required = false) Map<String, String> body) throws Exception {
         TeacherRequest req = service.getRequestById(id);
 
-        if (body != null && body.get("password") != null) {
-            User user = new User();
-            user.setName(req.getName());
-            user.setEmail(req.getEmail());
-            user.setRole("teacher");
+        if (req == null) {
+            throw new RuntimeException("Teacher request not found");
+        }
+
+        User user = new User();
+        user.setName(req.getName());
+        user.setEmail(req.getEmail());
+        user.setRole("teacher");
+
+        if (body != null && body.get("password") != null && !body.get("password").isEmpty()) {
             userService.createTeacherWithPassword(user, body.get("password"));
+        } else {
+            userService.createTeacherWithAuth(user);
         }
 
         return service.approveRequest(id);

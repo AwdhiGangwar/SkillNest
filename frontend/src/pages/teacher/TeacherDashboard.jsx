@@ -93,7 +93,7 @@ export default function TeacherDashboard() {
         <div className="lg:col-span-2">
           <div className="glass-card p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="font-display font-bold text-white text-xl"> <Calendar1 /> Upcoming Classes</h2>
+              <h2 className="font-display font-bold text-light-text dark:text-white text-xl"> <Calendar1 /> Upcoming Classes</h2>
               <button
                 onClick={() => navigate("/teacher/classes")}
                 className="text-sm text-brand-400 hover:text-brand-300 font-semibold transition-colors"
@@ -133,7 +133,7 @@ export default function TeacherDashboard() {
         <div className="space-y-6">
           {/* Earnings Summary */}
           <div className="glass-card p-6">
-            <h3 className="font-display font-bold text-white mb-5 text-lg"><Award /> Earnings Summary</h3>
+            <h3 className="font-display font-bold text-light-text dark:text-white mb-5 text-lg"><Award /> Earnings Summary</h3>
             {loading ? (
               <CardSkeleton />
             ) : (
@@ -143,7 +143,7 @@ export default function TeacherDashboard() {
                   value={earnings?.totalEarnings != null ? `₹${earnings.totalEarnings}` : "—"}
                   color="text-amber-400"
                 />
-                <div className="my-3 h-px bg-surface-border/50" />
+                <div className="my-3 h-px bg-light-border/50 dark:bg-surface-border/50" />
                 <EarningRow
                   label="This Month"
                   value={earnings?.monthlyEarnings != null ? `₹${earnings.monthlyEarnings}` : "—"}
@@ -171,7 +171,7 @@ export default function TeacherDashboard() {
 
           {/* Quick Actions */}
           <div className="glass-card p-6">
-            <h3 className="font-display font-bold text-white mb-5 text-lg">⚡ Quick Actions</h3>
+            <h3 className="font-display font-bold text-light-text dark:text-white mb-5 text-lg">⚡ Quick Actions</h3>
             <div className="space-y-2">
               {[
                 { label: "Set Availability", path: "/teacher/availability", icon: <Calendar1 /> },
@@ -181,15 +181,15 @@ export default function TeacherDashboard() {
                 <button
                   key={item.path}
                   onClick={() => navigate(item.path)}
-                  className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-surface-hover border border-transparent hover:border-brand-500/30 transition-all duration-200 group text-left"
+                  className="w-full flex items-center gap-3 p-3 rounded-lg bg-light-hover dark:bg-surface-card border border-transparent hover:bg-light-hover dark:hover:bg-surface-hover hover:border-brand-500/30 transition-all duration-200 group text-left"
                 >
-                  <span className="text-xl text-slate-400 group-hover:text-brand-400 transition-colors">
+                  <span className="text-xl text-light-text-secondary dark:text-slate-400 group-hover:text-brand-400 transition-colors">
                     {item.icon}
                   </span>
-                  <span className="flex-1 text-sm font-medium text-slate-300 group-hover:text-white transition-colors">
+                  <span className="flex-1 text-sm font-medium text-light-text dark:text-white group-hover:text-brand-300 transition-colors">
                     {item.label}
                   </span>
-                  <span className="text-slate-600 group-hover:text-slate-400 text-xs transition-colors">→</span>
+                  <span className="text-light-text-secondary dark:text-slate-400 text-xs transition-colors">→</span>
                 </button>
               ))}
             </div>
@@ -207,10 +207,10 @@ function StatCard({ label, value, icon, gradient }) {
       <div className="flex items-center justify-between mb-3">
         <span className="text-3xl">{icon}</span>
       </div>
-      <div className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">
+      <div className="text-light-text-secondary dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">
         {label}
       </div>
-      <div className="text-2xl font-display font-bold text-white">
+      <div className="text-2xl font-display font-bold text-light-text dark:text-white">
         {value}
       </div>
     </div>
@@ -246,24 +246,24 @@ function TeacherClassCard({ cls }) {
     : "TBD";
 
   return (
-    <div className="p-4 rounded-xl bg-surface-hover/50 border border-surface-border hover:border-brand-500/30 transition-all duration-200 group">
+    <div className="p-4 rounded-xl bg-light-hover/70 dark:bg-surface-hover/50 border border-light-border dark:border-surface-border hover:border-brand-500/30 transition-all duration-200 group">
       <div className="flex items-start gap-4">
         {/* Date Block */}
         <div className="w-12 h-12 rounded-lg bg-brand-500/20 flex flex-col items-center justify-center shrink-0">
           <span className="text-xs text-brand-400 font-bold leading-none">
             {start ? start.toLocaleDateString("en-US", { month: "short" }) : "?"}
           </span>
-          <span className="text-base font-bold text-white">
+          <span className="text-base font-bold text-light-text dark:text-white">
             {start ? start.getDate() : "—"}
           </span>
         </div>
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <h4 className="font-semibold text-white group-hover:text-brand-300 transition-colors mb-1">
+          <h4 className="font-semibold text-light-text dark:text-white group-hover:text-brand-300 transition-colors mb-1">
             {cls.title || "Class Session"}
           </h4>
-          <div className="text-xs text-slate-400 space-y-1">
+          <div className="text-xs text-light-text-secondary dark:text-slate-400 space-y-1">
             <div>📅 {dateStr} · 🕐 {timeStr}</div>
             {cls.studentId && <div>👤 Student: {cls.studentId.slice(0, 8)}...</div>}
           </div>
@@ -287,7 +287,7 @@ function TeacherClassCard({ cls }) {
 function EarningRow({ label, value, color }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-xs text-slate-400 font-medium">{label}</span>
+      <span className="text-xs text-light-text-secondary dark:text-slate-400 font-medium">{label}</span>
       <span className={`text-sm font-bold ${color}`}>{value}</span>
     </div>
   );

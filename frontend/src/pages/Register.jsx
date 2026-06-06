@@ -47,16 +47,16 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-surface text-white flex items-center justify-center p-4 overflow-hidden">
+    <div className="min-h-screen bg-light-bg text-light-text dark:bg-surface dark:text-white flex items-center justify-center p-4 overflow-hidden">
       <div className="max-w-6xl w-full grid lg:grid-cols-2 gap-12 items-center">
 
         {/* LEFT SIDE - Animation & Illustration */}
         <div className="hidden lg:flex flex-col items-center justify-center relative">
           <div className="text-center mb-10">
             <h1 className="text-5xl font-bold mb-4">
-              Welcome to <span className="text-orange-400">SkillNest</span>
+              Welcome to <span className="text-orange-400">CodeCat</span>
             </h1>
-            <p className="text-xl text-slate-400 max-w-md">
+            <p className="text-xl text-light-text-secondary dark:text-slate-400 max-w-md">
               Start your personalized learning journey today
             </p>
           </div>
@@ -85,11 +85,11 @@ export default function Register() {
         </div>
 
         {/* RIGHT SIDE - Registration Form */}
-        <div className="bg-surface-card border border-surface-border rounded-3xl p-6 lg:p-12 shadow-xl">
+        <div className="glass-card rounded-3xl p-6 lg:p-12 shadow-xl">
           <div className="mb-8 text-center lg:text-left">
-            <img src="/Logo.png" alt="SkillNest" className="w-22 h-14 mx-auto lg:mx-0 mb-6" />
-            <h1 className="text-4xl font-bold text-white">Create Student Account</h1>
-            <p className="text-slate-400 mt-2">Join the SkillNest learning community</p>
+            <div className="text-4xl font-display font-bold text-orange-400 mb-4">CodeCat</div>
+            <h1 className="text-4xl font-bold text-light-text dark:text-white">Create Student Account</h1>
+            <p className="text-light-text-secondary dark:text-slate-400 mt-2">Join the CodeCat learning community</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -98,7 +98,7 @@ export default function Register() {
               value={form.name}
               onChange={handleChange}
               placeholder="Full Name"
-              className="input-field w-full px-5 py-4 rounded-2xl bg-surface border border-surface-border focus:border-orange-500"
+              className="input-field w-full px-5 py-4 rounded-2xl focus:border-orange-500"
               required
             />
 
@@ -108,7 +108,7 @@ export default function Register() {
               value={form.email}
               onChange={handleChange}
               placeholder="Email Address"
-              className="input-field w-full px-5 py-4 rounded-2xl bg-surface border border-surface-border focus:border-orange-500"
+              className="input-field w-full px-5 py-4 rounded-2xl focus:border-orange-500"
               required
             />
 
@@ -118,7 +118,7 @@ export default function Register() {
               value={form.password}
               onChange={handleChange}
               placeholder="Create Password"
-              className="input-field w-full px-5 py-4 rounded-2xl bg-surface border border-surface-border focus:border-orange-500"
+              className="input-field w-full px-5 py-4 rounded-2xl focus:border-orange-500"
               required
             />
 
@@ -128,7 +128,7 @@ export default function Register() {
               value={form.confirmPassword}
               onChange={handleChange}
               placeholder="Confirm Password"
-              className="input-field w-full px-5 py-4 rounded-2xl bg-surface border border-surface-border focus:border-orange-500"
+              className="input-field w-full px-5 py-4 rounded-2xl focus:border-orange-500"
               required
             />
 

@@ -80,8 +80,8 @@ export default function TeacherClasses() {
             key={tab}
             onClick={() => setFilter(tab)}
             className={`px-4 py-2 rounded-xl text-sm font-medium capitalize transition-all duration-200 ${filter === tab
-                ? "bg-brand-500 text-white"
-                : "bg-surface-card border border-surface-border text-slate-400 hover:text-white hover:bg-surface-hover"
+              ? "bg-brand-500 text-white"
+              : "bg-light-card dark:bg-surface-card border border-light-border dark:border-surface-border text-light-text-secondary dark:text-slate-400 hover:text-light-text dark:hover:text-white hover:bg-light-hover dark:hover:bg-surface-hover"
               }`}
           >
             {tab}
@@ -128,11 +128,11 @@ export default function TeacherClasses() {
       >
         {rescheduleModal && (
           <form onSubmit={handleReschedule} className="space-y-5">
-            <div className="p-4 rounded-xl bg-surface-hover">
-              <div className="text-sm font-semibold text-white mb-1">
+            <div className="p-4 rounded-xl bg-light-hover dark:bg-surface-hover">
+              <div className="text-sm font-semibold text-light-text dark:text-white mb-1">
                 {rescheduleModal.title || "Class Session"}
               </div>
-              <div className="text-xs text-slate-400">
+              <div className="text-xs text-light-text-secondary dark:text-slate-400">
                 Current: {rescheduleModal.startTime
                   ? new Date(rescheduleModal.startTime).toLocaleString()
                   : "Not scheduled"}
@@ -191,7 +191,7 @@ function ClassDetailRow({ cls, onReschedule, onCancel }) {
           <span className="text-xs text-brand-400 font-medium uppercase leading-none">
             {start ? start.toLocaleDateString("en-US", { month: "short" }) : "—"}
           </span>
-          <span className="text-xl font-display font-bold text-white">
+          <span className="text-xl font-display font-bold text-light-text dark:text-white">
             {start ? start.getDate() : "—"}
           </span>
         </div>
@@ -199,7 +199,7 @@ function ClassDetailRow({ cls, onReschedule, onCancel }) {
         {/* Main info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1 flex-wrap">
-            <span className="font-display font-semibold text-white">
+            <span className="font-display font-semibold text-light-text dark:text-white">
               {cls.title || "Class Session"}
             </span>
             <Badge variant={STATUS_BADGE[cls.status] || "default"}>
@@ -207,7 +207,7 @@ function ClassDetailRow({ cls, onReschedule, onCancel }) {
             </Badge>
           </div>
 
-          <div className="flex flex-wrap gap-4 text-xs text-slate-400 mb-3">
+          <div className="flex flex-wrap gap-4 text-xs text-light-text-secondary dark:text-slate-400 mb-3">
             {start && (
               <span>
                 <Calendar className="w-4 h-4 inline-block mr-1" />

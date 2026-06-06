@@ -1,6 +1,6 @@
-# SkillNest Frontend
+# CodeCat Frontend
 
-React + Tailwind CSS frontend for the SkillNest online education platform.
+React + Tailwind CSS frontend for the CodeCat online education platform.
 
 ## Quick Start
 

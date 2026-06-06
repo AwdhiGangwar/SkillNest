@@ -66,7 +66,7 @@ export default function Earnings() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Monthly breakdown */}
         <div className="glass-card p-6">
-          <h2 className="font-display font-semibold text-white text-lg mb-5">Monthly Breakdown</h2>
+          <h2 className="font-display font-semibold text-light-text dark:text-white text-lg mb-5">Monthly Breakdown</h2>
           {loading ? (
             <div className="space-y-3">{Array(6).fill(0).map((_, i) => <CardSkeleton key={i} />)}</div>
           ) : monthlyData.length === 0 ? (
@@ -82,7 +82,7 @@ export default function Earnings() {
 
         {/* Recent completed classes */}
         <div className="glass-card p-6">
-          <h2 className="font-display font-semibold text-white text-lg mb-5">Recent Earnings</h2>
+          <h2 className="font-display font-semibold text-light-text dark:text-white text-lg mb-5">Recent Earnings</h2>
           {loading ? (
             <div className="space-y-3">{Array(5).fill(0).map((_, i) => <CardSkeleton key={i} />)}</div>
           ) : completedClasses.length === 0 ? (
@@ -107,8 +107,8 @@ function MonthRow({ month, max }) {
   const pct = max > 0 ? (month.amount / max) * 100 : 0;
   return (
     <div className="flex items-center gap-3">
-      <span className="text-xs text-slate-400 w-20 shrink-0">{month.label}</span>
-      <div className="flex-1 h-2 bg-surface-border rounded-full overflow-hidden">
+      <span className="text-xs text-light-text-secondary dark:text-slate-400 w-20 shrink-0">{month.label}</span>
+      <div className="flex-1 h-2 bg-light-border dark:bg-surface-border rounded-full overflow-hidden">
         <div
           className="h-full bg-gradient-to-r from-amber-500 to-amber-400 rounded-full transition-all duration-500"
           style={{ width: `${pct}%` }}
@@ -127,14 +127,14 @@ function EarningRow({ cls, rate }) {
     : "Unknown date";
 
   return (
-    <div className="flex items-center justify-between p-3 rounded-xl hover:bg-surface-hover transition-colors">
+    <div className="flex items-center justify-between p-3 rounded-xl bg-light-hover/70 dark:bg-surface-hover hover:bg-light-hover dark:hover:bg-surface-hover transition-colors">
       <div className="flex items-center gap-3">
         <div className="w-8 h-8 rounded-full bg-emerald-500/15 flex items-center justify-center text-sm">
           <check />
         </div>
         <div>
-          <div className="text-sm font-medium text-white">{cls.title || "Class Session"}</div>
-          <div className="text-xs text-slate-400">{date}</div>
+          <div className="text-sm font-medium text-light-text dark:text-white">{cls.title || "Class Session"}</div>
+          <div className="text-xs text-light-text-secondary dark:text-slate-400">{date}</div>
         </div>
       </div>
       <span className="text-sm font-bold text-emerald-400">+${rate}</span>
