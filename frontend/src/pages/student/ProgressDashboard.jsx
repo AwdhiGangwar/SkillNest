@@ -4,7 +4,7 @@ import { getCourseProgress, getMyCourses } from "../../services/api";
 import Layout from "../../components/Layout";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-
+import { NotebookTextIcon, Gauge, BadgeCheck, UserCheck } from "lucide-react"; // ✅ Add karo
 const ProgressDashboard = () => {
   const { user } = useAuth(); // ✅ useAuth se lo
   const [courses, setCourses] = useState([]);
@@ -85,7 +85,7 @@ const ProgressDashboard = () => {
                   <p className="text-gray-600 text-sm mb-1">Total Courses</p>
                   <p className="text-4xl font-bold text-gray-800">{courses.length}</p>
                 </div>
-                <span className="text-4xl">📚</span>
+                <span className="text-4xl"><NotebookTextIcon /></span>
               </div>
             </div>
 
@@ -95,7 +95,7 @@ const ProgressDashboard = () => {
                   <p className="text-gray-600 text-sm mb-1">Completed</p>
                   <p className="text-4xl font-bold text-green-600">{completedCourses}</p>
                 </div>
-                <span className="text-4xl">✅</span>
+                <span className="text-4xl"><BadgeCheck /></span>
               </div>
             </div>
 
@@ -105,7 +105,7 @@ const ProgressDashboard = () => {
                   <p className="text-gray-600 text-sm mb-1">In Progress</p>
                   <p className="text-4xl font-bold text-blue-600">{inProgressCourses}</p>
                 </div>
-                <span className="text-4xl">⏳</span>
+                <span className="text-4xl"><Gauge /></span>
               </div>
             </div>
 
@@ -116,14 +116,14 @@ const ProgressDashboard = () => {
                   <p className="text-4xl font-bold text-purple-600">
                     {courses.length > 0
                       ? Math.round(
-                          Object.values(courseProgress).reduce(
-                            (sum, p) => sum + (p?.progressPercentage || 0), 0
-                          ) / courses.length
-                        )
+                        Object.values(courseProgress).reduce(
+                          (sum, p) => sum + (p?.progressPercentage || 0), 0
+                        ) / courses.length
+                      )
                       : 0}%
                   </p>
                 </div>
-                <span className="text-4xl">📈</span>
+                <span className="text-4xl"><Gauge /></span>
               </div>
             </div>
           </div>
@@ -145,9 +145,9 @@ const ProgressDashboard = () => {
                         <h3 className="text-2xl font-bold text-surface-text">{course.title}</h3>
                         <p className="text-slate-400 text-sm mt-1">{course.description}</p>
                         <div className="flex gap-4 mt-3 text-sm text-slate-500">
-                          <span>👨‍🏫 {course.teacherName}</span>
-                          <span>📊 {progress.completedLessons || 0} lessons completed</span>
-                          {course.level && <span>📈 {course.level}</span>}
+                          <span><NotebookPen className="inline-block mr-2" /> {course.teacherName}</span>
+                          <span><NotebookTextIcon className="inline-block mr-2" /> {progress.completedLessons || 0} lessons completed</span>
+                          {course.level && <span><Gauge className="inline-block mr-2" /> {course.level}</span>}
                         </div>
                       </div>
                       <div className="text-right">
@@ -155,7 +155,7 @@ const ProgressDashboard = () => {
                           {percentage.toFixed(1)}%
                         </span>
                         <p className="text-slate-500 text-sm mt-1">
-                          {percentage === 100 ? "✅ Completed" : "In Progress"}
+                          {percentage === 100 ? " Completed" : "In Progress"}
                         </p>
                       </div>
                     </div>
@@ -202,7 +202,7 @@ const ProgressDashboard = () => {
                       </button>
                       {percentage === 100 && (
                         <button className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg font-semibold transition">
-                          🎓 Certificate
+                          <UserCheck className="inline-block mr-2" /> Certificate
                         </button>
                       )}
                     </div>

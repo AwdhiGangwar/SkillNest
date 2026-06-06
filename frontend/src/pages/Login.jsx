@@ -21,7 +21,7 @@ export default function Login() {
     setLoading(true);
     try {
       await login(email, password);
-      toast.success("Welcome back! 🎉");
+      toast.success("Welcome back!");
     } catch (err) {
       toast.error(err.message || "Login failed");
     } finally {

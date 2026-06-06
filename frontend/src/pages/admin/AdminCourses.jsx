@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { getAllCourses, createCourse, updateCourse, deleteCourse, getEnrollmentsByCourse, getAllUsers, getUserById, updateCourseStatus } from "../../services/api";
 import { CardSkeleton, EmptyState, Badge, Modal } from "../../components/ui";
 import toast from "react-hot-toast";
-
+import { CheckIcon, XIcon, SquareCheckIcon, Notebook } from "lucide-react";
 export default function AdminCourses() {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
@@ -151,21 +151,21 @@ export default function AdminCourses() {
       if (payload.maxStudents > 120) payload.maxStudents = 120;
       if (editingId) {
         await updateCourse(editingId, payload);
-        toast.success("Course updated! ✅");
+        toast.success("Course updated!" + <CheckIcon />);
       } else {
         await createCourse({
           ...payload,
           id: `course_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         });
-        toast.success("Course created! ✅");
+        toast.success("Course created! " + <CheckIcon />);
       }
       setShowModal(false);
       setForm({ title: "", description: "", category: "general", price: 0, maxStudents: 30, teacherIds: [], duration: 0, level: "beginner", totalClasses: 0, modules: "" });
       await fetchCourses();
     } catch (err) {
       let errorMessage = "Failed to save course";
-      if (err.status === 403) errorMessage = "❌ Access Denied: No teacher permissions";
-      else if (err.status === 401) errorMessage = "❌ Unauthorized: Please log in again";
+      if (err.status === 403) errorMessage = <XIcon /> + " Access Denied: No teacher permissions";
+      else if (err.status === 401) errorMessage = <XIcon /> + " Unauthorized: Please log in again";
       else if (err.message) errorMessage = err.message;
       toast.error(errorMessage);
     }
@@ -174,7 +174,7 @@ export default function AdminCourses() {
   const handleTogglePublish = async (id, currentStatus) => {
     try {
       await updateCourseStatus(id, !currentStatus);
-      toast.success(currentStatus ? "Course unpublished" : "Course published! 🚀");
+      toast.success(currentStatus ? "Course unpublished" : "Course published!" + <SquareCheckIcon />);
       fetchCourses();
     } catch (err) {
       toast.error("Failed to update course status");
@@ -242,7 +242,7 @@ export default function AdminCourses() {
             </div>
           ) : courses.length === 0 ? (
             <EmptyState
-              icon="📚"
+              icon={<Notebook className="w-12 h-12 text-slate-400" />}
               title="No courses yet"
               description="Add your first course to get started"
               action={<button onClick={() => handleOpenModal()} className="btn-primary">Create Course</button>}

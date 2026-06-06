@@ -4,7 +4,7 @@ import { getMyCourses, createSupportTicket } from '../../services/api';
 import { Modal, CardSkeleton, EmptyState } from '../../components/ui';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-
+import { NotebookPen, NotebookTextIcon, Check } from 'lucide-react';
 export default function MyCoursesPage() {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
@@ -63,7 +63,7 @@ export default function MyCoursesPage() {
         </div>
       ) : courses.length === 0 ? (
         <EmptyState
-          icon="📚"
+          icon={<NotebookTextIcon />}
           title="No courses enrolled yet"
           description="Start exploring and enroll in a course to begin your learning journey"
         >
@@ -104,7 +104,7 @@ export default function MyCoursesPage() {
           <div className="space-y-6">
             {/* Header */}
             <div className="w-full h-32 rounded-xl bg-gradient-to-br from-emerald-500/20 via-teal-500/10 to-surface-border flex items-center justify-center text-5xl">
-              ✓
+              <Check />
             </div>
 
             {/* Course Title & Instructor */}
@@ -119,7 +119,7 @@ export default function MyCoursesPage() {
               </h3>
               {selectedCourse.teacherName && (
                 <p className="text-slate-400 text-sm">
-                  👨‍🏫 Instructor: <span className="text-white font-semibold">{selectedCourse.teacherName}</span>
+                  <NotebookPen className="inline-block mr-2" /> Instructor: <span className="text-white font-semibold">{selectedCourse.teacherName}</span>
                 </p>
               )}
             </div>
@@ -278,7 +278,7 @@ function EnrolledCourseCard({ course, onStartLearning, onViewDetails, onRaiseTic
       {/* Course Header */}
       <div className={`h-28 bg-gradient-to-br ${bgColor} flex items-center justify-center text-4xl relative overflow-hidden`}>
         <div className="absolute inset-0 bg-mesh-gradient opacity-10" />
-        <span className="relative">📚</span>
+        <span className="relative"><NotebookTextIcon /></span>
       </div>
 
       {/* Course Content */}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getLessonsByModule } from "../services/api"; // अगर यह src/components में है, तो ../services/api सही है
 import toast from "react-hot-toast";
-
+import { Activity, ChartColumn, File, VideoIcon, ArrowBigDownIcon, NotebookPen } from "lucide-react";
 const ModuleSidebar = ({
   modules,
   selectedModule,
@@ -50,7 +50,7 @@ const ModuleSidebar = ({
   return (
     <div className="w-72 bg-surface-card text-surface-text shadow-lg overflow-y-auto border-r border-surface-border">
       <div className="p-4 border-b border-surface-border">
-        <h2 className="text-xl font-bold">📚 Course Content</h2>
+        <h2 className="text-xl font-bold"><NotebookPen /> Course Content</h2>
       </div>
 
       <div className="p-2">
@@ -59,22 +59,21 @@ const ModuleSidebar = ({
             {/* Module Header */}
             <button
               onClick={() => handleModuleClick(module)}
-              className={`w-full text-left px-4 py-3 rounded-lg transition-all transform hover:scale-[1.01] ${
-                selectedModule?.id === module.id
-                  ? "bg-brand-500 text-white font-semibold"
-                  : "hover:bg-surface-hover"
-              }`}
+              className={`w-full text-left px-4 py-3 rounded-lg transition-all transform hover:scale-[1.01] ${selectedModule?.id === module.id
+                ? "bg-brand-500 text-white font-semibold"
+                : "hover:bg-surface-hover"
+                }`}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="text-lg">📁</span>
+                  <span className="text-lg"><File /></span>
                   <div>
                     <p className="font-semibold">{module.title}</p>
                     <p className="text-xs text-slate-400">{module.description}</p>
                   </div>
                 </div>
                 <span className={`transition ${expandedModule === module.id ? "rotate-180" : ""}`}>
-                  ▼
+                  <ArrowBigDownIcon />
                 </span>
               </div>
             </button>
@@ -88,15 +87,15 @@ const ModuleSidebar = ({
                     onClick={() => handleLessonClick(lesson)}
                     className="w-full text-left px-3 py-2 rounded text-sm hover:bg-surface-hover mb-1 transition-all transform hover:scale-[1.01] flex items-center gap-2"
                   >
-                    <span>🎬</span>
+                    <span><VideoIcon className="inline mr-2" /></span>
                     <div>
                       <p className="font-medium">{lesson.title}</p>
                       <p className="text-xs text-slate-400">{lesson.duration} min</p>
                     </div>
                   </button>
                 )) || (
-                  <p className="text-xs text-gray-500 p-2">No lessons yet</p>
-                )}
+                    <p className="text-xs text-gray-500 p-2">No lessons yet</p>
+                  )}
               </div>
             )}
           </div>

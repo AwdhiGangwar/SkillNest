@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { gift, CheckCircle, NotebookPen, BadgeQuestionMark } from "lucide-react";
 const LessonViewer = ({ lesson, onComplete }) => {
   const [isMarked, setIsMarked] = useState(false);
 
@@ -17,7 +17,7 @@ const LessonViewer = ({ lesson, onComplete }) => {
         <div className="flex gap-4 mt-4 text-sm">
           <span className="text-gray-500">⏱️ Duration: {lesson.duration} minutes</span>
           {lesson.isPreviewFree && (
-            <span className="text-green-600 font-semibold">🎁 Free Preview</span>
+            <span className="text-green-600 font-semibold"><gift />Free Preview</span>
           )}
         </div>
       </div>
@@ -91,13 +91,12 @@ const LessonViewer = ({ lesson, onComplete }) => {
           <button
             onClick={handleMarkComplete}
             disabled={isMarked}
-            className={`w-full py-3 rounded-lg font-semibold transition ${
-              isMarked
-                ? "bg-emerald-500 text-white cursor-not-allowed"
-                : "bg-brand-500 hover:bg-brand-600 text-white"
-            }`}
+            className={`w-full py-3 rounded-lg font-semibold transition ${isMarked
+              ? "bg-emerald-500 text-white cursor-not-allowed"
+              : "bg-brand-500 hover:bg-brand-600 text-white"
+              }`}
           >
-            {isMarked ? "✅ Completed" : "Mark as Complete"}
+            {isMarked ? <CheckCircle /> : "Mark as Complete"}
           </button>
 
           {/* Lesson Info Card */}
@@ -129,11 +128,13 @@ const LessonViewer = ({ lesson, onComplete }) => {
                   rel="noopener noreferrer"
                   className="block text-blue-600 hover:underline text-sm"
                 >
-                  📝 Lesson Notes (PDF)
+                  <NotebookPen className="inline mr-2" />
+                  Lesson Notes (PDF)
                 </a>
               )}
               <button className="block text-blue-600 hover:underline text-sm w-full text-left">
-                ❓ Quiz Available
+                <BadgeQuestionMark className="inline mr-2" />
+                Quiz Available
               </button>
             </div>
           </div>

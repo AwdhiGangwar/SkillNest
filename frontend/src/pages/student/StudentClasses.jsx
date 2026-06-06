@@ -4,7 +4,7 @@ import Layout from "../../components/Layout";
 import { CardSkeleton, EmptyState } from "../../components/ui";
 import { getStudentClasses } from "../../services/api";
 import toast from "react-hot-toast";
-
+import { NotebookTextIcon, CalendarPlus, Plus } from "lucide-react";
 const STATUS_COLORS = {
   scheduled: { bg: "bg-blue-500/20", text: "text-blue-300", label: "Scheduled" },
   completed: { bg: "bg-emerald-500/20", text: "text-emerald-300", label: "Completed" },
@@ -45,11 +45,10 @@ export default function StudentClasses() {
           <button
             key={tab}
             onClick={() => setFilter(tab)}
-            className={`px-4 py-2 rounded-xl text-sm font-semibold capitalize transition-all duration-200 whitespace-nowrap ${
-              filter === tab
+            className={`px-4 py-2 rounded-xl text-sm font-semibold capitalize transition-all duration-200 whitespace-nowrap ${filter === tab
                 ? "bg-brand-500 text-white shadow-lg shadow-brand-500/50"
                 : "bg-surface-hover border border-surface-border text-slate-400 hover:text-white hover:bg-surface-border hover:border-brand-500/30"
-            }`}
+              }`}
           >
             {tab}
             <span className="ml-2 text-xs opacity-70">({tabCounts[tab]})</span>
@@ -63,7 +62,7 @@ export default function StudentClasses() {
         </div>
       ) : filtered.length === 0 ? (
         <EmptyState
-          icon="📅"
+          icon={<CalendarPlus />}
           title="No classes found"
           description={
             filter === "all"
@@ -93,24 +92,23 @@ function ClassCard({ cls }) {
 
   const dateStr = start
     ? start.toLocaleDateString("en-US", {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-      })
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+    })
     : "Date TBD";
 
   const timeStr = start
     ? `${start.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })}${end
+      ? ` – ${end.toLocaleTimeString("en-US", {
         hour: "2-digit",
         minute: "2-digit",
-      })}${
-        end
-          ? ` – ${end.toLocaleTimeString("en-US", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}`
-          : ""
-      }`
+      })}`
+      : ""
+    }`
     : "Time TBD";
 
   const dayOfWeek = start
@@ -130,7 +128,7 @@ function ClassCard({ cls }) {
           </span>
         </div>
         {cls.instructor && (
-          <p className="text-slate-400 text-sm">👨‍🏫 {cls.instructor}</p>
+          <p className="text-slate-400 text-sm"><NotebookTextIcon className="inline-block mr-2" /> {cls.instructor}</p>
         )}
       </div>
 
@@ -184,7 +182,7 @@ function ClassCard({ cls }) {
             rel="noreferrer"
             className="btn-primary w-full py-3 text-center flex items-center justify-center gap-2 font-semibold"
           >
-            📞 Join Class
+            <Plus /> Join Class
           </a>
         ) : isLive && cls.meetingLink ? (
           <a

@@ -9,7 +9,7 @@ import {
 } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
-
+import { Calendar } from "lucide-react";
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 const EMPTY_FORM = { date: "", startTime: "09:00", endTime: "10:00" };
 
@@ -193,7 +193,8 @@ export default function Availability() {
           {/* Preview */}
           {form.date && form.startTime && form.endTime && (
             <div className="p-3 rounded-xl bg-brand-500/10 border border-brand-500/20 text-sm text-brand-300">
-              📅 {new Date(form.date + "T00:00:00").toLocaleDateString("en-US", {
+              <Calendar className="inline-block mr-2" />
+              {new Date(form.date + "T00:00:00").toLocaleDateString("en-US", {
                 weekday: "long", month: "long", day: "numeric",
               })} · {form.startTime} – {form.endTime}
             </div>

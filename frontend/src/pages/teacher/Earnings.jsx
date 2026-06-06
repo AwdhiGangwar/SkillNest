@@ -4,7 +4,7 @@ import Layout from "../../components/Layout";
 import { StatCard, CardSkeleton, EmptyState } from "../../components/ui";
 import { getTeacherEarnings, getMonthlyEarnings, getTeacherClasses } from "../../services/api";
 import toast from "react-hot-toast";
-
+import { check, star, Gauge, Award } from "lucide-react";
 const RATE_PER_CLASS = 10; // $10 per completed class
 
 export default function Earnings() {
@@ -50,15 +50,15 @@ export default function Earnings() {
           Array(4).fill(0).map((_, i) => <CardSkeleton key={i} />)
         ) : (
           <>
-            <StatCard label="Total Earnings" value={`$${totalEarnings}`} icon="💰" color="amber" />
+            <StatCard label="Total Earnings" value={`$${totalEarnings}`} icon={<Award />} color="amber" />
             <StatCard
               label="This Month"
               value={`$${earnings?.monthlyEarnings ?? (monthlyData[0]?.amount || 0)}`}
-              icon="📈"
+              icon={<Gauge />}
               color="emerald"
             />
-            <StatCard label="Classes Conducted" value={completedClasses.length} icon="✅" color="brand" />
-            <StatCard label="Rate per Class" value={`$${RATE_PER_CLASS}`} icon="⭐" color="violet" />
+            <StatCard label="Classes Conducted" value={completedClasses.length} icon={<check />} color="brand" />
+            <StatCard label="Rate per Class" value={`$${RATE_PER_CLASS}`} icon={<star />} color="violet" />
           </>
         )}
       </div>
@@ -70,7 +70,7 @@ export default function Earnings() {
           {loading ? (
             <div className="space-y-3">{Array(6).fill(0).map((_, i) => <CardSkeleton key={i} />)}</div>
           ) : monthlyData.length === 0 ? (
-            <EmptyState icon="📊" title="No earnings yet" description="Complete classes to start earning" />
+            <EmptyState icon={<Gauge />} title="No earnings yet" description="Complete classes to start earning" />
           ) : (
             <div className="space-y-3">
               {monthlyData.slice(0, 8).map((m, i) => (
@@ -86,7 +86,7 @@ export default function Earnings() {
           {loading ? (
             <div className="space-y-3">{Array(5).fill(0).map((_, i) => <CardSkeleton key={i} />)}</div>
           ) : completedClasses.length === 0 ? (
-            <EmptyState icon="✅" title="No completed classes" description="Conduct classes to earn" />
+            <EmptyState icon={<check />} title="No completed classes" description="Conduct classes to earn" />
           ) : (
             <div className="space-y-2">
               {completedClasses
@@ -122,15 +122,15 @@ function MonthRow({ month, max }) {
 function EarningRow({ cls, rate }) {
   const date = cls.startTime
     ? new Date(cls.startTime).toLocaleDateString("en-US", {
-        month: "short", day: "numeric", year: "numeric",
-      })
+      month: "short", day: "numeric", year: "numeric",
+    })
     : "Unknown date";
 
   return (
     <div className="flex items-center justify-between p-3 rounded-xl hover:bg-surface-hover transition-colors">
       <div className="flex items-center gap-3">
         <div className="w-8 h-8 rounded-full bg-emerald-500/15 flex items-center justify-center text-sm">
-          ✅
+          <check />
         </div>
         <div>
           <div className="text-sm font-medium text-white">{cls.title || "Class Session"}</div>

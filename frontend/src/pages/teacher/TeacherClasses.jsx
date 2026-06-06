@@ -5,6 +5,7 @@ import { CardSkeleton, EmptyState, Badge, Modal } from "../../components/ui";
 import { getTeacherClasses, rescheduleClass, cancelClass } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { Calendar, Timer, User, Notebook } from "lucide-react";
 
 const STATUS_BADGE = {
   scheduled: "info",
@@ -78,11 +79,10 @@ export default function TeacherClasses() {
           <button
             key={tab}
             onClick={() => setFilter(tab)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium capitalize transition-all duration-200 ${
-              filter === tab
+            className={`px-4 py-2 rounded-xl text-sm font-medium capitalize transition-all duration-200 ${filter === tab
                 ? "bg-brand-500 text-white"
                 : "bg-surface-card border border-surface-border text-slate-400 hover:text-white hover:bg-surface-hover"
-            }`}
+              }`}
           >
             {tab}
             <span className="ml-2 text-xs opacity-60">
@@ -96,7 +96,7 @@ export default function TeacherClasses() {
         <div className="space-y-4">{Array(5).fill(0).map((_, i) => <CardSkeleton key={i} />)}</div>
       ) : filtered.length === 0 ? (
         <EmptyState
-          icon="📅"
+          icon={<Calendar />}
           title="No classes found"
           description={filter === "all" ? "No classes yet. Set availability so students can book." : `No ${filter} classes`}
           action={
@@ -210,7 +210,7 @@ function ClassDetailRow({ cls, onReschedule, onCancel }) {
           <div className="flex flex-wrap gap-4 text-xs text-slate-400 mb-3">
             {start && (
               <span>
-                📅{" "}
+                <Calendar className="w-4 h-4 inline-block mr-1" />
                 {start.toLocaleDateString("en-US", {
                   weekday: "short", month: "long", day: "numeric",
                 })}
@@ -218,12 +218,13 @@ function ClassDetailRow({ cls, onReschedule, onCancel }) {
             )}
             {start && (
               <span>
-                🕐 {start.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
+                <Timer className="w-4 h-4 inline-block mr-1" />
+                {start.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
                 {end && ` – ${end.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}`}
               </span>
             )}
-            {cls.studentId && <span>👨‍🎓 Student: {cls.studentId.slice(0, 12)}...</span>}
-            {cls.courseId && <span>📚 Course: {cls.courseId.slice(0, 12)}...</span>}
+            {cls.studentId && <span><User className="w-4 h-4 inline-block mr-1" /> Student: {cls.studentId.slice(0, 12)}...</span>}
+            {cls.courseId && <span><Notebook className="w-4 h-4 inline-block mr-1" /> Course: {cls.courseId.slice(0, 12)}...</span>}
           </div>
 
           {/* Actions */}

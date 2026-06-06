@@ -6,19 +6,20 @@ import { CardSkeleton, EmptyState, Modal } from "../../components/ui";
 import { getAllCourses, createCourse } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
+import { NotebookTextIcon } from "lucide-react";
 
-const EMPTY_FORM = { 
-  id: "", 
-  title: "", 
-  description: "", 
-  price: "", 
-  maxStudents: 30 
+const EMPTY_FORM = {
+  id: "",
+  title: "",
+  description: "",
+  price: "",
+  maxStudents: 30
 };
 
 export default function TeacherCourses() {
   const { profile } = useAuth();
   const navigate = useNavigate();
-  
+
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -29,7 +30,7 @@ export default function TeacherCourses() {
     try {
       const res = await getAllCourses();
       const mine = (res.data || []).filter(
-        (c) => c.teacherId === profile?.id 
+        (c) => c.teacherId === profile?.id
       );
       setCourses(mine);
     } catch (err) {
@@ -220,7 +221,7 @@ function TeacherCourseCard({ course }) {
   return (
     <div className="glass-card overflow-hidden hover:border-brand-500/30 transition-all duration-300 animate-slide-up group">
       <div className={`h-24 bg-gradient-to-br ${grad} flex items-center justify-center text-3xl`}>
-        📚
+        <NotebookTextIcon />
       </div>
       <div className="p-5">
         <h3 className="font-display font-semibold text-white text-base mb-1 line-clamp-1 group-hover:text-brand-300 transition-colors">
@@ -236,7 +237,7 @@ function TeacherCourseCard({ course }) {
           </span>
         </div>
 
-        <button 
+        <button
           onClick={() => navigate(`/course-content/${course.id}`)}
           className="w-full py-2 bg-surface-hover hover:bg-brand-500/20 border border-surface-border hover:border-brand-500/50 text-white text-xs font-semibold rounded-lg transition-all"
         >

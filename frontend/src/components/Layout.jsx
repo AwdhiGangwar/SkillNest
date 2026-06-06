@@ -4,6 +4,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 import { useAuth } from "../context/AuthContext";
 import ThemeToggle from "./ThemeToggle";
+import { Player } from "@lottiefiles/react-lottie-player";
+import { Home, Search, BookOpen, Gauge, Calendar, Clipboard, Users, Clock, SpeakerIcon, Airplay, Album, Headphones, Settings, GraduationCap } from "lucide-react";
 
 function Layout({ title, subtitle, actions, children }) {
   const navigate = useNavigate();
@@ -15,31 +17,31 @@ function Layout({ title, subtitle, actions, children }) {
 
   const navItems = {
     student: [
-      { label: "Dashboard", path: "/student/dashboard", icon: "📊" },
-      { label: "Browse Courses", path: "/student/courses", icon: "🔍" },
-      { label: "My Courses", path: "/student/my-courses", icon: "📚" },
-      { label: "My Progress", path: "/student/progress", icon: "📈" },
-      { label: "Classes", path: "/student/classes", icon: "📅" },
-      { label: "Assignments", path: "/student/assignments", icon: "📝" },
+      { label: "Dashboard", path: "/student/dashboard", icon: <Home size={18} /> },
+      { label: "Browse Courses", path: "/student/courses", icon: <Search size={18} /> },
+      { label: "My Courses", path: "/student/my-courses", icon: <BookOpen size={18} /> },
+      { label: "My Progress", path: "/student/progress", icon: <Gauge size={18} /> },
+      { label: "Classes", path: "/student/classes", icon: <GraduationCap size={18} /> },
+      { label: "Assignments", path: "/student/assignments", icon: <Clipboard size={18} /> },
     ],
     teacher: [
-      { label: "Dashboard", path: "/teacher/dashboard", icon: "🎯" },
-      { label: "Courses", path: "/teacher/courses", icon: "📚" },
-      { label: "Classes", path: "/teacher/classes", icon: "📅" },
-      { label: "Students", path: "/teacher/students", icon: "👥" },
-      { label: "Availability", path: "/teacher/availability", icon: "⏰" },
-      { label: "Earnings", path: "/teacher/earnings", icon: "💰" },
+      { label: "Dashboard", path: "/teacher/dashboard", icon: <Home size={18} /> },
+      { label: "Courses", path: "/teacher/courses", icon: <BookOpen size={18} /> },
+      { label: "Classes", path: "/teacher/classes", icon: <GraduationCap size={18} /> },
+      { label: "Students", path: "/teacher/students", icon: <Users size={18} /> },
+      { label: "Availability", path: "/teacher/availability", icon: <Clock size={18} /> },
+      { label: "Earnings", path: "/teacher/earnings", icon: <Gauge size={18} /> },
     ],
     admin: [
-      { label: "Dashboard", path: "/admin/dashboard", icon: "📊" },
-      { label: "Users", path: "/admin/users", icon: "👥" },
-      { label: "Teacher Requests", path: "/admin/teacher-requests", icon: "📝" },
-      { label: "Courses", path: "/admin/courses", icon: "📚" },
-      { label: "Enrollments", path: "/admin/enrollments", icon: "🎓" },
-      { label: "Analytics", path: "/admin/analytics", icon: "📈" },
-      { label: "Payments", path: "/admin/payments", icon: "💰" },
-      { label: "Support", path: "/admin/support", icon: "🎧" },
-      { label: "Settings", path: "/admin/settings", icon: "⚙️" },
+      { label: "Dashboard", path: "/admin/dashboard", icon: <Home size={18} /> },
+      { label: "Users", path: "/admin/users", icon: <Users size={18} /> },
+      { label: "Teacher Requests", path: "/admin/teacher-requests", icon: <Clipboard size={18} /> },
+      { label: "Courses", path: "/admin/courses", icon: <BookOpen size={18} /> },
+      { label: "Enrollments", path: "/admin/enrollments", icon: <Airplay size={18} /> },
+      { label: "Analytics", path: "/admin/analytics", icon: <Album size={18} /> },
+      { label: "Payments", path: "/admin/payments", icon: <SpeakerIcon size={18} /> },
+      { label: "Support", path: "/admin/support", icon: <Headphones size={18} /> },
+      { label: "Settings", path: "/admin/settings", icon: <Settings size={18} /> },
     ],
   };
 
@@ -52,19 +54,15 @@ function Layout({ title, subtitle, actions, children }) {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-surface flex flex-col transition-colors duration-300">
+    <div className="min-h-screen bg-surface text-white flex flex-col transition-colors duration-300">
       {/* SIDEBAR - Desktop */}
-      <div className="hidden lg:flex flex-col fixed left-0 top-0 h-screen w-60 bg-white dark:bg-surface-card border-r border-gray-200 dark:border-surface-border p-6 overflow-y-auto transition-colors duration-300 z-40">
+      <div className="hidden lg:flex flex-col fixed left-0 top-0 h-screen w-60 bg-surface-card border-r border-surface-border p-6 overflow-y-auto transition-colors duration-300 z-40">
         {/* Logo */}
         <div
           onClick={() => navigate("/")}
-          className="flex items-center gap-1 mb-5  cursor-pointer hover:opacity-80 transition-all transform hover:scale-[1.02]"
+          className="flex items-center gap-3 mb-8 cursor-pointer hover:opacity-80 transition-all"
         >
-          <img
-            src="/logo.png"
-            alt="SkillNest Logo"
-            className="w-22 h-22 object-contain drop-shadow-lg brightness-120"
-          />
+          <div className="font-display font-bold text-2xl tracking-tight">SkillNest</div>
         </div>
 
         {/* Navigation */}
@@ -73,62 +71,91 @@ function Layout({ title, subtitle, actions, children }) {
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
-              className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-3 ${isActive(item.path)
-                  ? "bg-brand-500/15 text-brand-600 dark:text-brand-300 dark:bg-brand-500/20"
-                  : "text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-surface-hover"
+              className={`w-full text-left px-4 py-3 rounded-2xl text-sm font-medium transition-all flex items-center gap-3 ${isActive(item.path)
+                ? "bg-orange-500/10 text-orange-400 border border-orange-500/30"
+                : "text-slate-400 hover:text-white hover:bg-surface-hover"
                 }`}
             >
-              <span className="text-lg">{item.icon}</span>
-              <span className="truncate">{item.label}</span>
+              <span className="text-xl">{item.icon}</span>
+              <span>{item.label}</span>
             </button>
           ))}
         </nav>
 
-        {/* User Profile Section */}
-        <div className="border-t border-gray-200 dark:border-surface-border pt-4 mt-4">
-          <div className="bg-gray-50 dark:bg-surface-card/50 p-4 mb-4 rounded-xl">
-            <div className="text-xs text-gray-500 dark:text-slate-400 mb-2">Logged in as</div>
-            <div className="font-semibold text-sm truncate text-gray-900 dark:text-white">
-              {profile?.name}
-            </div>
-            <div className="text-xs text-gray-600 dark:text-slate-500 truncate">{profile?.email}</div>
+        {/* Profile & Logout */}
+        <div className="border-t border-surface-border pt-6 mt-auto">
+          <div className="bg-surface-hover p-4 rounded-2xl mb-4">
+            <div className="font-medium text-white">{profile?.name}</div>
+            <div className="text-xs text-slate-400 truncate">{profile?.email}</div>
             {profile?.role && (
-              <div className="mt-3 inline-block bg-brand-500/15 text-brand-600 dark:text-brand-300 text-xs font-semibold px-3 py-1 rounded-lg">
+              <div className="mt-2 inline-block text-xs px-3 py-1 bg-orange-500/10 text-orange-400 rounded-full">
                 {profile.role.toUpperCase()}
               </div>
             )}
           </div>
+
           <button
             onClick={handleLogout}
-            className="w-full px-4 py-2 justify-center text-sm font-medium transition-colors rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-surface-card dark:hover:bg-surface-hover text-gray-900 dark:text-surface-text"
+            className="w-full py-3 text-red-400 hover:bg-red-500/10 rounded-2xl transition-all text-sm font-medium"
           >
             Logout
           </button>
         </div>
       </div>
 
-      {/* MAIN CONTENT */}
+      {/* MAIN CONTENT AREA */}
       <div className="flex-1 lg:ml-60 flex flex-col">
-        {/* MOBILE HEADER */}
-        <div className="lg:hidden bg-white dark:bg-surface-card border-b border-gray-200 dark:border-surface-border px-4 py-3 flex items-center justify-between sticky top-0 z-50 backdrop-blur-md transition-colors duration-300">
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-surface-hover rounded-lg transition-colors text-gray-600 dark:text-slate-300"
-          >
-            <span className="text-xl">☰</span>
+        {/* Mobile Header */}
+        <div className="lg:hidden bg-surface-card border-b border-surface-border px-4 py-4 flex items-center justify-between sticky top-0 z-50">
+          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-2xl">
+            ☰
           </button>
-          <div className="font-display font-bold text-gray-900 dark:text-white">SkillNest</div>
-          <button
-            onClick={handleLogout}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-surface-hover rounded-lg transition-colors text-gray-600 dark:text-slate-400 dark:hover:text-white"
-          >
-            ⏻
-          </button>
+          <div className="font-display font-bold text-xl">SkillNest</div>
+          <button onClick={handleLogout} className="text-red-400">⏻</button>
         </div>
 
-        {/* MOBILE MENU */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden bg-white dark:bg-surface-card border-b border-gray-200 dark:border-surface-border p-4 space-y-2 sticky top-[56px] z-40 backdrop-blur-md transition-colors duration-300">
+        {/* PAGE HEADER */}
+        <div className="px-6 lg:px-10 py-8 border-b border-surface-border bg-surface">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <h1 className="text-3xl lg:text-4xl font-bold text-white tracking-tight">
+                {title}
+              </h1>
+
+              {/* Hello Animation */}
+              <div className="hidden lg:block w-12 h-12 -mt-1">
+                <Player
+                  autoplay
+                  loop
+                  src="/assets/animations/hello-animation.json"
+                  style={{ width: "350%", height: "350%" }}
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <ThemeToggle />
+              {actions && actions}
+            </div>
+          </div>
+
+          {subtitle && (
+            <p className="text-slate-400 mt-3 text-lg">{subtitle}</p>
+          )}
+        </div>
+
+        {/* PAGE CONTENT */}
+        <div className="flex-1 p-6 lg:p-10 overflow-y-auto bg-surface">
+          <div className="max-w-screen-2xl mx-auto w-full">
+            {children}
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 bg-black/80 z-50 pt-16">
+          <div className="bg-surface-card h-full overflow-y-auto p-6 space-y-2">
             {currentNavItems.map((item) => (
               <button
                 key={item.path}
@@ -136,46 +163,18 @@ function Layout({ title, subtitle, actions, children }) {
                   navigate(item.path);
                   setMobileMenuOpen(false);
                 }}
-                className={`w-full flex items-center gap-3 text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive(item.path)
-                    ? "bg-brand-500/15 text-brand-500 dark:text-brand-300"
-                    : "text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-surface-hover"
+                className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-left ${isActive(item.path)
+                  ? "bg-orange-500/10 text-orange-400"
+                  : "hover:bg-surface-hover"
                   }`}
               >
-                <span className="text-lg">{item.icon}</span>
-                <span>{item.label}</span>
+                <span className="text-2xl">{item.icon}</span>
+                <span className="font-medium">{item.label}</span>
               </button>
             ))}
           </div>
-        )}
-
-        {/* PAGE HEADER */}
-        <div className="px-4 lg:px-8 py-6 lg:py-8 border-b border-gray-200 dark:border-surface-border bg-white dark:bg-surface transition-colors duration-300">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
-              <h1 className="text-3xl lg:text-4xl font-display font-bold text-gray-900 dark:text-white mb-2">
-                {title}
-              </h1>
-              {subtitle && (
-                <p className="text-gray-600 dark:text-slate-400 text-sm lg:text-base">{subtitle}</p>
-              )}
-            </div>
-            <div className="flex items-center gap-3">
-              <ThemeToggle />
-              {actions && actions}
-            </div>
-          </div>
         </div>
-
-        {/* PAGE CONTENT */}
-        <div className="flex-1 px-4 lg:px-8 py-6 lg:py-8 overflow-y-auto w-full bg-white dark:bg-surface transition-colors duration-300">
-          <div className="max-w-screen-2xl mx-auto w-full">{children}</div>
-        </div>
-
-        {/* FOOTER */}
-        <div className="border-t border-gray-200 dark:border-surface-border px-4 lg:px-8 py-4 text-center text-xs text-gray-500 dark:text-slate-500 hidden lg:block bg-white dark:bg-surface transition-colors duration-300">
-          <p>© 2024 SkillNest. All rights reserved.</p>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

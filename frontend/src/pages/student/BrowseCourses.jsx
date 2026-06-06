@@ -3,7 +3,7 @@ import Layout from "../../components/Layout";
 import { CardSkeleton, EmptyState, Modal } from "../../components/ui";
 import { getAllCourses, enrollInCourse, createEnrollmentRequest } from "../../services/api";
 import toast from "react-hot-toast";
-
+import { NotebookPen, NotebookTextIcon, Search } from "lucide-react";
 export default function BrowseCourses() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +31,7 @@ export default function BrowseCourses() {
     try {
       const res = await enrollInCourse(course.id);
       toast.success(
-        typeof res.data === "string" ? res.data : "Enrolled successfully! 🎉"
+        typeof res.data === "string" ? res.data : "Enrolled successfully!"
       );
       setCourses(courses.map(c => c.id === course.id ? { ...c, enrolled: true } : c));
       setSelected(null);
@@ -45,9 +45,9 @@ export default function BrowseCourses() {
   const handleRequestEnrollment = async () => {
     if (!requestingCourse) return;
     try {
-      await createEnrollmentRequest({ 
-        courseId: requestingCourse.id, 
-        message: requestMessage 
+      await createEnrollmentRequest({
+        courseId: requestingCourse.id,
+        message: requestMessage
       });
       toast.success("Enrollment request submitted successfully!");
       setRequestingCourse(null);
@@ -66,7 +66,7 @@ export default function BrowseCourses() {
       <div className="mb-8">
         <div className="relative max-w-md">
           <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg">
-            🔍
+            <Search />
           </span>
           <input
             type="text"
@@ -125,7 +125,7 @@ export default function BrowseCourses() {
                     {selected.title}
                   </h3>
                   {selected.teacherName && (
-                    <p className="text-slate-300 text-sm">👨‍🏫 {selected.teacherName}</p>
+                    <p className="text-slate-300 text-sm"><NotebookPen className="inline-block mr-2" /> {selected.teacherName}</p>
                   )}
                 </div>
                 {selected.level && (
@@ -170,12 +170,12 @@ export default function BrowseCourses() {
               <div>
                 <h4 className="text-sm font-semibold text-white mb-3">📖 Course Modules</h4>
                 <div className="space-y-2">
-                  {(typeof selected.modules === 'string' 
-                    ? selected.modules.split(',') 
+                  {(typeof selected.modules === 'string'
+                    ? selected.modules.split(',')
                     : selected.modules
                   ).map((module, idx) => (
-                    <div 
-                      key={idx} 
+                    <div
+                      key={idx}
                       className="flex items-center gap-3 p-3 rounded-lg bg-surface-hover/30 border border-surface-border/50 hover:border-brand-500/30 transition-colors"
                     >
                       <span className="text-brand-400 font-bold text-sm">
@@ -190,7 +190,7 @@ export default function BrowseCourses() {
 
             {/* Action Buttons */}
             <div className="flex gap-3 pt-4">
-              
+
               <button
                 onClick={() => {
                   setSelected(null);
@@ -267,7 +267,7 @@ function CourseCard({ course, onViewDetails, onRequest }) {
       {/* Course Image/Icon */}
       <div className={`h-28 bg-gradient-to-br ${bgColor} flex items-center justify-center text-4xl relative overflow-hidden`}>
         <div className="absolute inset-0 bg-mesh-gradient opacity-10" />
-        <span className="relative">📚</span>
+        <span className="relative"><NotebookTextIcon /></span>
       </div>
 
       {/* Course Content */}
@@ -277,7 +277,7 @@ function CourseCard({ course, onViewDetails, onRequest }) {
             {course.title}
           </h3>
           {course.teacherName && (
-            <p className="text-slate-400 text-xs">👨‍🏫 {course.teacherName}</p>
+            <p className="text-slate-400 text-xs"><NotebookPen className="inline-block mr-2" /> {course.teacherName}</p>
           )}
         </div>
 

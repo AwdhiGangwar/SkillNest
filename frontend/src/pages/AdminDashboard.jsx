@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { StatCard, CardSkeleton } from "../components/ui";
 import { getAdminDashboard } from "../services/api";
 import toast from "react-hot-toast";
+import { Gauge, Users, BookOpen, Headset, Notebook, Award, Music, Headphones } from "lucide-react";
 
 export default function AdminDashboard() {
   const [dashboardData, setDashboardData] = useState(null);
@@ -44,25 +45,25 @@ export default function AdminDashboard() {
           <StatCard
             label="Active Users"
             value={dashboardData?.totalUsers || 0}
-            icon="👥"
+            icon={<Users />}
             trend="+12% this month"
           />
           <StatCard
             label="Live Courses"
             value={dashboardData?.totalCourses || 0}
-            icon="📚"
+            icon={<BookOpen />}
             trend="+5 this month"
           />
           <StatCard
             label="Total Revenue"
             value={`$${dashboardData?.totalRevenue?.toFixed(2) || "0.00"}`}
-            icon="💰"
+            icon={<Award />}
             trend="+8.2% this month"
           />
           <StatCard
             label="Open Tickets"
             value={dashboardData?.openSupportTickets || 0}
-            icon="🎧"
+            icon={<Headset />}
             trend={`${dashboardData?.openSupportTickets || 0} pending`}
           />
         </div>
@@ -75,42 +76,42 @@ export default function AdminDashboard() {
           <QuickLinkCard
             title="Manage Users"
             description="View, block, and manage user accounts"
-            icon="👥"
+            icon={<Users />}
             link="/admin/users"
             color="blue"
           />
           <QuickLinkCard
             title="Manage Courses"
             description="Create, edit, and monitor courses"
-            icon="📚"
+            icon={<BookOpen />}
             link="/admin/courses"
             color="purple"
           />
           <QuickLinkCard
             title="Teacher Requests"
             description="Review teacher applications"
-            icon="📝"
+            icon={<Notebook />}
             link="/admin/teacher-requests"
             color="amber"
           />
           <QuickLinkCard
             title="Enrollments"
             description="Manage student enrollments"
-            icon="🎓"
+            icon={<Notebook />}
             link="/admin/enrollments"
             color="emerald"
           />
           <QuickLinkCard
             title="Analytics"
             description="View platform performance"
-            icon="📈"
+            icon={<Gauge />}
             link="/admin/analytics"
             color="pink"
           />
           <QuickLinkCard
             title="Support Tickets"
             description="Handle user inquiries"
-            icon="🎧"
+            icon={<Headset />}
             link="/admin/support"
             color="cyan"
           />

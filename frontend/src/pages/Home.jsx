@@ -1,34 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Player } from "@lottiefiles/react-lottie-player";
 
 export default function Home() {
-  const [isDark, setIsDark] = useState(true);
   const [showCourses, setShowCourses] = useState(false);
-
-  // Theme Setup
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "dark";
-    const darkMode = savedTheme === "dark";
-    setIsDark(darkMode);
-    if (darkMode) {
-      document.documentElement.classList.remove("light");
-    } else {
-      document.documentElement.classList.add("light");
-    }
-  }, []);
-
-  const toggleTheme = () => {
-    const newDarkMode = !isDark;
-    setIsDark(newDarkMode);
-    if (newDarkMode) {
-      document.documentElement.classList.remove("light");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.add("light");
-      localStorage.setItem("theme", "light");
-    }
-  };
 
   const courses = [
     "Programming Fundamentals",
@@ -49,7 +24,6 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-lg border-b border-surface-border">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
-
             <span className="text-2xl font-bold tracking-tight">SkillNest</span>
           </Link>
 
@@ -64,7 +38,6 @@ export default function Home() {
                 onClick={() => setShowCourses(!showCourses)}
               >
                 Courses
-
               </button>
 
               {showCourses && (
@@ -87,27 +60,22 @@ export default function Home() {
               )}
             </div>
 
-            <Link to="/join-teacher" className="hover:text-orange-400 transition-colors">Become a Teacher</Link>
+            <Link to="/join-teacher" className="hover:text-orange-400 transition-colors">
+              Become a Teacher
+            </Link>
           </div>
 
           <div className="flex items-center gap-4">
-            {/* Theme Toggle - Desert Style */}
-            <button
-              onClick={toggleTheme}
-              className="relative w-12 h-6 rounded-full bg-gradient-to-r from-orange-400 to-amber-500 flex items-center p-1 transition-all hover:scale-105"
+            <Link
+              to="/login"
+              className="px-6 py-2.5 text-sm font-medium hover:bg-white/10 rounded-xl transition-all"
             >
-              <div
-                className={`w-5 h-5 rounded-full bg-white shadow-md flex items-center justify-center transition-transform duration-300 ${isDark ? "translate-x-0" : "translate-x-6"
-                  }`}
-              >
-                {isDark ? "🌙" : "☀️"}
-              </div>
-            </button>
-
-            <Link to="/login" className="px-6 py-2.5 text-sm font-medium hover:bg-white/10 rounded-xl transition-all">
               Login
             </Link>
-            <Link to="/register" className="btn-primary px-6 py-2.5 text-sm font-semibold rounded-xl hover:scale-105 transition-all">
+            <Link
+              to="/register"
+              className="btn-primary px-6 py-2.5 text-sm font-semibold rounded-xl hover:scale-105 transition-all"
+            >
               Get Started
             </Link>
           </div>
@@ -133,10 +101,16 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-5 pt-6 justify-center lg:justify-start">
-              <Link to="/register" className="btn-primary px-10 py-4 rounded-2xl text-xl font-semibold">
+              <Link
+                to="/register"
+                className="btn-primary px-10 py-4 rounded-2xl text-xl font-semibold hover:scale-105 transition-all"
+              >
                 Start Free Trial
               </Link>
-              <Link to="/login" className="px-10 py-4 rounded-2xl text-xl font-semibold border border-slate-400 hover:border-white hover:bg-white/10">
+              <Link
+                to="/login"
+                className="px-10 py-4 rounded-2xl text-xl font-semibold border border-slate-400 hover:border-white hover:bg-white/10 transition-all"
+              >
                 Watch Demo
               </Link>
             </div>
@@ -151,17 +125,9 @@ export default function Home() {
               className="drop-shadow-2xl"
             />
           </div>
-
-          <div className="absolute bottom-10 left-0 right-0 flex items-center justify-center lg:justify-start gap-8 pt-6 text-sm text-slate-400 px-6">
-            <div>✅ Trusted by 50,000+ students</div>
-            <div>✅ 4.9/5 Rating</div>
-          </div>
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce text-3xl text-orange-400">
-          ↓
-        </div>
+
       </div>
 
       {/* IMPACT SECTION */}
@@ -189,7 +155,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* FEATURES SECTION */}
+      {/* FEATURES SECTION with Lottie Animations */}
       <div id="features" className="py-20 bg-surface">
         <div className="max-w-6xl mx-auto px-6">
           <h2 className="text-center text-4xl font-bold mb-4">Why SkillNest?</h2>
@@ -198,20 +164,53 @@ export default function Home() {
           </p>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { icon: "🔍", title: "Concept Clarity", desc: "Build strong foundations with visual & interactive explanations" },
-              { icon: "🎯", title: "Personalized Pace", desc: "Learn at your own speed with 1:1 doubt solving" },
-              { icon: "🎮", title: "Gamified Learning", desc: "Earn points, badges & compete on leaderboards" },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="bg-surface-card border border-surface-border p-10 rounded-3xl hover:border-orange-400/50 hover:-translate-y-2 transition-all group"
-              >
-                <div className="text-5xl mb-6 group-hover:scale-110 transition-transform">{item.icon}</div>
-                <h3 className="text-2xl font-semibold mb-4">{item.title}</h3>
-                <p className="text-slate-400 leading-relaxed">{item.desc}</p>
+            {/* Search Animation */}
+            <div className="bg-surface-card border border-surface-border p-8 rounded-3xl hover:border-orange-400/50 hover:-translate-y-2 transition-all group">
+              <div className="h-40 flex items-center justify-center mb-6">
+                <Player
+                  autoplay
+                  loop
+                  src="/assets/animations/search-animation.json"
+                  style={{ width: "250px", height: "250px" }}
+                />
               </div>
-            ))}
+              <h3 className="text-2xl font-semibold mb-4 text-center">Concept Clarity</h3>
+              <p className="text-slate-400 text-center leading-relaxed">
+                Build strong foundations with visual & interactive explanations
+              </p>
+            </div>
+
+            {/* Aim Animation */}
+            <div className="bg-surface-card border border-surface-border p-8 rounded-3xl hover:border-orange-400/50 hover:-translate-y-2 transition-all group">
+              <div className="h-40 flex items-center justify-center mb-6">
+                <Player
+                  autoplay
+                  loop
+                  src="/assets/animations/aim-animation.json"
+                  style={{ width: "160px", height: "160px" }}
+                />
+              </div>
+              <h3 className="text-2xl font-semibold mb-4 text-center">Personalized Pace</h3>
+              <p className="text-slate-400 text-center leading-relaxed">
+                Learn at your own speed with 1:1 doubt solving
+              </p>
+            </div>
+
+            {/* Game Animation */}
+            <div className="bg-surface-card border border-surface-border p-8 rounded-3xl hover:border-orange-400/50 hover:-translate-y-2 transition-all group">
+              <div className="h-40 flex items-center justify-center mb-6">
+                <Player
+                  autoplay
+                  loop
+                  src="/assets/animations/game-animation.json"
+                  style={{ width: "160px", height: "160px" }}
+                />
+              </div>
+              <h3 className="text-2xl font-semibold mb-4 text-center">Gamified Learning</h3>
+              <p className="text-slate-400 text-center leading-relaxed">
+                Earn points, badges & compete on leaderboards
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -243,6 +242,6 @@ export default function Home() {
           </Link>
         </div>
       </div>
-    </div >
+    </div>
   );
 }

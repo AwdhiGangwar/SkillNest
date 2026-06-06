@@ -14,10 +14,11 @@ import {
   GraduationCap,   // Classes
   FileText,        // Assignment
   Clock3,          // Time
-  BarChart3,       // Progress
+  ChartColumn,       // Progress
   CalendarDays,    // Calendar
   Waves,            // Wave
   BarChart,
+  CheckCircle
 } from "lucide-react";
 export default function StudentDashboard() {
   const { profile } = useAuth();
@@ -57,7 +58,7 @@ export default function StudentDashboard() {
 
   return (
     <Layout
-      title={`${greeting}, ${profile?.name?.split(" ")[0] || "there"} 👋`}
+      title={`${greeting}, ${profile?.name?.split(" ")[0] || "there"}`}
       subtitle="Here's what's happening with your learning"
     >
       {/* Stats Cards */}
@@ -71,13 +72,13 @@ export default function StudentDashboard() {
         ) : (
           <>
             <div className="glass-card p-6 rounded-3xl">
-              <div className="text-4xl mb-3"><BarChart3 /></div>
+              <div className="text-4xl mb-3"><ChartColumn /></div>
               <div className="text-4xl font-bold text-white">{courses.length}</div>
               <div className="text-slate-400 text-sm mt-1">Enrolled Courses</div>
             </div>
 
             <div className="glass-card p-6 rounded-3xl">
-              <div className="text-4xl mb-3"><Ticket /></div>
+              <div className="text-4xl mb-3"><CheckCircle /></div>
               <div className="text-4xl font-bold text-emerald-400">{completedClasses.length}</div>
               <div className="text-slate-400 text-sm mt-1">Completed Classes</div>
             </div>
@@ -152,7 +153,7 @@ export default function StudentDashboard() {
 
         {/* Progress Overview */}
         <div className="glass-card p-6 rounded-3xl">
-          <h2 className="text-xl font-semibold text-white mb-6 flex gap-2"><BarChart />Progress Overview</h2>
+          <h2 className="text-xl font-semibold text-white mb-6 flex gap-2"><ChartColumn />Progress Overview</h2>
 
           <div className="space-y-8">
             <div>

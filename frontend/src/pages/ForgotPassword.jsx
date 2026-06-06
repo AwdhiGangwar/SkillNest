@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { resetPassword } from "../services/firebase";
 import toast from "react-hot-toast";
-
+import { emailIcon } from "lucide-react";
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
 
@@ -12,7 +12,7 @@ export default function ForgotPassword() {
 
     try {
       await resetPassword(email);
-      toast.success("Reset link sent to your email 📩");
+      toast.success("Reset link sent to your email " + <emailIcon className="inline mb-1" />);
     } catch (err) {
       toast.error(err.message);
     }

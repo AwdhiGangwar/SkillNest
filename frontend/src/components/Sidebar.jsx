@@ -4,37 +4,27 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import {
-  LayoutDashboard,
-  BookOpen,
-  GraduationCap,
-  CalendarDays,
-  Clock3,
-  Users,
-  DollarSign,
-  ClipboardList,
-  LogOut,
-  ChevronLeft,
-  ChevronRight,
+  home as HomeIcon, note as NotebookPen, search as SearchIcon, book as BookOpenIcon, gauge as GaugeIcon, calendar as CalendarIcon, clipboard as ClipboardIcon, users as UsersIcon, clock as ClockIcon, speakerphone as SpeakerIcon, airplay as AirplayIcon, album as AlbumIcon, headphones as HeadphonesIcon, settings as SettingsIcon, graduationcap as GraduationCapIcon
 } from "lucide-react";
 const STUDENT_NAV = [
-  { path: "/student/dashboard", icon: "🏠", label: "Dashboard" },
-  { path: "/student/courses", icon: "📚", label: "Browse Courses" },
-  { path: "/student/my-courses", icon: "🎯", label: "My Courses" },
-  { path: "/student/classes", icon: "📅", label: "My Classes" },
+  { path: "/student/dashboard", icon: HomeIcon, label: "Dashboard" },
+  { path: "/student/courses", icon: BookOpenIcon, label: "Browse Courses" },
+  { path: "/student/my-courses", icon: NotebookPen, label: "My Courses" },
+  { path: "/student/classes", icon: CalendarIcon, label: "My Classes" },
 ];
 
 const TEACHER_NAV = [
-  { path: "/teacher/dashboard", icon: "🏠", label: "Dashboard" },
-  { path: "/teacher/courses", icon: "📚", label: "My Courses" },
-  { path: "/teacher/classes", icon: "📅", label: "Classes" },
-  { path: "/teacher/availability", icon: "🕒", label: "Availability" },
-  { path: "/teacher/students", icon: "👥", label: "Students" },
-  { path: "/teacher/earnings", icon: "💰", label: "Earnings" },
+  { path: "/teacher/dashboard", icon: HomeIcon, label: "Dashboard" },
+  { path: "/teacher/courses", icon: BookOpenIcon, label: "My Courses" },
+  { path: "/teacher/classes", icon: CalendarIcon, label: "Classes" },
+  { path: "/teacher/availability", icon: ClockIcon, label: "Availability" },
+  { path: "/teacher/students", icon: UsersIcon, label: "Students" },
+  { path: "/teacher/earnings", icon: GaugeIcon, label: "Earnings" },
 ];
 
 const ADMIN_NAV = [
-  { path: "/admin/dashboard", icon: "🏠", label: "Dashboard" },
-  { path: "/admin/teacher-requests", icon: "📋", label: "Teacher Requests" },
+  { path: "/admin/dashboard", icon: HomeIcon, label: "Dashboard" },
+  { path: "/admin/teacher-requests", icon: ClipboardIcon, label: "Teacher Requests" },
 ];
 
 export default function Sidebar() {

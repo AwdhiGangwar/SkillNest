@@ -3,7 +3,7 @@ import Layout from "../../components/Layout";
 import { getAdminDashboard } from "../../services/api";
 import { StatCard, CardSkeleton } from "../../components/ui";
 import toast from "react-hot-toast";
-
+import { Gauge, Users, BookOpen, Headset, Notebook, Award, Music, Headphones } from "lucide-react";
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -23,8 +23,8 @@ export default function AdminDashboard() {
   }, []);
 
   return (
-    <Layout 
-      title="Admin Overview" 
+    <Layout
+      title="Admin Overview"
       subtitle="Platform-wide metrics and performance tracking"
     >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -32,13 +32,13 @@ export default function AdminDashboard() {
           new Array(3).fill(0).map((_, i) => <CardSkeleton key={`skeleton-${i}`} />)
         ) : (
           <>
-            <StatCard label="Total Users" value={stats?.totalUsers || 0} icon="👥" color="brand" />
-            <StatCard label="Total Courses" value={stats?.totalCourses || 0} icon="📚" color="violet" />
-            <StatCard label="Active Enrollments" value={stats?.totalEnrollments || 0} icon="🎓" color="emerald" />
+            <StatCard label="Total Users" value={stats?.totalUsers || 0} icon={<Users className="w-6 h-6" />} color="brand" />
+            <StatCard label="Total Courses" value={stats?.totalCourses || 0} icon={<BookOpen className="w-6 h-6" />} color="violet" />
+            <StatCard label="Active Enrollments" value={stats?.totalEnrollments || 0} icon={<Award className="w-6 h-6" />} color="emerald" />
           </>
         )}
       </div>
-      
+
       <div className="glass-card p-8 text-center border-dashed border-2 border-surface-border">
         <h3 className="text-white font-semibold mb-2">Detailed Analytics coming soon</h3>
         <p className="text-slate-400 text-sm">We're currently processing deeper data insights for the platform.</p>

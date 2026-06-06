@@ -3,7 +3,7 @@ import Layout from "../../components/Layout";
 import { getAnalytics } from "../../services/api";
 import { CardSkeleton } from "../../components/ui";
 import toast from "react-hot-toast";
-
+import { star as StarIcon } from "lucide-react";
 export default function AdminAnalytics() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -51,7 +51,7 @@ export default function AdminAnalytics() {
 
             <div className="glass-card p-6 rounded-xl border border-surface-border">
               <p className="text-slate-400 text-sm mb-2">Avg Rating</p>
-              <h3 className="text-3xl font-bold text-yellow-400">{stats?.avgRating || 0}⭐</h3>
+              <h3 className="text-3xl font-bold text-yellow-400">{stats?.avgRating || 0} <Star className="inline w-5 h-5" /></h3>
               <p className="text-slate-500 text-xs mt-2">Overall quality</p>
             </div>
           </div>
@@ -63,7 +63,7 @@ export default function AdminAnalytics() {
                 <div
                   key={idx}
                   className="flex-1 bg-brand-500/30 rounded-t-lg hover:bg-brand-500/50 transition-all transform hover:scale-y-105 origin-bottom"
-                  style={{height: `${val}%`}}
+                  style={{ height: `${val}%` }}
                   title={`${val}%`}
                 />
               ))}

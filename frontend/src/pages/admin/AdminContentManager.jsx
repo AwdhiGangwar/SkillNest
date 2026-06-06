@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { 
-  getModulesByCourse, getLessonsByModule, createModule, createLesson, 
+import {
+  getModulesByCourse, getLessonsByModule, createModule, createLesson,
   createAssignment, createClass, getCourseById, reorderModules, reorderLessons,
   getClassesByCourse, deleteModule, deleteLesson, deleteClass,
   getAssignmentsByCourse, getSubmissionsByAssignment
@@ -9,7 +9,7 @@ import {
 import Layout from "../../components/Layout";
 import { Modal } from "../../components/ui";
 import toast from "react-hot-toast";
-
+import { arrowUp as ArrowUpIcon, arrowDown as ArrowDownIcon, star as Star, a } from "lucide-react";
 const AdminContentManager = () => {
   const { courseId } = useParams();
   const [course, setCourse] = useState(null);
@@ -175,9 +175,9 @@ const AdminContentManager = () => {
                   <div className="flex justify-between items-center transform hover:scale-[1.01] transition-transform">
                     <span className="text-white font-medium">{m.title}</span>
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity text-slate-400">
-                      <button onClick={(e) => {e.stopPropagation(); handleReorder('module', idx, 'up')}} className="p-1 hover:text-brand-400">▲</button>
-                      <button onClick={(e) => {e.stopPropagation(); handleReorder('module', idx, 'down')}} className="p-1 hover:text-brand-400">▼</button>
-                      <button onClick={(e) => {e.stopPropagation(); handleDeleteModule(m.id)}} className="p-1 text-red-400 hover:text-red-300">×</button>
+                      <button onClick={(e) => { e.stopPropagation(); handleReorder('module', idx, 'up') }} className="p-1 hover:text-brand-400">▲</button>
+                      <button onClick={(e) => { e.stopPropagation(); handleReorder('module', idx, 'down') }} className="p-1 hover:text-brand-400">▼</button>
+                      <button onClick={(e) => { e.stopPropagation(); handleDeleteModule(m.id) }} className="p-1 text-red-400 hover:text-red-300">×</button>
                     </div>
                   </div>
                 </div>

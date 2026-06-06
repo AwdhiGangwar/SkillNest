@@ -6,6 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import { getTeacherClasses, getTeacherEarnings } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { Calendar, Gauge, User, Check, Award, BookCopy, Star, Timer, Calendar1 } from "lucide-react";
 
 export default function TeacherDashboard() {
   const { profile } = useAuth();
@@ -45,7 +46,7 @@ export default function TeacherDashboard() {
 
   return (
     <Layout
-      title={`${greeting}, ${profile?.name?.split(" ")[0] || "Teacher"} 👋`}
+      title={`${greeting}, ${profile?.name?.split(" ")[0] || "Teacher"}`}
       subtitle="Here's your teaching performance at a glance"
       actions={
         <button onClick={() => navigate("/teacher/courses")} className="btn-primary">
@@ -59,28 +60,28 @@ export default function TeacherDashboard() {
           Array(4).fill(0).map((_, i) => <CardSkeleton key={i} />)
         ) : (
           <>
-            <StatCard 
-              label="Active Students" 
-              value={totalStudents} 
-              icon="👨‍🎓" 
+            <StatCard
+              label="Active Students"
+              value={totalStudents}
+              icon="👨‍🎓"
               gradient="from-violet-500/20 to-purple-500/10"
             />
-            <StatCard 
-              label="Classes Done" 
-              value={completed.length} 
-              icon="✅" 
+            <StatCard
+              label="Classes Done"
+              value={completed.length}
+              icon={<Check className="w-5 h-5" />}
               gradient="from-emerald-500/20 to-teal-500/10"
             />
-            <StatCard 
-              label="Attendance Rate" 
-              value={`${attendanceRate}%`} 
-              icon="📊" 
+            <StatCard
+              label="Attendance Rate"
+              value={`${attendanceRate}%`}
+              icon={<Gauge className="w-5 h-5" />}
               gradient="from-blue-500/20 to-cyan-500/10"
             />
-            <StatCard 
-              label="Total Earnings" 
-              value={earnings?.totalEarnings != null ? `₹${earnings.totalEarnings}` : "—"} 
-              icon="💰" 
+            <StatCard
+              label="Total Earnings"
+              value={earnings?.totalEarnings != null ? `₹${earnings.totalEarnings}` : "—"}
+              icon={<Award className="w-5 h-5" />}
               gradient="from-amber-500/20 to-orange-500/10"
             />
           </>
@@ -92,7 +93,7 @@ export default function TeacherDashboard() {
         <div className="lg:col-span-2">
           <div className="glass-card p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="font-display font-bold text-white text-xl">📅 Upcoming Classes</h2>
+              <h2 className="font-display font-bold text-white text-xl"> <Calendar1 /> Upcoming Classes</h2>
               <button
                 onClick={() => navigate("/teacher/classes")}
                 className="text-sm text-brand-400 hover:text-brand-300 font-semibold transition-colors"
@@ -107,12 +108,12 @@ export default function TeacherDashboard() {
               </div>
             ) : upcoming.length === 0 ? (
               <EmptyState
-                icon="📅"
+                icon={<Calendar1 />}
                 title="No upcoming classes"
                 description="Set your availability so students can book sessions"
               >
-                <button 
-                  onClick={() => navigate("/teacher/availability")} 
+                <button
+                  onClick={() => navigate("/teacher/availability")}
                   className="btn-primary text-sm mt-4"
                 >
                   Set Availability →
@@ -132,30 +133,30 @@ export default function TeacherDashboard() {
         <div className="space-y-6">
           {/* Earnings Summary */}
           <div className="glass-card p-6">
-            <h3 className="font-display font-bold text-white mb-5 text-lg">💰 Earnings Summary</h3>
+            <h3 className="font-display font-bold text-white mb-5 text-lg"><Award /> Earnings Summary</h3>
             {loading ? (
               <CardSkeleton />
             ) : (
               <div className="space-y-4">
-                <EarningRow 
-                  label="Total Earned" 
-                  value={earnings?.totalEarnings != null ? `₹${earnings.totalEarnings}` : "—"} 
+                <EarningRow
+                  label="Total Earned"
+                  value={earnings?.totalEarnings != null ? `₹${earnings.totalEarnings}` : "—"}
                   color="text-amber-400"
                 />
                 <div className="my-3 h-px bg-surface-border/50" />
-                <EarningRow 
-                  label="This Month" 
-                  value={earnings?.monthlyEarnings != null ? `₹${earnings.monthlyEarnings}` : "—"} 
+                <EarningRow
+                  label="This Month"
+                  value={earnings?.monthlyEarnings != null ? `₹${earnings.monthlyEarnings}` : "—"}
                   color="text-emerald-400"
                 />
-                <EarningRow 
-                  label="Rate/Class" 
-                  value={earnings?.ratePerClass != null ? `₹${earnings.ratePerClass}` : "—"} 
+                <EarningRow
+                  label="Rate/Class"
+                  value={earnings?.ratePerClass != null ? `₹${earnings.ratePerClass}` : "—"}
                   color="text-brand-400"
                 />
-                <EarningRow 
-                  label="Completed" 
-                  value={completed.length} 
+                <EarningRow
+                  label="Completed"
+                  value={completed.length}
                   color="text-violet-400"
                 />
                 <button
@@ -173,9 +174,9 @@ export default function TeacherDashboard() {
             <h3 className="font-display font-bold text-white mb-5 text-lg">⚡ Quick Actions</h3>
             <div className="space-y-2">
               {[
-                { label: "Set Availability", path: "/teacher/availability", icon: "◻" },
-                { label: "View Students", path: "/teacher/students", icon: "👥" },
-                { label: "My Courses", path: "/teacher/courses", icon: "📚" },
+                { label: "Set Availability", path: "/teacher/availability", icon: <Calendar1 /> },
+                { label: "View Students", path: "/teacher/students", icon: <User /> },
+                { label: "My Courses", path: "/teacher/courses", icon: <BookCopy /> },
               ].map((item) => (
                 <button
                   key={item.path}
@@ -225,24 +226,23 @@ function TeacherClassCard({ cls }) {
 
   const dateStr = start
     ? start.toLocaleDateString("en-US", {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-      })
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+    })
     : "TBD";
 
   const timeStr = start
     ? `${start.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })}${end
+      ? ` – ${end.toLocaleTimeString("en-US", {
         hour: "2-digit",
         minute: "2-digit",
-      })}${
-        end
-          ? ` – ${end.toLocaleTimeString("en-US", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}`
-          : ""
-      }`
+      })}`
+      : ""
+    }`
     : "TBD";
 
   return (
@@ -271,11 +271,10 @@ function TeacherClassCard({ cls }) {
 
         {/* Status Badge */}
         <div className="shrink-0">
-          <span className={`px-3 py-1 rounded-lg text-xs font-bold ${
-            cls.status === "scheduled" 
-              ? "bg-blue-500/20 text-blue-300" 
-              : "bg-emerald-500/20 text-emerald-300"
-          }`}>
+          <span className={`px-3 py-1 rounded-lg text-xs font-bold ${cls.status === "scheduled"
+            ? "bg-blue-500/20 text-blue-300"
+            : "bg-emerald-500/20 text-emerald-300"
+            }`}>
             {cls.status === "scheduled" ? "Upcoming" : "Completed"}
           </span>
         </div>

@@ -6,6 +6,7 @@ import {
   getEnrollmentRequests, approveEnrollmentRequest, rejectEnrollmentRequest,
   getAllCourses, getAllUsers, getEnrollmentsByCourse, getEnrollmentStats
 } from "../../services/api";
+import { CheckIcon, XIcon, MessageIcon } from "lucide-react";
 import api from "../../services/api";
 
 export default function AdminEnrollments() {
@@ -135,14 +136,14 @@ export default function AdminEnrollments() {
         courseId: form.courseId,
       });
 
-      toast.success("Student enrolled successfully! ✅");
+      toast.success("Student enrolled successfully! " + <CheckIcon />);
       setShowModal(false);
       setForm({ studentId: "", courseId: "" });
       await loadData(); // ✅ Refresh data
     } catch (err) {
       let errorMessage = "Failed to enroll student";
-      if (err.status === 403) errorMessage = "❌ Access Denied";
-      else if (err.status === 401) errorMessage = "❌ Unauthorized: Please log in again";
+      if (err.status === 403) errorMessage = <XIcon /> + " Access Denied";
+      else if (err.status === 401) errorMessage = <XIcon /> + " Unauthorized: Please log in again";
       else if (err.message) errorMessage = err.message;
       toast.error(errorMessage);
     } finally {
@@ -342,7 +343,7 @@ export default function AdminEnrollments() {
                         📚 {r.courseName || r.courseId}
                       </div>
                       {r.message && (
-                        <div className="text-sm text-slate-300 mt-1">💬 "{r.message}"</div>
+                        <div className="text-sm text-slate-300 mt-1">  "{r.message}"</div>
                       )}
                       <div className="text-xs text-slate-500 mt-1">
                         {new Date(r.createdAt).toLocaleDateString()}
@@ -353,7 +354,7 @@ export default function AdminEnrollments() {
                         onClick={async () => {
                           try {
                             await approveEnrollmentRequest(r.id);
-                            toast.success('✅ Approved');
+                            toast.success(<CheckIcon /> + ' Approved');
                             setRequests(prev => prev.filter(x => x.id !== r.id));
                           } catch (err) {
                             toast.error(err.message || 'Failed to approve');
@@ -367,7 +368,7 @@ export default function AdminEnrollments() {
                         onClick={async () => {
                           try {
                             await rejectEnrollmentRequest(r.id);
-                            toast.success('❌ Rejected');
+                            toast.success(<XIcon /> + ' Rejected');
                             setRequests(prev => prev.filter(x => x.id !== r.id));
                           } catch (err) {
                             toast.error(err.message || 'Failed to reject');

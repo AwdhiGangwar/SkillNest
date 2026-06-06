@@ -4,7 +4,7 @@ import Layout from "../../components/Layout";
 import toast from "react-hot-toast";
 import api from "../../services/api";
 import { createSubmission } from "../../services/api";
-
+import { NotebookTextIcon, Check } from "lucide-react";
 const CLOUD_NAME = "drzjvnmfk";
 const UPLOAD_PRESET = "skillnest_assignments";
 
@@ -34,7 +34,7 @@ export default function StudentAssignments() {
             courseName: course.title
           }));
           allAssignments.push(...courseAssignments);
-        } catch (e) {}
+        } catch (e) { }
       }
 
       setAssignments(allAssignments);
@@ -112,7 +112,7 @@ export default function StudentAssignments() {
               submittedAt: new Date().toISOString()
             });
 
-            toast.success("Assignment submitted! ✅");
+            toast.success("Assignment submitted! " + <Check className="inline-block ml-2" />);
             setSubmitted(prev => ({ ...prev, [assignmentId]: true }));
           } catch (err) {
             // ✅ Already submitted error handle karo
@@ -150,7 +150,7 @@ export default function StudentAssignments() {
         <div className="text-slate-400 text-center py-20">Loading...</div>
       ) : assignments.length === 0 ? (
         <div className="text-center py-20">
-          <p className="text-4xl mb-4">📝</p>
+          <p className="text-4xl mb-4"><NotebookTextIcon /></p>
           <p className="text-surface-text font-semibold">No assignments yet</p>
           <p className="text-slate-400 text-sm mt-2">
             Enroll in a course to see assignments
@@ -168,7 +168,7 @@ export default function StudentAssignments() {
                     {assignment.title}
                   </h3>
                   <p className="text-brand-400 text-sm">
-                    📚 {assignment.courseName}
+                    <NotebookTextIcon className="inline-block mr-2" /> {assignment.courseName}
                   </p>
                 </div>
                 {assignment.dueDate && (
@@ -187,7 +187,7 @@ export default function StudentAssignments() {
               {submitted[assignment.id] ? (
                 <div className="bg-emerald-500/10 border border-emerald-500/30
                                 rounded-xl p-4 text-emerald-400 text-sm font-medium">
-                  ✅ Assignment Submitted Successfully!
+                  <Check className="inline-block mr-2" /> Assignment Submitted Successfully!
                 </div>
               ) : (
                 <div className="space-y-3">

@@ -1,6 +1,6 @@
 // src/components/ui/EmptyState.jsx
 import PropTypes from "prop-types";
-
+import { Activity, ChartColumn } from "lucide-react";
 /**
  * EmptyState Component
  * Displays when there's no data to show
@@ -9,10 +9,10 @@ import PropTypes from "prop-types";
  * <EmptyState
  *   title="No courses yet"
  *   description="Start learning by enrolling in a course"
- *   icon="📚"
+ *   icon={<ChartColumn />}
  * />
  */
-function EmptyState({ title, description, icon = "📭", action = null }) {
+function EmptyState({ title, description, icon = <Activity />, action = null }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4">
       <div className="text-6xl mb-4">{icon}</div>

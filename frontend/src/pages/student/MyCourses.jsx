@@ -5,7 +5,7 @@ import { CardSkeleton, EmptyState } from "../../components/ui";
 import { getMyCourses } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-
+import { NotebookPen, NotebookTextIcon } from "lucide-react";
 export default function MyCourses() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +34,7 @@ export default function MyCourses() {
         </div>
       ) : courses.length === 0 ? (
         <EmptyState
-          icon="📚"
+          icon={<NotebookTextIcon />}
           title="No courses yet"
           description="Browse available courses and enroll to start learning"
           action={
@@ -66,7 +66,7 @@ function EnrolledCourseCard({ course }) {
   return (
     <div className="glass-card overflow-hidden hover:border-brand-500/30 transition-all duration-300 animate-slide-up group">
       <div className={`h-28 bg-gradient-to-br ${grad} flex items-center justify-center text-4xl`}>
-        📖
+        <NotebookTextIcon />
       </div>
       <div className="p-5">
         <div className="flex items-start justify-between gap-2 mb-2">

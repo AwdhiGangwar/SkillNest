@@ -7,7 +7,7 @@ import ModuleSidebar from "../../components/ModuleSidebar";
 import LessonViewer from "../../components/LessonViewer";
 import ProgressBar from "../../components/ProgressBar";
 import toast from "react-hot-toast";
-
+import { Rocket } from "lucide-react";
 const CourseLearning = () => {
   const { user } = useAuth(); // ✅ useAuth se lo
   const { courseId } = useParams();
@@ -60,7 +60,7 @@ const CourseLearning = () => {
       if (!selectedLesson || !user) return; // ✅ user directly
 
       await markLessonComplete(user.uid, courseId, selectedLesson.id); // ✅
-      toast.success("Lesson marked as completed! 🎉");
+      toast.success("Lesson marked as completed! " + <Rocket className="inline-block ml-2" />);
 
       const progressRes = await getCourseProgress(user.uid, courseId, 100); // ✅
       setProgress(progressRes.data?.progressPercentage || 0);
