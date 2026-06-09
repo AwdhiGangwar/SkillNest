@@ -167,7 +167,7 @@ export default function TeacherCourses() {
 
           <div>
             <label className="block text-sm font-medium text-light-text-secondary dark:text-slate-300 mb-2">
-              Price (USD) <span className="text-red-400">*</span>
+              Price <span className="text-red-400">*</span>
             </label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-light-text-secondary dark:text-slate-400">$</span>
@@ -238,7 +238,7 @@ function TeacherCourseCard({ course }) {
         </div>
 
         <button
-          onClick={() => navigate(`/course-content/${course.id}`)}
+          onClick={() => navigate(`/teacher/content/${course.id}`)}
           className="w-full py-2 bg-light-hover dark:bg-surface-hover hover:bg-brand-500/20 border border-light-border dark:border-surface-border hover:border-brand-500/50 text-light-text dark:text-white text-xs font-semibold rounded-lg transition-all"
         >
           Manage Content

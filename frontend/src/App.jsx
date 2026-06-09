@@ -82,8 +82,9 @@ export default function App() {
         <Route path="/teacher/availability" element={<ProtectedRoute role="teacher"><Availability /></ProtectedRoute>} />
         <Route path="/teacher/students" element={<ProtectedRoute role="teacher"><TeacherStudents /></ProtectedRoute>} />
         <Route path="/teacher/earnings" element={<ProtectedRoute role="teacher"><Earnings /></ProtectedRoute>} />
-
+        <Route path="/teacher/content/:courseId" element={<ProtectedRoute role="teacher"><AdminContentManager /></ProtectedRoute>} />
         {/* Admin Routes */}
+        <Route path="/admin/content" element={<ProtectedRoute role="admin"><AdminContentManager /></ProtectedRoute>} />
         <Route path="/admin/dashboard" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
         <Route path="/admin/teacher-requests" element={<ProtectedRoute role="admin"><TeacherRequests /></ProtectedRoute>} />
         <Route path="/admin/create-teacher" element={<ProtectedRoute role="admin"><CreateTeacher /></ProtectedRoute>} />
@@ -94,6 +95,8 @@ export default function App() {
         <Route path="/admin/payments" element={<ProtectedRoute role="admin"><AdminPayments /></ProtectedRoute>} />
         <Route path="/admin/support" element={<ProtectedRoute role="admin"><AdminSupport /></ProtectedRoute>} />
         <Route path="/admin/settings" element={<ProtectedRoute role="admin"><AdminSettings /></ProtectedRoute>} />
+        // Admin Routes mein yeh wala rakho (duplicate hatao)
+        <Route path="/admin/content/:courseId" element={<ProtectedRoute role="admin"><AdminContentManager /></ProtectedRoute>} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/login" replace />} />

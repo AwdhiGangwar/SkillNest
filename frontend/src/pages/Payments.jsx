@@ -32,7 +32,7 @@ export default function Payments() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           <div className="glass-card p-6 rounded-xl border border-surface-border">
             <p className="text-slate-400 text-sm mb-2">Total Paid</p>
-            <h3 className="text-3xl font-bold text-brand-400">${getTotalAmount()}</h3>
+            <h3 className="text-3xl font-bold text-brand-400">{getTotalAmount()}</h3>
             <p className="text-slate-500 text-xs mt-2">All transactions</p>
           </div>
 
@@ -77,7 +77,7 @@ export default function Payments() {
                     <tr key={txn.id} className="hover:bg-surface-border/30 transition-all">
                       <td className="py-3">{new Date(txn.date).toLocaleDateString()}</td>
                       <td className="py-3 text-slate-300">{txn.description}</td>
-                      <td className="py-3 font-semibold text-brand-400">${txn.amount}</td>
+                      <td className="py-3 font-semibold text-brand-400">{txn.amount}</td>
                       <td className="py-3">
                         <Badge variant={txn.status === "completed" ? "success" : "info"}>
                           {txn.status}

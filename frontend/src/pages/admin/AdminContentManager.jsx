@@ -119,20 +119,79 @@ const AdminContentManager = () => {
   const handleScheduleClass = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
+
+    const title = formData.get("title");
+    const startTime = formData.get("startTime");
+    const recurring = formData.get("recurring") || "none";
+    const endDate = formData.get("endDate");
+    const occurrences = parseInt(formData.get("occurrences")) || 30;
+    const meetingLink = formData.get("link");
+    const meetingTool = formData.get("meetingTool");
+
+    if (!title || !startTime || !meetingLink) {
+      return toast.error("Title, Start Time aur Meeting Link required hai");
+    }
+
     try {
-      await createClass({
-        courseId,
-        title: formData.get("title"),
-        startTime: formData.get("startTime"),
-        meetingLink: formData.get("link"),
-        status: "scheduled"
-      });
-      toast.success("Class scheduled!");
+      if (recurring === "none") {
+        // Single Class
+        await createClass({
+          courseId,
+          title,
+          startTime,
+          meetingLink,
+          meetingTool: meetingTool || "Google Meet",
+          status: "scheduled"
+        });
+        toast.success("Class scheduled successfully!");
+      }
+      else {
+        // Recurring Classes
+        const classesToCreate = [];
+        let current = new Date(startTime);
+        const end = endDate ? new Date(endDate) : null;
+        let count = 0;
+
+        while (count < occurrences) {
+          if (end && current > end) break;
+
+          classesToCreate.push({
+            courseId,
+            title: `${title} (${current.toLocaleDateString('en-IN')})`,
+            startTime: current.toISOString(),
+            meetingLink,
+            meetingTool: meetingTool || "Google Meet",
+            status: "scheduled"
+          });
+
+          // Next occurrence
+          if (recurring === "daily") {
+            current.setDate(current.getDate() + 1);
+          } else if (recurring === "weekly") {
+            current.setDate(current.getDate() + 7);
+          }
+          count++;
+        }
+
+        if (classesToCreate.length === 0) {
+          return toast.error("No classes to schedule");
+        }
+
+        // Create all classes
+        for (const cls of classesToCreate) {
+          await createClass(cls);
+        }
+
+        toast.success(`${classesToCreate.length} recurring classes successfully scheduled!`);
+      }
+
       fetchLiveClasses();
       e.target.reset();
-    } catch (e) { toast.error("Failed to schedule class"); }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to schedule class/classes");
+    }
   };
-
   const handleAddAssignment = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -226,19 +285,46 @@ const AdminContentManager = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="glass-card p-6">
             <h3 className="text-xl font-bold text-white mb-6">Schedule Live Session</h3>
+
             <form onSubmit={handleScheduleClass} className="space-y-4 text-surface-text">
               <input name="title" placeholder="Class Topic" className="input-field w-full" required />
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs text-slate-400 block mb-1">Start Time</label>
                   <input name="startTime" type="datetime-local" className="input-field w-full" required />
                 </div>
                 <div>
-                  <label className="text-xs text-slate-400 block mb-1">Meeting Tool</label>
-                  <select className="input-field w-full"><option>Google Meet</option><option>Zoom</option></select>
+                  <label className="text-xs text-slate-400 block mb-1">Recurring</label>
+                  <select name="recurring" className="input-field w-full" defaultValue="none">
+                    <option value="none">One Time</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                  </select>
                 </div>
               </div>
-              <input name="link" placeholder="Paste Meeting Link Here" className="input-field w-full" required />
+
+              <div id="recurringOptions" className="hidden grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs text-slate-400 block mb-1">End Date</label>
+                  <input name="endDate" type="date" className="input-field w-full" />
+                </div>
+                <div>
+                  <label className="text-xs text-slate-400 block mb-1">Occurrences</label>
+                  <input name="occurrences" type="number" placeholder="e.g. 30" className="input-field w-full" min="1" />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs text-slate-400 block mb-1">Meeting Tool</label>
+                <select name="meetingTool" className="input-field w-full">
+                  <option value="Google Meet">Google Meet</option>
+                  <option value="Zoom">Zoom</option>
+                </select>
+              </div>
+
+              <input name="link" placeholder="Paste Meeting Link Here (same for all recurring)" className="input-field w-full" required />
+
               <button type="submit" className="btn-primary w-full py-3">Schedule & Notify Students</button>
             </form>
           </div>

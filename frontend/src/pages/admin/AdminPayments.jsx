@@ -42,23 +42,23 @@ export default function AdminPayments() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="glass-card p-6 rounded-xl border border-surface-border">
             <p className="text-slate-400 text-sm mb-2">Total Revenue</p>
-            <h3 className="text-3xl font-bold text-emerald-400">${summary ? Number(summary.totalRevenue || 0).toFixed(2) : getTotalAmount()}</h3>
+            <h3 className="text-3xl font-bold text-emerald-400">{summary ? Number(summary.totalRevenue || 0).toFixed(2) : getTotalAmount()}</h3>
             <p className="text-slate-500 text-xs mt-2">All time earnings</p>
           </div>
           <div className="glass-card p-6 rounded-xl border border-surface-border">
             <p className="text-slate-400 text-sm mb-2">Paid to Teachers</p>
-            <h3 className="text-3xl font-bold text-rose-400">${summary ? Number(summary.totalPaidToTeachers || 0).toFixed(2) : '0.00'}</h3>
+            <h3 className="text-3xl font-bold text-rose-400">{summary ? Number(summary.totalPaidToTeachers || 0).toFixed(2) : '0.00'}</h3>
             <p className="text-slate-500 text-xs mt-2">Total payouts ({payouts.length})</p>
           </div>
           <div className="glass-card p-6 rounded-xl border border-surface-border">
             <p className="text-slate-400 text-sm mb-2">Monthly Revenue</p>
-            <h3 className="text-3xl font-bold text-emerald-400">${(() => {
-                if (!summary || !summary.monthlyRevenue) return '0.00';
-                const m = summary.monthlyRevenue;
-                const d = new Date();
-                const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
-                return Number(m[key] || 0).toFixed(2);
-              })()}</h3>
+            <h3 className="text-3xl font-bold text-emerald-400">{(() => {
+              if (!summary || !summary.monthlyRevenue) return '0.00';
+              const m = summary.monthlyRevenue;
+              const d = new Date();
+              const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
+              return Number(m[key] || 0).toFixed(2);
+            })()}</h3>
             <p className="text-slate-500 text-xs mt-2">Current month</p>
           </div>
           <div className="glass-card p-6 rounded-xl border border-surface-border">
@@ -91,7 +91,7 @@ export default function AdminPayments() {
                   <tr key={txn.id} className="hover:bg-surface-hover/30 transition-all transform hover:scale-[1.005]">
                     <td className="px-6 py-5 text-slate-400 text-sm">{txn.date}</td>
                     <td className="px-6 py-5 text-surface-text">{txn.description}</td>
-                    <td className="px-6 py-5 font-semibold text-emerald-400">${txn.amount}</td>
+                    <td className="px-6 py-5 font-semibold text-emerald-400">{txn.amount}</td>
                     <td className="px-6 py-5">
                       <Badge variant={txn.status === "completed" ? "success" : "warn"}>
                         {txn.status}

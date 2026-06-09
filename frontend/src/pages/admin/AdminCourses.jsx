@@ -311,8 +311,11 @@ export default function AdminCourses() {
                           className="px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 text-xs font-semibold hover:bg-blue-500 hover:text-white transition-all">
                           Edit
                         </button>
-                        <button onClick={() => navigate(`/course-content/${course.id}`)}
-                          className="px-3 py-1.5 rounded-lg bg-brand-500/10 text-brand-400 text-xs font-semibold hover:bg-brand-500 hover:text-white transition-all">
+                        {/* Replace this button */}
+                        <button
+                          onClick={() => navigate(`/admin/content/${course.id}`)}
+                          className="px-3 py-1.5 rounded-lg bg-violet-500/10 text-violet-400 text-xs font-semibold hover:bg-violet-500 hover:text-white transition-all flex items-center gap-1.5">
+                          <Notebook className="w-4 h-4" />
                           Manage Content
                         </button>
                         <button onClick={() => handleDelete(course.id)} disabled={deletingId === course.id}

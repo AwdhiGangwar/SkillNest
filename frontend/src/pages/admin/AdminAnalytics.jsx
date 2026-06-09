@@ -33,7 +33,7 @@ export default function AdminAnalytics() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             <div className="glass-card p-6 rounded-xl border border-surface-border">
               <p className="text-slate-400 text-sm mb-2">Total Revenue</p>
-              <h3 className="text-3xl font-bold text-brand-400">${stats?.totalRevenue || 0}</h3>
+              <h3 className="text-3xl font-bold text-brand-400">{stats?.totalRevenue || 0}</h3>
               <p className="text-slate-500 text-xs mt-2">Platform earnings</p>
             </div>
 

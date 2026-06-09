@@ -25,8 +25,15 @@ const TEACHER_NAV = [
 const ADMIN_NAV = [
   { path: "/admin/dashboard", icon: HomeIcon, label: "Dashboard" },
   { path: "/admin/teacher-requests", icon: ClipboardIcon, label: "Teacher Requests" },
+  { path: "/admin/users", icon: UsersIcon, label: "Users" },
+  { path: "/admin/courses", icon: BookOpenIcon, label: "Courses" },
+  { path: "/admin/enrollments", icon: NotebookPen, label: "Enrollments" },
+  { path: "/admin/analytics", icon: GaugeIcon, label: "Analytics" },
+  { path: "/admin/payments", icon: AlbumIcon, label: "Payments" },
+  { path: "/admin/support", icon: HeadphonesIcon, label: "Support" },
+  { path: "/admin/content", icon: AirplayIcon, label: "Manage Content" },
+  { path: "/admin/settings", icon: SettingsIcon, label: "Settings" },
 ];
-
 export default function Sidebar() {
   const { profile, logout } = useAuth();
   const navigate = useNavigate();
