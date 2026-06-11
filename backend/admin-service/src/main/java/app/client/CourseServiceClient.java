@@ -19,7 +19,7 @@ public class CourseServiceClient {
         this.restTemplate = restTemplate;
     }
 
-    private final String BASE_URL = "http://localhost:8082";
+    private final String BASE_URL = "http://course-service:8082";
 
     private HttpHeaders getHeaders() {
         HttpHeaders headers = new HttpHeaders();

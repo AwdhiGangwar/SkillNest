@@ -1,14 +1,17 @@
 package app.client;
 
+import java.util.List;
+
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.List;
 
 @Service
 public class EnrollmentServiceClient {
@@ -19,7 +22,7 @@ public class EnrollmentServiceClient {
         this.restTemplate = restTemplate;
     }
 
-    private final String BASE_URL = "http://localhost:8083";
+    private final String BASE_URL = "http://enrollment-service:8083";
 
     private HttpHeaders getHeaders() {
         HttpHeaders headers = new HttpHeaders();
