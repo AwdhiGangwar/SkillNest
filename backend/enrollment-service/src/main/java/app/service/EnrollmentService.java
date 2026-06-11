@@ -39,7 +39,7 @@ public class EnrollmentService {
         Firestore db = FirestoreClient.getFirestore();
 
         // 🔥 1. Validate User via USER-SERVICE (via GATEWAY)
-        String userUrl = "http://localhost:8080/api/me";
+        String userUrl = "http://api-gateway:8080/api/me";
         logger.info("Validating user for enrollment via: {}", userUrl);
 
         HttpHeaders headers = new HttpHeaders();
