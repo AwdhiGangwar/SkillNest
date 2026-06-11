@@ -25,7 +25,7 @@ public class UserServiceClient {
         this.restTemplate = restTemplate;
     }
 
-    private final String BASE_URL = "http://localhost:8081";
+    private static final String BASE_URL = "http://user-service:8081";
 
     // 🔥 COMMON HEADER METHOD
     private HttpHeaders getHeaders() {
