@@ -9,6 +9,7 @@ services:
       ENROLLMENT_SERVICE_URL: "http://enrollment-service:8083"
       CLASS_SERVICE_URL: "http://class-service:8084"
       ADMIN_SERVICE_URL: "http://admin-service:8086"
+      TEACHER_REQUEST_SERVICE_URL: "http://user-service:8081"
 
   user-service:
     build: ./backend/user-service
