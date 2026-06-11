@@ -11,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class UserService {
 
-    private static final String USER_SERVICE_URL = "http://localhost:8080/api/users";
+    private static final String USER_SERVICE_URL = "http://api-gateway:8080/api/users";
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Autowired

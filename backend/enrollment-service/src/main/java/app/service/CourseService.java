@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 public class CourseService {
 
-    private static final String COURSE_SERVICE_URL = "http://localhost:8082/api/courses";
+    private static final String COURSE_SERVICE_URL = "http://course-service:8082/api/courses";
     private static final Logger logger = LoggerFactory.getLogger(CourseService.class);
 
     @Autowired
