@@ -26,7 +26,7 @@ public class CourseService {
     // ==================== ROLE CHECK ====================
     public boolean isTeacher(String uid, String token) {
         try {
-            String url = "http://localhost:8080/api/me";
+            String url = "http://api-gateway:8080/api/me";
             logger.info("Checking teacher role for UID: {}", uid);
 
             HttpHeaders headers = new HttpHeaders();
